@@ -54,11 +54,11 @@ Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c \
 Core/Src/system_stm32f4xx.c \
 Core/Src/sysmem.c \
-Core/Src/syscalls.c
+Core/Src/syscalls.c \
+startup_stm32f411CEU6.c
 
 # ASM sources
-ASM_SOURCES =  \
-startup_stm32f411xe.s
+ASM_SOURCES = 
 
 # ASM sources
 ASMM_SOURCES = 
