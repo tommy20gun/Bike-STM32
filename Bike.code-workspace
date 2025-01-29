@@ -4,5 +4,10 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"stm32f4xx.h": "c",
+			"stm32f411xe.h": "c"
+		}
+	}
 }
