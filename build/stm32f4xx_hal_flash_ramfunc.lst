@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccm6KuVg.s 			page 1
+=======
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\cczChpEo.s 			page 1
+>>>>>>> BareMetal_Startup
 
 
    1              		.cpu cortex-m4
@@ -58,7 +62,11 @@ ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccm6KuVg.s 			page 1
   28:Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c ****     *** GNU Compiler ***
   29:Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c ****     --------------------
   30:Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c ****     [..] RAM functions are defined using a specific toolchain attribute
+<<<<<<< HEAD
 ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccm6KuVg.s 			page 2
+=======
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\cczChpEo.s 			page 2
+>>>>>>> BareMetal_Startup
 
 
   31:Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c ****          "__attribute__((section(".RamFunc")))".
@@ -118,7 +126,11 @@ ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccm6KuVg.s 			page 1
   85:Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c ****   */
   86:Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c **** 
   87:Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c **** /**
+<<<<<<< HEAD
 ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccm6KuVg.s 			page 3
+=======
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\cczChpEo.s 			page 3
+>>>>>>> BareMetal_Startup
 
 
   88:Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c ****   * @brief Stop the flash interface while System Run
@@ -178,7 +190,11 @@ ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccm6KuVg.s 			page 1
   68              		.align	2
   69              	.L3:
   70 0028 00380240 		.word	1073887232
+<<<<<<< HEAD
 ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccm6KuVg.s 			page 4
+=======
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\cczChpEo.s 			page 4
+>>>>>>> BareMetal_Startup
 
 
   71 002c 00700040 		.word	1073770496
@@ -238,7 +254,11 @@ ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccm6KuVg.s 			page 1
  113 0052 1360     		str	r3, [r2]
  117:Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c **** 
  118:Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c ****   return HAL_OK;
+<<<<<<< HEAD
 ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccm6KuVg.s 			page 5
+=======
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\cczChpEo.s 			page 5
+>>>>>>> BareMetal_Startup
 
 
  114              		.loc 1 118 3 view .LVU18
@@ -298,7 +318,11 @@ ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccm6KuVg.s 			page 1
  157 0072 03F08053 		and	r3, r3, #268435456
  158 0076 0193     		str	r3, [sp, #4]
  159              		.loc 1 131 3 view .LVU25
+<<<<<<< HEAD
 ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccm6KuVg.s 			page 6
+=======
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\cczChpEo.s 			page 6
+>>>>>>> BareMetal_Startup
 
 
  160 0078 019B     		ldr	r3, [sp, #4]
@@ -358,7 +382,11 @@ ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccm6KuVg.s 			page 1
  199              		.loc 1 148 3 view .LVU31
  200              	.LBB5:
  201              		.loc 1 148 3 view .LVU32
+<<<<<<< HEAD
 ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccm6KuVg.s 			page 7
+=======
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\cczChpEo.s 			page 7
+>>>>>>> BareMetal_Startup
 
 
  202 0092 0020     		movs	r0, #0
@@ -406,11 +434,16 @@ ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccm6KuVg.s 			page 1
  240              		.file 3 "c:\\users\\tommy\\documents\\bike stmproj\\tools\\gcc-arm-none-eabi-10.3-2021.10\\arm-non
  241              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h"
  242              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+<<<<<<< HEAD
 ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccm6KuVg.s 			page 8
+=======
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\cczChpEo.s 			page 8
+>>>>>>> BareMetal_Startup
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 stm32f4xx_hal_flash_ramfunc.c
+<<<<<<< HEAD
 C:\Users\tommy\AppData\Local\Temp\ccm6KuVg.s:20     .RamFunc:00000000 $t
 C:\Users\tommy\AppData\Local\Temp\ccm6KuVg.s:26     .RamFunc:00000000 HAL_FLASHEx_StopFlashInterfaceClk
 C:\Users\tommy\AppData\Local\Temp\ccm6KuVg.s:70     .RamFunc:00000028 $d
@@ -423,5 +456,19 @@ C:\Users\tommy\AppData\Local\Temp\ccm6KuVg.s:178    .RamFunc:00000088 $d
 C:\Users\tommy\AppData\Local\Temp\ccm6KuVg.s:183    .RamFunc:00000090 $t
 C:\Users\tommy\AppData\Local\Temp\ccm6KuVg.s:189    .RamFunc:00000090 HAL_FLASHEx_DisableFlashSleepMode
 C:\Users\tommy\AppData\Local\Temp\ccm6KuVg.s:232    .RamFunc:000000b8 $d
+=======
+C:\Users\tommy\AppData\Local\Temp\cczChpEo.s:20     .RamFunc:00000000 $t
+C:\Users\tommy\AppData\Local\Temp\cczChpEo.s:26     .RamFunc:00000000 HAL_FLASHEx_StopFlashInterfaceClk
+C:\Users\tommy\AppData\Local\Temp\cczChpEo.s:70     .RamFunc:00000028 $d
+C:\Users\tommy\AppData\Local\Temp\cczChpEo.s:75     .RamFunc:00000030 $t
+C:\Users\tommy\AppData\Local\Temp\cczChpEo.s:81     .RamFunc:00000030 HAL_FLASHEx_StartFlashInterfaceClk
+C:\Users\tommy\AppData\Local\Temp\cczChpEo.s:124    .RamFunc:00000058 $d
+C:\Users\tommy\AppData\Local\Temp\cczChpEo.s:129    .RamFunc:00000060 $t
+C:\Users\tommy\AppData\Local\Temp\cczChpEo.s:135    .RamFunc:00000060 HAL_FLASHEx_EnableFlashSleepMode
+C:\Users\tommy\AppData\Local\Temp\cczChpEo.s:178    .RamFunc:00000088 $d
+C:\Users\tommy\AppData\Local\Temp\cczChpEo.s:183    .RamFunc:00000090 $t
+C:\Users\tommy\AppData\Local\Temp\cczChpEo.s:189    .RamFunc:00000090 HAL_FLASHEx_DisableFlashSleepMode
+C:\Users\tommy\AppData\Local\Temp\cczChpEo.s:232    .RamFunc:000000b8 $d
+>>>>>>> BareMetal_Startup
 
 NO UNDEFINED SYMBOLS

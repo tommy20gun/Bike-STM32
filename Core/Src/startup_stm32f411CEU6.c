@@ -126,7 +126,11 @@ __weak void      SPI4_IRQHandler                   (void){ DefaultHandler();}/* 
 __weak void      SPI5_IRQHandler                   (void){ DefaultHandler();}/* SPI5                         */  
 
 //load the interrupt vector table into .isr_vectors location defined by linker
+<<<<<<< HEAD
 __attribute__((section(".isr_vectors")))
+=======
+__attribute__((section(".isr_vector")))
+>>>>>>> BareMetal_Startup
 //a vector table of function pointers to each interrupt.
 const void (*VectorTable[]) (void) = {
 	(const void (*)(void)) &_estack,

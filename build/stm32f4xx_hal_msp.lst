@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccEviAJa.s 			page 1
+=======
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccMnAIFu.s 			page 1
+>>>>>>> BareMetal_Startup
 
 
    1              		.cpu cortex-m4
@@ -58,7 +62,11 @@ ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccEviAJa.s 			page 1
   28:Core/Src/stm32f4xx_hal_msp.c **** /* USER CODE BEGIN TD */
   29:Core/Src/stm32f4xx_hal_msp.c **** 
   30:Core/Src/stm32f4xx_hal_msp.c **** /* USER CODE END TD */
+<<<<<<< HEAD
 ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccEviAJa.s 			page 2
+=======
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccMnAIFu.s 			page 2
+>>>>>>> BareMetal_Startup
 
 
   31:Core/Src/stm32f4xx_hal_msp.c **** 
@@ -118,7 +126,11 @@ ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccEviAJa.s 			page 1
   43 0006 0B4B     		ldr	r3, .L3
   44 0008 5A6C     		ldr	r2, [r3, #68]
   45 000a 42F48042 		orr	r2, r2, #16384
+<<<<<<< HEAD
 ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccEviAJa.s 			page 3
+=======
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccMnAIFu.s 			page 3
+>>>>>>> BareMetal_Startup
 
 
   46 000e 5A64     		str	r2, [r3, #68]
@@ -171,13 +183,23 @@ ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccEviAJa.s 			page 1
   86              		.file 2 "c:\\users\\tommy\\documents\\bike stmproj\\tools\\gcc-arm-none-eabi-10.3-2021.10\\arm-non
   87              		.file 3 "c:\\users\\tommy\\documents\\bike stmproj\\tools\\gcc-arm-none-eabi-10.3-2021.10\\arm-non
   88              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h"
+<<<<<<< HEAD
 ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccEviAJa.s 			page 4
+=======
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccMnAIFu.s 			page 4
+>>>>>>> BareMetal_Startup
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 stm32f4xx_hal_msp.c
+<<<<<<< HEAD
 C:\Users\tommy\AppData\Local\Temp\ccEviAJa.s:20     .text.HAL_MspInit:00000000 $t
 C:\Users\tommy\AppData\Local\Temp\ccEviAJa.s:26     .text.HAL_MspInit:00000000 HAL_MspInit
 C:\Users\tommy\AppData\Local\Temp\ccEviAJa.s:80     .text.HAL_MspInit:00000034 $d
+=======
+C:\Users\tommy\AppData\Local\Temp\ccMnAIFu.s:20     .text.HAL_MspInit:00000000 $t
+C:\Users\tommy\AppData\Local\Temp\ccMnAIFu.s:26     .text.HAL_MspInit:00000000 HAL_MspInit
+C:\Users\tommy\AppData\Local\Temp\ccMnAIFu.s:80     .text.HAL_MspInit:00000034 $d
+>>>>>>> BareMetal_Startup
 
 NO UNDEFINED SYMBOLS
