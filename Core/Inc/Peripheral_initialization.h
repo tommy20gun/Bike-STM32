@@ -5,8 +5,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include <stm32f411xe.h>
 
 void RCC_Enable_HSE(void); //enable clock
+void GPIO_Setup(void); //enable GPIO
 
 #ifdef __cplusplus
 }

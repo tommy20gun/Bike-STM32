@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\cccH1m96.s 			page 1
-=======
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s 			page 1
->>>>>>> BareMetal_Startup
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -62,11 +58,7 @@ ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s 			page 1
   28:Core/Src/stm32f4xx_it.c **** /* USER CODE BEGIN TD */
   29:Core/Src/stm32f4xx_it.c **** 
   30:Core/Src/stm32f4xx_it.c **** /* USER CODE END TD */
-<<<<<<< HEAD
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\cccH1m96.s 			page 2
-=======
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s 			page 2
->>>>>>> BareMetal_Startup
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s 			page 2
 
 
   31:Core/Src/stm32f4xx_it.c **** 
@@ -126,11 +118,7 @@ ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s 			page 1
   77:Core/Src/stm32f4xx_it.c ****   }
   37              		.loc 1 77 3 discriminator 1 view .LVU2
   75:Core/Src/stm32f4xx_it.c ****   {
-<<<<<<< HEAD
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\cccH1m96.s 			page 3
-=======
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s 			page 3
->>>>>>> BareMetal_Startup
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s 			page 3
 
 
   38              		.loc 1 75 10 discriminator 1 view .LVU3
@@ -190,11 +178,7 @@ ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s 			page 1
   98:Core/Src/stm32f4xx_it.c ****   */
   99:Core/Src/stm32f4xx_it.c **** void MemManage_Handler(void)
  100:Core/Src/stm32f4xx_it.c **** {
-<<<<<<< HEAD
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\cccH1m96.s 			page 4
-=======
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s 			page 4
->>>>>>> BareMetal_Startup
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s 			page 4
 
 
   75              		.loc 1 100 1 view -0
@@ -254,11 +238,7 @@ ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s 			page 1
  119:Core/Src/stm32f4xx_it.c ****   {
  107              		.loc 1 119 9 discriminator 1 view .LVU15
  108 0000 FEE7     		b	.L8
-<<<<<<< HEAD
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\cccH1m96.s 			page 5
-=======
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s 			page 5
->>>>>>> BareMetal_Startup
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s 			page 5
 
 
  109              		.cfi_endproc
@@ -318,11 +298,7 @@ ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s 			page 1
  144              		.loc 1 145 1 view -0
  145              		.cfi_startproc
  146              		@ args = 0, pretend = 0, frame = 0
-<<<<<<< HEAD
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\cccH1m96.s 			page 6
-=======
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s 			page 6
->>>>>>> BareMetal_Startup
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s 			page 6
 
 
  147              		@ frame_needed = 0, uses_anonymous_args = 0
@@ -382,11 +358,7 @@ ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s 			page 1
  169:Core/Src/stm32f4xx_it.c ****   */
  170:Core/Src/stm32f4xx_it.c **** void PendSV_Handler(void)
  171:Core/Src/stm32f4xx_it.c **** {
-<<<<<<< HEAD
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\cccH1m96.s 			page 7
-=======
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s 			page 7
->>>>>>> BareMetal_Startup
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s 			page 7
 
 
  182              		.loc 1 171 1 view -0
@@ -446,60 +418,32 @@ ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s 			page 1
  218              		.text
  219              	.Letext0:
  220              		.file 2 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
-<<<<<<< HEAD
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\cccH1m96.s 			page 8
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s 			page 8
 
 
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\cccH1m96.s 			page 9
-=======
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s 			page 8
-
-
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s 			page 9
->>>>>>> BareMetal_Startup
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s 			page 9
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 stm32f4xx_it.c
-<<<<<<< HEAD
-C:\Users\tommy\AppData\Local\Temp\cccH1m96.s:20     .text.NMI_Handler:00000000 $t
-C:\Users\tommy\AppData\Local\Temp\cccH1m96.s:26     .text.NMI_Handler:00000000 NMI_Handler
-C:\Users\tommy\AppData\Local\Temp\cccH1m96.s:44     .text.HardFault_Handler:00000000 $t
-C:\Users\tommy\AppData\Local\Temp\cccH1m96.s:50     .text.HardFault_Handler:00000000 HardFault_Handler
-C:\Users\tommy\AppData\Local\Temp\cccH1m96.s:67     .text.MemManage_Handler:00000000 $t
-C:\Users\tommy\AppData\Local\Temp\cccH1m96.s:73     .text.MemManage_Handler:00000000 MemManage_Handler
-C:\Users\tommy\AppData\Local\Temp\cccH1m96.s:90     .text.BusFault_Handler:00000000 $t
-C:\Users\tommy\AppData\Local\Temp\cccH1m96.s:96     .text.BusFault_Handler:00000000 BusFault_Handler
-C:\Users\tommy\AppData\Local\Temp\cccH1m96.s:113    .text.UsageFault_Handler:00000000 $t
-C:\Users\tommy\AppData\Local\Temp\cccH1m96.s:119    .text.UsageFault_Handler:00000000 UsageFault_Handler
-C:\Users\tommy\AppData\Local\Temp\cccH1m96.s:136    .text.SVC_Handler:00000000 $t
-C:\Users\tommy\AppData\Local\Temp\cccH1m96.s:142    .text.SVC_Handler:00000000 SVC_Handler
-C:\Users\tommy\AppData\Local\Temp\cccH1m96.s:155    .text.DebugMon_Handler:00000000 $t
-C:\Users\tommy\AppData\Local\Temp\cccH1m96.s:161    .text.DebugMon_Handler:00000000 DebugMon_Handler
-C:\Users\tommy\AppData\Local\Temp\cccH1m96.s:174    .text.PendSV_Handler:00000000 $t
-C:\Users\tommy\AppData\Local\Temp\cccH1m96.s:180    .text.PendSV_Handler:00000000 PendSV_Handler
-C:\Users\tommy\AppData\Local\Temp\cccH1m96.s:193    .text.SysTick_Handler:00000000 $t
-C:\Users\tommy\AppData\Local\Temp\cccH1m96.s:199    .text.SysTick_Handler:00000000 SysTick_Handler
-=======
-C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s:20     .text.NMI_Handler:00000000 $t
-C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s:26     .text.NMI_Handler:00000000 NMI_Handler
-C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s:44     .text.HardFault_Handler:00000000 $t
-C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s:50     .text.HardFault_Handler:00000000 HardFault_Handler
-C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s:67     .text.MemManage_Handler:00000000 $t
-C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s:73     .text.MemManage_Handler:00000000 MemManage_Handler
-C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s:90     .text.BusFault_Handler:00000000 $t
-C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s:96     .text.BusFault_Handler:00000000 BusFault_Handler
-C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s:113    .text.UsageFault_Handler:00000000 $t
-C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s:119    .text.UsageFault_Handler:00000000 UsageFault_Handler
-C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s:136    .text.SVC_Handler:00000000 $t
-C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s:142    .text.SVC_Handler:00000000 SVC_Handler
-C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s:155    .text.DebugMon_Handler:00000000 $t
-C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s:161    .text.DebugMon_Handler:00000000 DebugMon_Handler
-C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s:174    .text.PendSV_Handler:00000000 $t
-C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s:180    .text.PendSV_Handler:00000000 PendSV_Handler
-C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s:193    .text.SysTick_Handler:00000000 $t
-C:\Users\tommy\AppData\Local\Temp\ccENKYYk.s:199    .text.SysTick_Handler:00000000 SysTick_Handler
->>>>>>> BareMetal_Startup
+C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s:20     .text.NMI_Handler:00000000 $t
+C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s:26     .text.NMI_Handler:00000000 NMI_Handler
+C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s:44     .text.HardFault_Handler:00000000 $t
+C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s:50     .text.HardFault_Handler:00000000 HardFault_Handler
+C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s:67     .text.MemManage_Handler:00000000 $t
+C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s:73     .text.MemManage_Handler:00000000 MemManage_Handler
+C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s:90     .text.BusFault_Handler:00000000 $t
+C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s:96     .text.BusFault_Handler:00000000 BusFault_Handler
+C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s:113    .text.UsageFault_Handler:00000000 $t
+C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s:119    .text.UsageFault_Handler:00000000 UsageFault_Handler
+C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s:136    .text.SVC_Handler:00000000 $t
+C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s:142    .text.SVC_Handler:00000000 SVC_Handler
+C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s:155    .text.DebugMon_Handler:00000000 $t
+C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s:161    .text.DebugMon_Handler:00000000 DebugMon_Handler
+C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s:174    .text.PendSV_Handler:00000000 $t
+C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s:180    .text.PendSV_Handler:00000000 PendSV_Handler
+C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s:193    .text.SysTick_Handler:00000000 $t
+C:\Users\tommy\AppData\Local\Temp\cceYI0Lx.s:199    .text.SysTick_Handler:00000000 SysTick_Handler
 
 UNDEFINED SYMBOLS
 HAL_IncTick

@@ -1,0 +1,260 @@
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccrI8SYq.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"Peripheral_initialization.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.RCC_Enable_HSE,"ax",%progbits
+  20              		.align	1
+  21              		.global	RCC_Enable_HSE
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	RCC_Enable_HSE:
+  27              	.LFB134:
+  28              		.file 1 "Core/Src/Peripheral_initialization.c"
+   1:Core/Src/Peripheral_initialization.c **** #include <Peripheral_initialization.h>
+   2:Core/Src/Peripheral_initialization.c **** 
+   3:Core/Src/Peripheral_initialization.c **** 	/*************>>>>>>> STEPS FOLLOWED <<<<<<<<************
+   4:Core/Src/Peripheral_initialization.c **** 	
+   5:Core/Src/Peripheral_initialization.c **** 	1. ENABLE HSE and wait for the HSE to become Ready
+   6:Core/Src/Peripheral_initialization.c **** 	2. Set the POWER ENABLE CLOCK and VOLTAGE REGULATOR
+   7:Core/Src/Peripheral_initialization.c **** 	3. Configure the FLASH PREFETCH and the LATENCY Related Settings
+   8:Core/Src/Peripheral_initialization.c **** 	4. Configure the PRESCALARS HCLK, PCLK1, PCLK2
+   9:Core/Src/Peripheral_initialization.c **** 	5. Configure the MAIN PLL
+  10:Core/Src/Peripheral_initialization.c **** 	6. Enable the PLL and wait for it to become ready
+  11:Core/Src/Peripheral_initialization.c **** 	7. Select the Clock Source and wait for it to be set
+  12:Core/Src/Peripheral_initialization.c **** 	
+  13:Core/Src/Peripheral_initialization.c **** 	********************************************************/
+  14:Core/Src/Peripheral_initialization.c **** 
+  15:Core/Src/Peripheral_initialization.c **** //TODO do I need to set ifdef cplusplus etc
+  16:Core/Src/Peripheral_initialization.c **** #define PLLN 96
+  17:Core/Src/Peripheral_initialization.c **** #define PLLM 12
+  18:Core/Src/Peripheral_initialization.c **** 
+  19:Core/Src/Peripheral_initialization.c **** void RCC_Enable_HSE(void){
+  29              		.loc 1 19 26 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+  20:Core/Src/Peripheral_initialization.c **** 	RCC-> CR |= RCC_CR_HSEON; //turn on HSE Clock
+  34              		.loc 1 20 2 view .LVU1
+  35              		.loc 1 20 11 is_stmt 0 view .LVU2
+  36 0000 234A     		ldr	r2, .L5
+  37 0002 1368     		ldr	r3, [r2]
+  38 0004 43F48033 		orr	r3, r3, #65536
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccrI8SYq.s 			page 2
+
+
+  39 0008 1360     		str	r3, [r2]
+  21:Core/Src/Peripheral_initialization.c **** 	while (!(RCC -> CR & RCC_CR_HSERDY)); //when HSE is ready then move on
+  40              		.loc 1 21 2 is_stmt 1 view .LVU3
+  41              	.L2:
+  42              		.loc 1 21 38 discriminator 1 view .LVU4
+  43              		.loc 1 21 8 discriminator 1 view .LVU5
+  44              		.loc 1 21 15 is_stmt 0 discriminator 1 view .LVU6
+  45 000a 214B     		ldr	r3, .L5
+  46 000c 1B68     		ldr	r3, [r3]
+  47              		.loc 1 21 8 discriminator 1 view .LVU7
+  48 000e 13F4003F 		tst	r3, #131072
+  49 0012 FAD0     		beq	.L2
+  22:Core/Src/Peripheral_initialization.c **** 
+  23:Core/Src/Peripheral_initialization.c **** 	RCC->AHB1ENR |= RCC_APB1ENR_PWREN; //enable the Peripheral clock
+  50              		.loc 1 23 2 is_stmt 1 view .LVU8
+  51              		.loc 1 23 15 is_stmt 0 view .LVU9
+  52 0014 1E4B     		ldr	r3, .L5
+  53 0016 1A6B     		ldr	r2, [r3, #48]
+  54 0018 42F08052 		orr	r2, r2, #268435456
+  55 001c 1A63     		str	r2, [r3, #48]
+  24:Core/Src/Peripheral_initialization.c **** 	PWR->CR |= PWR_CR_VOS; //enable voltage regulator
+  56              		.loc 1 24 2 is_stmt 1 view .LVU10
+  57              		.loc 1 24 10 is_stmt 0 view .LVU11
+  58 001e 1D49     		ldr	r1, .L5+4
+  59 0020 0A68     		ldr	r2, [r1]
+  60 0022 42F44042 		orr	r2, r2, #49152
+  61 0026 0A60     		str	r2, [r1]
+  25:Core/Src/Peripheral_initialization.c **** 
+  26:Core/Src/Peripheral_initialization.c **** 	//Configure the FLASH PREFETCH and the LATENCY Related Settings
+  27:Core/Src/Peripheral_initialization.c **** 	FLASH-> ACR |= FLASH_ACR_PRFTEN | FLASH_ACR_ICEN | FLASH_ACR_DCEN | FLASH_ACR_LATENCY_5WS ;
+  62              		.loc 1 27 2 is_stmt 1 view .LVU12
+  63              		.loc 1 27 14 is_stmt 0 view .LVU13
+  64 0028 01F5E631 		add	r1, r1, #117760
+  65 002c 0A68     		ldr	r2, [r1]
+  66 002e 42F4E062 		orr	r2, r2, #1792
+  67 0032 42F00502 		orr	r2, r2, #5
+  68 0036 0A60     		str	r2, [r1]
+  28:Core/Src/Peripheral_initialization.c **** 
+  29:Core/Src/Peripheral_initialization.c **** 	//Configure the PRESCALARS HCLK, PCLK1, PCLK2
+  30:Core/Src/Peripheral_initialization.c **** 	RCC->CFGR |=  RCC_CFGR_PPRE1_DIV2; 
+  69              		.loc 1 30 2 is_stmt 1 view .LVU14
+  70              		.loc 1 30 12 is_stmt 0 view .LVU15
+  71 0038 9A68     		ldr	r2, [r3, #8]
+  72 003a 42F48052 		orr	r2, r2, #4096
+  73 003e 9A60     		str	r2, [r3, #8]
+  31:Core/Src/Peripheral_initialization.c **** 	RCC->CFGR &= ~(RCC_CFGR_HPRE_3 | RCC_CFGR_PPRE2_2);
+  74              		.loc 1 31 2 is_stmt 1 view .LVU16
+  75              		.loc 1 31 12 is_stmt 0 view .LVU17
+  76 0040 9A68     		ldr	r2, [r3, #8]
+  77 0042 22F40042 		bic	r2, r2, #32768
+  78 0046 22F08002 		bic	r2, r2, #128
+  79 004a 9A60     		str	r2, [r3, #8]
+  32:Core/Src/Peripheral_initialization.c **** 
+  33:Core/Src/Peripheral_initialization.c **** 	//set PLLP to 2, set PLLM to 12, set PLLN to 96, 
+  34:Core/Src/Peripheral_initialization.c **** 	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLP);
+  80              		.loc 1 34 2 is_stmt 1 view .LVU18
+  81              		.loc 1 34 15 is_stmt 0 view .LVU19
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccrI8SYq.s 			page 3
+
+
+  82 004c 5A68     		ldr	r2, [r3, #4]
+  83 004e 22F44032 		bic	r2, r2, #196608
+  84 0052 5A60     		str	r2, [r3, #4]
+  35:Core/Src/Peripheral_initialization.c **** 	RCC->PLLCFGR |= (PLLN << 6U)|(PLLM << 0);
+  85              		.loc 1 35 2 is_stmt 1 view .LVU20
+  86              		.loc 1 35 15 is_stmt 0 view .LVU21
+  87 0054 5A68     		ldr	r2, [r3, #4]
+  88 0056 42F4C052 		orr	r2, r2, #6144
+  89 005a 42F00C02 		orr	r2, r2, #12
+  90 005e 5A60     		str	r2, [r3, #4]
+  36:Core/Src/Peripheral_initialization.c **** 	//source to HSE
+  37:Core/Src/Peripheral_initialization.c **** 	RCC->PLLCFGR |= RCC_PLLCFGR_PLLSRC_HSE;
+  91              		.loc 1 37 2 is_stmt 1 view .LVU22
+  92              		.loc 1 37 15 is_stmt 0 view .LVU23
+  93 0060 5A68     		ldr	r2, [r3, #4]
+  94 0062 42F48002 		orr	r2, r2, #4194304
+  95 0066 5A60     		str	r2, [r3, #4]
+  38:Core/Src/Peripheral_initialization.c **** 	//turn on PLL and wait to be ready
+  39:Core/Src/Peripheral_initialization.c **** 	RCC->CR |= RCC_CR_PLLON;
+  96              		.loc 1 39 2 is_stmt 1 view .LVU24
+  97              		.loc 1 39 10 is_stmt 0 view .LVU25
+  98 0068 1A68     		ldr	r2, [r3]
+  99 006a 42F08072 		orr	r2, r2, #16777216
+ 100 006e 1A60     		str	r2, [r3]
+  40:Core/Src/Peripheral_initialization.c **** 	while (!(RCC->CR & RCC_CR_PLLRDY));
+ 101              		.loc 1 40 2 is_stmt 1 view .LVU26
+ 102              	.L3:
+ 103              		.loc 1 40 36 discriminator 1 view .LVU27
+ 104              		.loc 1 40 8 discriminator 1 view .LVU28
+ 105              		.loc 1 40 14 is_stmt 0 discriminator 1 view .LVU29
+ 106 0070 074B     		ldr	r3, .L5
+ 107 0072 1B68     		ldr	r3, [r3]
+ 108              		.loc 1 40 8 discriminator 1 view .LVU30
+ 109 0074 13F0007F 		tst	r3, #33554432
+ 110 0078 FAD0     		beq	.L3
+  41:Core/Src/Peripheral_initialization.c **** 	//	7. Select the Clock Source (PLL_P) and wait for it to be set
+  42:Core/Src/Peripheral_initialization.c **** 	RCC->CFGR |=  (1UL << 1);
+ 111              		.loc 1 42 2 is_stmt 1 view .LVU31
+ 112              		.loc 1 42 12 is_stmt 0 view .LVU32
+ 113 007a 054A     		ldr	r2, .L5
+ 114 007c 9368     		ldr	r3, [r2, #8]
+ 115 007e 43F00203 		orr	r3, r3, #2
+ 116 0082 9360     		str	r3, [r2, #8]
+  43:Core/Src/Peripheral_initialization.c **** 	while (!(RCC->CFGR & (1UL<<3)));
+ 117              		.loc 1 43 2 is_stmt 1 view .LVU33
+ 118              	.L4:
+ 119              		.loc 1 43 33 discriminator 1 view .LVU34
+ 120              		.loc 1 43 8 discriminator 1 view .LVU35
+ 121              		.loc 1 43 14 is_stmt 0 discriminator 1 view .LVU36
+ 122 0084 024B     		ldr	r3, .L5
+ 123 0086 9B68     		ldr	r3, [r3, #8]
+ 124              		.loc 1 43 8 discriminator 1 view .LVU37
+ 125 0088 13F0080F 		tst	r3, #8
+ 126 008c FAD0     		beq	.L4
+  44:Core/Src/Peripheral_initialization.c **** 	}
+ 127              		.loc 1 44 2 view .LVU38
+ 128 008e 7047     		bx	lr
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccrI8SYq.s 			page 4
+
+
+ 129              	.L6:
+ 130              		.align	2
+ 131              	.L5:
+ 132 0090 00380240 		.word	1073887232
+ 133 0094 00700040 		.word	1073770496
+ 134              		.cfi_endproc
+ 135              	.LFE134:
+ 137              		.section	.text.GPIO_Setup,"ax",%progbits
+ 138              		.align	1
+ 139              		.global	GPIO_Setup
+ 140              		.syntax unified
+ 141              		.thumb
+ 142              		.thumb_func
+ 144              	GPIO_Setup:
+ 145              	.LFB135:
+  45:Core/Src/Peripheral_initialization.c **** 
+  46:Core/Src/Peripheral_initialization.c **** void GPIO_Setup(void){
+ 146              		.loc 1 46 22 is_stmt 1 view -0
+ 147              		.cfi_startproc
+ 148              		@ args = 0, pretend = 0, frame = 0
+ 149              		@ frame_needed = 0, uses_anonymous_args = 0
+ 150              		@ link register save eliminated.
+  47:Core/Src/Peripheral_initialization.c **** 	//enable GPIO C13 as PP Output
+  48:Core/Src/Peripheral_initialization.c **** 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
+ 151              		.loc 1 48 2 view .LVU40
+ 152              		.loc 1 48 15 is_stmt 0 view .LVU41
+ 153 0000 064A     		ldr	r2, .L8
+ 154 0002 136B     		ldr	r3, [r2, #48]
+ 155 0004 43F00403 		orr	r3, r3, #4
+ 156 0008 1363     		str	r3, [r2, #48]
+  49:Core/Src/Peripheral_initialization.c **** 	GPIOC -> MODER |= GPIO_MODER_MODE13_0;
+ 157              		.loc 1 49 2 is_stmt 1 view .LVU42
+ 158              		.loc 1 49 17 is_stmt 0 view .LVU43
+ 159 000a 054B     		ldr	r3, .L8+4
+ 160 000c 1A68     		ldr	r2, [r3]
+ 161 000e 42F08062 		orr	r2, r2, #67108864
+ 162 0012 1A60     		str	r2, [r3]
+  50:Core/Src/Peripheral_initialization.c **** 	GPIOC -> OTYPER = 0;
+ 163              		.loc 1 50 2 is_stmt 1 view .LVU44
+ 164              		.loc 1 50 18 is_stmt 0 view .LVU45
+ 165 0014 0022     		movs	r2, #0
+ 166 0016 5A60     		str	r2, [r3, #4]
+  51:Core/Src/Peripheral_initialization.c **** 	GPIOC -> OSPEEDR = 0;
+ 167              		.loc 1 51 2 is_stmt 1 view .LVU46
+ 168              		.loc 1 51 19 is_stmt 0 view .LVU47
+ 169 0018 9A60     		str	r2, [r3, #8]
+  52:Core/Src/Peripheral_initialization.c **** }
+ 170              		.loc 1 52 1 view .LVU48
+ 171 001a 7047     		bx	lr
+ 172              	.L9:
+ 173              		.align	2
+ 174              	.L8:
+ 175 001c 00380240 		.word	1073887232
+ 176 0020 00080240 		.word	1073874944
+ 177              		.cfi_endproc
+ 178              	.LFE135:
+ 180              		.text
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccrI8SYq.s 			page 5
+
+
+ 181              	.Letext0:
+ 182              		.file 2 "c:\\users\\tommy\\documents\\bike stmproj\\tools\\gcc-arm-none-eabi-10.3-2021.10\\arm-non
+ 183              		.file 3 "c:\\users\\tommy\\documents\\bike stmproj\\tools\\gcc-arm-none-eabi-10.3-2021.10\\arm-non
+ 184              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h"
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccrI8SYq.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 Peripheral_initialization.c
+C:\Users\tommy\AppData\Local\Temp\ccrI8SYq.s:20     .text.RCC_Enable_HSE:00000000 $t
+C:\Users\tommy\AppData\Local\Temp\ccrI8SYq.s:26     .text.RCC_Enable_HSE:00000000 RCC_Enable_HSE
+C:\Users\tommy\AppData\Local\Temp\ccrI8SYq.s:132    .text.RCC_Enable_HSE:00000090 $d
+C:\Users\tommy\AppData\Local\Temp\ccrI8SYq.s:138    .text.GPIO_Setup:00000000 $t
+C:\Users\tommy\AppData\Local\Temp\ccrI8SYq.s:144    .text.GPIO_Setup:00000000 GPIO_Setup
+C:\Users\tommy\AppData\Local\Temp\ccrI8SYq.s:175    .text.GPIO_Setup:0000001c $d
+
+NO UNDEFINED SYMBOLS
