@@ -23,7 +23,7 @@ void RCC_Enable_HSE(void){
 	PWR->CR |= PWR_CR_VOS; //enable voltage regulator
 
 	//Configure the FLASH PREFETCH and the LATENCY Related Settings
-	FLASH-> ACR |= FLASH_ACR_PRFTEN | FLASH_ACR_ICEN | FLASH_ACR_DCEN | FLASH_ACR_LATENCY_5WS
+	FLASH-> ACR |= FLASH_ACR_PRFTEN | FLASH_ACR_ICEN | FLASH_ACR_DCEN | FLASH_ACR_LATENCY_5WS ;
 
 	//Configure the PRESCALARS HCLK, PCLK1, PCLK2
 	RCC->CFGR |=  RCC_CFGR_PPRE1_DIV2; 
@@ -40,7 +40,6 @@ void RCC_Enable_HSE(void){
 	//	7. Select the Clock Source and wait for it to be set
 	RCC->CFGR |=  (1UL << 1);
 	while (!(RCC->CR & (1UL<<3)));
-
 	}
 	
 		

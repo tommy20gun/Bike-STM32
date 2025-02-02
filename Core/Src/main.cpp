@@ -5,10 +5,12 @@
   * @attention
   */
 
-#include "stm32f411xx.h"
+#include <Peripheral_initialization.h>
+
 
 int main(){
 
+  RCC_Enable_HSE();
     while (1){
 
     }
