@@ -20,9 +20,6 @@ void off(){
 
 }
 
-class bruh{
-
-};
 
 int main(){
 
