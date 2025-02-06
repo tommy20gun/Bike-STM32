@@ -6,7 +6,7 @@
   */
 
 #include <Peripheral_initialization.h>
-#include "cmsis_os.h"
+#include <cmsis_os.h>
 
 void default_task_handler(void const* args){
   while(1){

@@ -36,7 +36,6 @@ BUILD_DIR = build
 ######################################
 # C sources
 C_SOURCES =  \
-#Core/Src/main.c \
 Core/Src/startup_stm32f411CEU6.c \
 Core/Src/Peripheral_initialization.c \
 Core/Src/system_stm32f4xx.c
@@ -107,7 +106,8 @@ C_INCLUDES =  \
 -IDrivers/STM32F4xx_HAL_Driver/Inc \
 -IDrivers/CMSIS/Device/ST/STM32F4xx/Include \
 -IDrivers/CMSIS/Include \
--IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy
+-IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy \
+-IDrivers/CMSIS/RTOS/Template \
 
 CXX_INCLUDES = $(C_INCLUDES) \
 

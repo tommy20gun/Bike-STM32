@@ -1,0 +1,16 @@
+build/Bike.bin
+build/Bike.elf
+build/Bike.hex
+build/Bike.map
+build/main.d
+build/main.lst
+build/main.o
+build/Peripheral_initialization.d
+build/Peripheral_initialization.lst
+build/Peripheral_initialization.o
+build/startup_stm32f411CEU6.d
+build/startup_stm32f411CEU6.lst
+build/startup_stm32f411CEU6.o
+build/system_stm32f4xx.d
+build/system_stm32f4xx.lst
+build/system_stm32f4xx.o
