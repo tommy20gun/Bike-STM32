@@ -6,6 +6,20 @@
   */
 
 #include <Peripheral_initialization.h>
+#include "cmsis_os.h"
+
+void default_task_handler(void const* args){
+  while(1){
+    osDelay(10);
+  }
+}
+
+void RTOS_Setup(void){
+  //TODO make sure we are not using systick
+  osThreadDef(default_task_handler, osPriorityNormal, 1, 0);
+  osThreadCreate(osThread(default_task_handler),NULL);
+  
+}
 
 void delay (volatile uint32_t clockticks){
   while (clockticks--);
