@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccaTzTyb.s 			page 1
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\cc564X6l.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -15,213 +15,234 @@ ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccaTzTyb.s 			page 1
   12              		.eabi_attribute 30, 1
   13              		.eabi_attribute 34, 1
   14              		.eabi_attribute 18, 4
-  15              		.file	"main.c"
+  15              		.file	"main.cpp"
   16              		.text
   17              	.Ltext0:
   18              		.cfi_sections	.debug_frame
-  19              		.section	.text.delay,"ax",%progbits
+  19              		.section	.text._Z5delaym,"ax",%progbits
   20              		.align	1
-  21              		.global	delay
+  21              		.global	_Z5delaym
   22              		.syntax unified
   23              		.thumb
   24              		.thumb_func
-  26              	delay:
-  27              	.LVL0:
-  28              	.LFB134:
-  29              		.file 1 "Core/Src/main.c"
-   1:Core/Src/main.c ****  /** 
-   2:Core/Src/main.c ****   * @file           : main.cpp
-   3:Core/Src/main.c ****   * @brief          : Main program body
-   4:Core/Src/main.c ****   ******************************************************************************
-   5:Core/Src/main.c ****   * @attention
-   6:Core/Src/main.c ****   */
-   7:Core/Src/main.c **** 
-   8:Core/Src/main.c **** #include <Peripheral_initialization.h>
-   9:Core/Src/main.c **** 
-  10:Core/Src/main.c **** void delay (volatile uint32_t clockticks){
-  30              		.loc 1 10 42 view -0
-  31              		.cfi_startproc
-  32              		@ args = 0, pretend = 0, frame = 8
-  33              		@ frame_needed = 0, uses_anonymous_args = 0
-  34              		@ link register save eliminated.
-  35              		.loc 1 10 42 is_stmt 0 view .LVU1
-  36 0000 82B0     		sub	sp, sp, #8
-  37              	.LCFI0:
-  38              		.cfi_def_cfa_offset 8
-  39 0002 0190     		str	r0, [sp, #4]
-  11:Core/Src/main.c ****   while (clockticks--);
-  40              		.loc 1 11 3 is_stmt 1 view .LVU2
+  26              	_Z5delaym:
+  27              		.fnstart
+  28              	.LVL0:
+  29              	.LFB134:
+  30              		.file 1 "Core/Src/main.cpp"
+   1:Core/Src/main.cpp ****  /** 
+   2:Core/Src/main.cpp ****   * @file           : main.cpp
+   3:Core/Src/main.cpp ****   * @brief          : Main program body
+   4:Core/Src/main.cpp ****   ******************************************************************************
+   5:Core/Src/main.cpp ****   * @attention
+   6:Core/Src/main.cpp ****   */
+   7:Core/Src/main.cpp **** 
+   8:Core/Src/main.cpp **** #include <Peripheral_initialization.h>
+   9:Core/Src/main.cpp **** 
+  10:Core/Src/main.cpp **** void delay (volatile uint32_t clockticks){
+  31              		.loc 1 10 42 view -0
+  32              		.cfi_startproc
+  33              		@ args = 0, pretend = 0, frame = 8
+  34              		@ frame_needed = 0, uses_anonymous_args = 0
+  35              		@ link register save eliminated.
+  36              		.loc 1 10 42 is_stmt 0 view .LVU1
+  37 0000 82B0     		sub	sp, sp, #8
+  38              	.LCFI0:
+  39              		.cfi_def_cfa_offset 8
+  40 0002 0190     		str	r0, [sp, #4]
   41              	.L2:
-  42              		.loc 1 11 23 discriminator 1 view .LVU3
-  43              		.loc 1 11 9 discriminator 1 view .LVU4
-  44              		.loc 1 11 20 is_stmt 0 discriminator 1 view .LVU5
-  45 0004 019B     		ldr	r3, [sp, #4]
-  46 0006 5A1E     		subs	r2, r3, #1
-  47 0008 0192     		str	r2, [sp, #4]
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccaTzTyb.s 			page 2
+  11:Core/Src/main.cpp ****   while (clockticks--);
+  42              		.loc 1 11 3 is_stmt 1 view .LVU2
+  43              		.loc 1 11 20 view .LVU3
+  44 0004 019B     		ldr	r3, [sp, #4]
+  45 0006 5A1E     		subs	r2, r3, #1
+  46 0008 0192     		str	r2, [sp, #4]
+  47 000a 002B     		cmp	r3, #0
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\cc564X6l.s 			page 2
 
 
-  48              		.loc 1 11 9 discriminator 1 view .LVU6
-  49 000a 002B     		cmp	r3, #0
-  50 000c FAD1     		bne	.L2
-  12:Core/Src/main.c **** }
-  51              		.loc 1 12 1 view .LVU7
-  52 000e 02B0     		add	sp, sp, #8
-  53              	.LCFI1:
-  54              		.cfi_def_cfa_offset 0
-  55              		@ sp needed
-  56 0010 7047     		bx	lr
-  57              		.cfi_endproc
-  58              	.LFE134:
-  60              		.section	.text.on,"ax",%progbits
+  48 000c FAD1     		bne	.L2
+  12:Core/Src/main.cpp **** }
+  49              		.loc 1 12 1 is_stmt 0 view .LVU4
+  50 000e 02B0     		add	sp, sp, #8
+  51              	.LCFI1:
+  52              		.cfi_def_cfa_offset 0
+  53              		@ sp needed
+  54 0010 7047     		bx	lr
+  55              		.cfi_endproc
+  56              	.LFE134:
+  57              		.cantunwind
+  58              		.fnend
+  60              		.section	.text._Z2onv,"ax",%progbits
   61              		.align	1
-  62              		.global	on
+  62              		.global	_Z2onv
   63              		.syntax unified
   64              		.thumb
   65              		.thumb_func
-  67              	on:
-  68              	.LFB135:
-  13:Core/Src/main.c **** 
-  14:Core/Src/main.c **** void on(){
-  69              		.loc 1 14 10 is_stmt 1 view -0
-  70              		.cfi_startproc
-  71              		@ args = 0, pretend = 0, frame = 0
-  72              		@ frame_needed = 0, uses_anonymous_args = 0
-  73              		@ link register save eliminated.
-  15:Core/Src/main.c ****   GPIOC -> BSRR = (1U << 13);
-  74              		.loc 1 15 3 view .LVU9
-  75              		.loc 1 15 17 is_stmt 0 view .LVU10
-  76 0000 024B     		ldr	r3, .L5
-  77 0002 4FF40052 		mov	r2, #8192
-  78 0006 9A61     		str	r2, [r3, #24]
-  16:Core/Src/main.c **** 
-  17:Core/Src/main.c **** }
-  79              		.loc 1 17 1 view .LVU11
-  80 0008 7047     		bx	lr
-  81              	.L6:
-  82 000a 00BF     		.align	2
-  83              	.L5:
-  84 000c 00080240 		.word	1073874944
-  85              		.cfi_endproc
-  86              	.LFE135:
-  88              		.section	.text.off,"ax",%progbits
-  89              		.align	1
-  90              		.global	off
-  91              		.syntax unified
-  92              		.thumb
-  93              		.thumb_func
-  95              	off:
-  96              	.LFB136:
-  18:Core/Src/main.c **** void off(){
-  97              		.loc 1 18 11 is_stmt 1 view -0
-  98              		.cfi_startproc
-  99              		@ args = 0, pretend = 0, frame = 0
- 100              		@ frame_needed = 0, uses_anonymous_args = 0
- 101              		@ link register save eliminated.
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccaTzTyb.s 			page 3
+  67              	_Z2onv:
+  68              		.fnstart
+  69              	.LFB135:
+  13:Core/Src/main.cpp **** 
+  14:Core/Src/main.cpp **** void on(){
+  70              		.loc 1 14 10 is_stmt 1 view -0
+  71              		.cfi_startproc
+  72              		@ args = 0, pretend = 0, frame = 0
+  73              		@ frame_needed = 0, uses_anonymous_args = 0
+  74              		@ link register save eliminated.
+  15:Core/Src/main.cpp ****   GPIOC -> BSRR = (1U << 13);
+  75              		.loc 1 15 3 view .LVU6
+  76              		.loc 1 15 17 is_stmt 0 view .LVU7
+  77 0000 024B     		ldr	r3, .L5
+  78 0002 4FF40052 		mov	r2, #8192
+  79 0006 9A61     		str	r2, [r3, #24]
+  16:Core/Src/main.cpp **** 
+  17:Core/Src/main.cpp **** }
+  80              		.loc 1 17 1 view .LVU8
+  81 0008 7047     		bx	lr
+  82              	.L6:
+  83 000a 00BF     		.align	2
+  84              	.L5:
+  85 000c 00080240 		.word	1073874944
+  86              		.cfi_endproc
+  87              	.LFE135:
+  88              		.cantunwind
+  89              		.fnend
+  91              		.section	.text._Z3offv,"ax",%progbits
+  92              		.align	1
+  93              		.global	_Z3offv
+  94              		.syntax unified
+  95              		.thumb
+  96              		.thumb_func
+  98              	_Z3offv:
+  99              		.fnstart
+ 100              	.LFB136:
+  18:Core/Src/main.cpp **** void off(){
+ 101              		.loc 1 18 11 is_stmt 1 view -0
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\cc564X6l.s 			page 3
 
 
-  19:Core/Src/main.c ****   GPIOC -> BSRR = ((1U << 13) << 16);
- 102              		.loc 1 19 3 view .LVU13
- 103              		.loc 1 19 17 is_stmt 0 view .LVU14
- 104 0000 024B     		ldr	r3, .L8
- 105 0002 4FF00052 		mov	r2, #536870912
- 106 0006 9A61     		str	r2, [r3, #24]
-  20:Core/Src/main.c **** 
-  21:Core/Src/main.c **** }
- 107              		.loc 1 21 1 view .LVU15
- 108 0008 7047     		bx	lr
- 109              	.L9:
- 110 000a 00BF     		.align	2
- 111              	.L8:
- 112 000c 00080240 		.word	1073874944
- 113              		.cfi_endproc
- 114              	.LFE136:
- 116              		.section	.text.main,"ax",%progbits
- 117              		.align	1
- 118              		.global	main
- 119              		.syntax unified
- 120              		.thumb
- 121              		.thumb_func
- 123              	main:
- 124              	.LFB137:
-  22:Core/Src/main.c **** int main(){
- 125              		.loc 1 22 11 is_stmt 1 view -0
- 126              		.cfi_startproc
- 127              		@ Volatile: function does not return.
- 128              		@ args = 0, pretend = 0, frame = 0
- 129              		@ frame_needed = 0, uses_anonymous_args = 0
- 130 0000 08B5     		push	{r3, lr}
- 131              	.LCFI2:
- 132              		.cfi_def_cfa_offset 8
- 133              		.cfi_offset 3, -8
- 134              		.cfi_offset 14, -4
-  23:Core/Src/main.c **** 
-  24:Core/Src/main.c ****   RCC_Enable_HSE();
- 135              		.loc 1 24 3 view .LVU17
- 136 0002 FFF7FEFF 		bl	RCC_Enable_HSE
- 137              	.LVL1:
-  25:Core/Src/main.c ****   GPIO_Setup();
- 138              		.loc 1 25 3 view .LVU18
- 139 0006 FFF7FEFF 		bl	GPIO_Setup
- 140              	.LVL2:
- 141              	.L11:
-  26:Core/Src/main.c ****     while (1){
- 142              		.loc 1 26 5 discriminator 1 view .LVU19
-  27:Core/Src/main.c ****       on();
- 143              		.loc 1 27 7 discriminator 1 view .LVU20
- 144 000a FFF7FEFF 		bl	on
- 145              	.LVL3:
-  28:Core/Src/main.c ****       delay(10000000);
- 146              		.loc 1 28 7 discriminator 1 view .LVU21
- 147 000e 054C     		ldr	r4, .L13
- 148 0010 2046     		mov	r0, r4
- 149 0012 FFF7FEFF 		bl	delay
- 150              	.LVL4:
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccaTzTyb.s 			page 4
+ 102              		.cfi_startproc
+ 103              		@ args = 0, pretend = 0, frame = 0
+ 104              		@ frame_needed = 0, uses_anonymous_args = 0
+ 105              		@ link register save eliminated.
+  19:Core/Src/main.cpp ****   GPIOC -> BSRR = ((1U << 13) << 16);
+ 106              		.loc 1 19 3 view .LVU10
+ 107              		.loc 1 19 17 is_stmt 0 view .LVU11
+ 108 0000 024B     		ldr	r3, .L8
+ 109 0002 4FF00052 		mov	r2, #536870912
+ 110 0006 9A61     		str	r2, [r3, #24]
+  20:Core/Src/main.cpp **** 
+  21:Core/Src/main.cpp **** }
+ 111              		.loc 1 21 1 view .LVU12
+ 112 0008 7047     		bx	lr
+ 113              	.L9:
+ 114 000a 00BF     		.align	2
+ 115              	.L8:
+ 116 000c 00080240 		.word	1073874944
+ 117              		.cfi_endproc
+ 118              	.LFE136:
+ 119              		.cantunwind
+ 120              		.fnend
+ 122              		.section	.text.main,"ax",%progbits
+ 123              		.align	1
+ 124              		.global	main
+ 125              		.syntax unified
+ 126              		.thumb
+ 127              		.thumb_func
+ 129              	main:
+ 130              		.fnstart
+ 131              	.LFB137:
+  22:Core/Src/main.cpp **** 
+  23:Core/Src/main.cpp **** 
+  24:Core/Src/main.cpp **** int main(){
+ 132              		.loc 1 24 11 is_stmt 1 view -0
+ 133              		.cfi_startproc
+ 134              		@ args = 0, pretend = 0, frame = 0
+ 135              		@ frame_needed = 0, uses_anonymous_args = 0
+ 136 0000 10B5     		push	{r4, lr}
+ 137              		.save {r4, lr}
+ 138              	.LCFI2:
+ 139              		.cfi_def_cfa_offset 8
+ 140              		.cfi_offset 4, -8
+ 141              		.cfi_offset 14, -4
+  25:Core/Src/main.cpp **** 
+  26:Core/Src/main.cpp ****   RCC_Enable_HSE();
+ 142              		.loc 1 26 3 view .LVU14
+ 143              		.loc 1 26 17 is_stmt 0 view .LVU15
+ 144 0002 FFF7FEFF 		bl	RCC_Enable_HSE
+ 145              	.LVL1:
+  27:Core/Src/main.cpp ****   GPIO_Setup();
+ 146              		.loc 1 27 3 is_stmt 1 view .LVU16
+ 147              		.loc 1 27 13 is_stmt 0 view .LVU17
+ 148 0006 FFF7FEFF 		bl	GPIO_Setup
+ 149              	.LVL2:
+ 150              	.L11:
+  28:Core/Src/main.cpp ****     while (1){
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\cc564X6l.s 			page 4
 
 
-  29:Core/Src/main.c ****       off();
- 151              		.loc 1 29 7 discriminator 1 view .LVU22
- 152 0016 FFF7FEFF 		bl	off
- 153              	.LVL5:
-  30:Core/Src/main.c ****       delay(10000000);
- 154              		.loc 1 30 7 discriminator 1 view .LVU23
- 155 001a 2046     		mov	r0, r4
- 156 001c FFF7FEFF 		bl	delay
- 157              	.LVL6:
-  26:Core/Src/main.c ****       on();
- 158              		.loc 1 26 11 discriminator 1 view .LVU24
- 159 0020 F3E7     		b	.L11
- 160              	.L14:
- 161 0022 00BF     		.align	2
- 162              	.L13:
- 163 0024 80969800 		.word	10000000
- 164              		.cfi_endproc
- 165              	.LFE137:
- 167              		.text
- 168              	.Letext0:
- 169              		.file 2 "c:\\users\\tommy\\documents\\bike stmproj\\tools\\gcc-arm-none-eabi-10.3-2021.10\\arm-non
- 170              		.file 3 "c:\\users\\tommy\\documents\\bike stmproj\\tools\\gcc-arm-none-eabi-10.3-2021.10\\arm-non
- 171              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h"
- 172              		.file 5 "Core/Inc/Peripheral_initialization.h"
-ARM GAS  C:\Users\tommy\AppData\Local\Temp\ccaTzTyb.s 			page 5
+ 151              		.loc 1 28 5 is_stmt 1 discriminator 1 view .LVU18
+  29:Core/Src/main.cpp ****       on();
+ 152              		.loc 1 29 7 discriminator 1 view .LVU19
+ 153              		.loc 1 29 9 is_stmt 0 discriminator 1 view .LVU20
+ 154 000a FFF7FEFF 		bl	_Z2onv
+ 155              	.LVL3:
+  30:Core/Src/main.cpp ****       delay(10000000);
+ 156              		.loc 1 30 7 is_stmt 1 discriminator 1 view .LVU21
+ 157              		.loc 1 30 12 is_stmt 0 discriminator 1 view .LVU22
+ 158 000e 054C     		ldr	r4, .L13
+ 159 0010 2046     		mov	r0, r4
+ 160 0012 FFF7FEFF 		bl	_Z5delaym
+ 161              	.LVL4:
+  31:Core/Src/main.cpp ****       off();
+ 162              		.loc 1 31 7 is_stmt 1 discriminator 1 view .LVU23
+ 163              		.loc 1 31 10 is_stmt 0 discriminator 1 view .LVU24
+ 164 0016 FFF7FEFF 		bl	_Z3offv
+ 165              	.LVL5:
+  32:Core/Src/main.cpp ****       delay(10000000);
+ 166              		.loc 1 32 7 is_stmt 1 discriminator 1 view .LVU25
+ 167              		.loc 1 32 12 is_stmt 0 discriminator 1 view .LVU26
+ 168 001a 2046     		mov	r0, r4
+ 169 001c FFF7FEFF 		bl	_Z5delaym
+ 170              	.LVL6:
+  28:Core/Src/main.cpp ****       on();
+ 171              		.loc 1 28 5 is_stmt 1 discriminator 1 view .LVU27
+ 172 0020 F3E7     		b	.L11
+ 173              	.L14:
+ 174 0022 00BF     		.align	2
+ 175              	.L13:
+ 176 0024 80969800 		.word	10000000
+ 177              		.cfi_endproc
+ 178              	.LFE137:
+ 179              		.fnend
+ 181              		.text
+ 182              	.Letext0:
+ 183              		.file 2 "c:\\users\\tommy\\documents\\bike stmproj\\tools\\gcc-arm-none-eabi-10.3-2021.10\\arm-non
+ 184              		.file 3 "c:\\users\\tommy\\documents\\bike stmproj\\tools\\gcc-arm-none-eabi-10.3-2021.10\\arm-non
+ 185              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h"
+ 186              		.file 5 "Core/Inc/Peripheral_initialization.h"
+ARM GAS  C:\Users\tommy\AppData\Local\Temp\cc564X6l.s 			page 5
 
 
 DEFINED SYMBOLS
-                            *ABS*:00000000 main.c
-C:\Users\tommy\AppData\Local\Temp\ccaTzTyb.s:20     .text.delay:00000000 $t
-C:\Users\tommy\AppData\Local\Temp\ccaTzTyb.s:26     .text.delay:00000000 delay
-C:\Users\tommy\AppData\Local\Temp\ccaTzTyb.s:61     .text.on:00000000 $t
-C:\Users\tommy\AppData\Local\Temp\ccaTzTyb.s:67     .text.on:00000000 on
-C:\Users\tommy\AppData\Local\Temp\ccaTzTyb.s:84     .text.on:0000000c $d
-C:\Users\tommy\AppData\Local\Temp\ccaTzTyb.s:89     .text.off:00000000 $t
-C:\Users\tommy\AppData\Local\Temp\ccaTzTyb.s:95     .text.off:00000000 off
-C:\Users\tommy\AppData\Local\Temp\ccaTzTyb.s:112    .text.off:0000000c $d
-C:\Users\tommy\AppData\Local\Temp\ccaTzTyb.s:117    .text.main:00000000 $t
-C:\Users\tommy\AppData\Local\Temp\ccaTzTyb.s:123    .text.main:00000000 main
-C:\Users\tommy\AppData\Local\Temp\ccaTzTyb.s:163    .text.main:00000024 $d
+                            *ABS*:00000000 main.cpp
+C:\Users\tommy\AppData\Local\Temp\cc564X6l.s:20     .text._Z5delaym:00000000 $t
+C:\Users\tommy\AppData\Local\Temp\cc564X6l.s:26     .text._Z5delaym:00000000 _Z5delaym
+        .ARM.exidx.text._Z5delaym:00000000 $d
+C:\Users\tommy\AppData\Local\Temp\cc564X6l.s:61     .text._Z2onv:00000000 $t
+C:\Users\tommy\AppData\Local\Temp\cc564X6l.s:67     .text._Z2onv:00000000 _Z2onv
+C:\Users\tommy\AppData\Local\Temp\cc564X6l.s:85     .text._Z2onv:0000000c $d
+           .ARM.exidx.text._Z2onv:00000000 $d
+C:\Users\tommy\AppData\Local\Temp\cc564X6l.s:92     .text._Z3offv:00000000 $t
+C:\Users\tommy\AppData\Local\Temp\cc564X6l.s:98     .text._Z3offv:00000000 _Z3offv
+C:\Users\tommy\AppData\Local\Temp\cc564X6l.s:116    .text._Z3offv:0000000c $d
+          .ARM.exidx.text._Z3offv:00000000 $d
+C:\Users\tommy\AppData\Local\Temp\cc564X6l.s:123    .text.main:00000000 $t
+C:\Users\tommy\AppData\Local\Temp\cc564X6l.s:129    .text.main:00000000 main
+C:\Users\tommy\AppData\Local\Temp\cc564X6l.s:176    .text.main:00000024 $d
+             .ARM.exidx.text.main:00000000 $d
 
 UNDEFINED SYMBOLS
 RCC_Enable_HSE
 GPIO_Setup
+__aeabi_unwind_cpp_pr0

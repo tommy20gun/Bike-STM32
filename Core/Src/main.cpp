@@ -19,6 +19,8 @@ void off(){
   GPIOC -> BSRR = ((1U << 13) << 16);
 
 }
+
+
 int main(){
 
   RCC_Enable_HSE();
