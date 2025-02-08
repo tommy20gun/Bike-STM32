@@ -51,6 +51,10 @@ void GPIO_Setup(void){
 	GPIOC -> OSPEEDR = 0;
 }
 
+void USART2_Setup(void){
+	
+}
+
 
 
 

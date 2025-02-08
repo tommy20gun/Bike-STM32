@@ -38,7 +38,15 @@ BUILD_DIR = build
 C_SOURCES =  \
 Core/Src/startup_stm32f411CEU6.c \
 Core/Src/Peripheral_initialization.c \
-Core/Src/system_stm32f4xx.c
+Core/Src/stm32f4xx_it.c \
+Core/Src/system_stm32f4xx.c \
+Core/Src/sysmem.c \
+Core/Src/syscalls.c \
+Core/Src/startup_stm32f411CEU6.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_gpio.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_rcc.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_utils.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_exti.c
 
 CXX_SOURCES = \
 Core/Src/main.cpp
@@ -94,7 +102,7 @@ AS_DEFS =
 # C defines
 C_DEFS =  \
 -DSTM32F411xE \
--DUSE_HAL_DRIVER
+#-DUSE_HAL_DRIVER
 
 
 # AS includes
@@ -104,10 +112,25 @@ AS_INCLUDES =
 C_INCLUDES =  \
 -ICore/Inc \
 -IDrivers/STM32F4xx_HAL_Driver/Inc \
+
 -IDrivers/CMSIS/Device/ST/STM32F4xx/Include \
--IDrivers/CMSIS/Include \
+#-IDrivers/CMSIS/Include \
+
 -IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy \
 -IDrivers/CMSIS/RTOS/Template \
+-DSTM32F411xE \
+-DUSE_FULL_LL_DRIVER \
+-DHSE_VALUE=25000000 \
+-DHSE_STARTUP_TIMEOUT=100 \
+-DLSE_STARTUP_TIMEOUT=5000 \
+-DLSE_VALUE=32768 \
+-DEXTERNAL_CLOCK_VALUE=12288000 \
+-DHSI_VALUE=16000000 \
+-DLSI_VALUE=32000 \
+-DVDD_VALUE=3300 \
+-DPREFETCH_ENABLE=1 \
+-DINSTRUCTION_CACHE_ENABLE=1 \
+-DDATA_CACHE_ENABLE=1
 
 CXX_INCLUDES = $(C_INCLUDES) \
 

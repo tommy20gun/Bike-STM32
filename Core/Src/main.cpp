@@ -5,21 +5,24 @@
   * @attention
   */
 
-#include <Peripheral_initialization.h>
-#include <cmsis_os.h>
 
-void default_task_handler(void const* args){
+#include <main.h> //includes LL
+
+void job1(void const* args){
   while(1){
-    osDelay(10);
+    osDelay(1000);
+    LL_GPIO_TogglePin(GPIOC,LL_GPIO_PIN_13);
   }
 }
 
 void RTOS_Setup(void){
   //TODO make sure we are not using systick
-  osThreadDef(default_task_handler, osPriorityNormal, 1, 0);
-  osThreadCreate(osThread(default_task_handler),NULL);
-  
+  osKernelInitialize();
+  osThreadDef(job1, osPriorityNormal, 1, 0);
+  osThreadCreate(osThread(job1),NULL);
 }
+
+
 
 void delay (volatile uint32_t clockticks){
   while (clockticks--);
@@ -36,14 +39,9 @@ void off(){
 
 
 int main(){
-
   RCC_Enable_HSE();
   GPIO_Setup();
-    while (1){
-      on();
-      delay(10000000);
-      off();
-      delay(10000000);
-    }
+  RTOS_Setup();
+  osKernelStart();
 }
 
