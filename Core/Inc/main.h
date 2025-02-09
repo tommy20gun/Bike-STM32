@@ -37,7 +37,6 @@ extern "C" {
 #include "stm32f4xx_ll_utils.h"
 #include "stm32f4xx_ll_pwr.h"
 #include "stm32f4xx_ll_dma.h"
-#include "stm32f4xx_ll_usart.h"
 #include "stm32f4xx_ll_gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -47,6 +46,8 @@ extern "C" {
 #endif /* USE_FULL_ASSERT */
 
 #include <Peripheral_initialization.h>
+#include <cmsis_os.h> 
+
 
 /*
 #include "stm32f4xx_ll_rcc.h"

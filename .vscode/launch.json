@@ -10,9 +10,9 @@
             "executable": "./build/Bike.elf",
             "request": "launch",
             "type": "cortex-debug",
-            "runToEntryPoint": "main",
             "servertype": "openocd",
             "device": "STM32F411CEU6",
+            "rtos": "FreeRTOS",
             "configFiles": [
                 "interface/stlink.cfg",
                 "target/stm32f4x.cfg"
