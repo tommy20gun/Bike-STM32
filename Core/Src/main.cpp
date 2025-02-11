@@ -23,7 +23,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
   //wakes up H
   BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     if (GPIO_Pin == GPIO_PIN_0){
-      xSemaphoreGiveFromISR(xSemaphore, &HigherPriorityTaskWoken);
+      xSemaphoreGiveFromISR(xSemaphore, &xHigherPriorityTaskWoken);
     }
     //Calls the next task Immediately instead of next Tick
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
