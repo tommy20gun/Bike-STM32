@@ -46,7 +46,17 @@ extern "C" {
 #endif /* USE_FULL_ASSERT */
 
 #include <Peripheral_initialization.h>
-#include <cmsis_os.h> 
+
+//RTOS includes
+#include <task.h>
+#include "FreeRTOS.h"
+#include "task.h"
+#include "timers.h"
+#include "queue.h"
+#include "semphr.h"
+#include "event_groups.h"
+
+
 
 
 /*

@@ -70,6 +70,8 @@ void GPIO_Setup(void){
 	GPIOC -> MODER |= GPIO_MODER_MODE13_0;
 	GPIOC -> OTYPER = 0;
 	GPIOC -> OSPEEDR = 0;
+
+  
 }
 
 UART_HandleTypeDef* USART2_Setup(void){
