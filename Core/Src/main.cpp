@@ -10,12 +10,14 @@
 #include <string>
 
 using namespace std;
+static TaskHandle_t TurnonHeadlight = NULL;
+static SemaphoreHandle_t xSemaphore;
 
-void vTurnonHeadlight(void const* args){
+void vTurnonHeadlight(void* pvParameters){
   while(1){
     //subtracts semaphore back down to 0, next while loop will block again
     xSemaphoreTake(xSemaphore,portMAX_DELAY);
-    HAL_GPIO_WritePin(GPIOB,GPIO_Pin_0,SET);
+    HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_SET);
   }
 }
 
@@ -30,13 +32,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 }
 
 //void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
-static TaskHandle_t TurnonHeadlight = NULL;
-static SemaphoreHandle_t xSemaphore;
+
 
 void RTOS_Setup(void){
   //TODO make sure we are not using systick
   BaseType_t xReturned;
-  xReturned = xTaskCreate(vTurnOnHeadlight,
+  xReturned = xTaskCreate(vTurnonHeadlight,
    "Turn on and off headlight",
    512, 
    NULL,
