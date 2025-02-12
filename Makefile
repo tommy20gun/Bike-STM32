@@ -74,6 +74,9 @@ Core/Src/syscalls.c \
 Core/Src/Startup/startup_stm32f411CEU6.c \
 Core/Src/Startup/Peripheral_initialization.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c \
+CustomDrivers/Bicycle Hardware/TailLight.c \
+CustomDrivers/Bicycle Hardware/Headlight.c \
+CustomDrivers/Bicycle Hardware/Horn.c \
 
 
 
@@ -164,7 +167,9 @@ C_INCLUDES =  \
 -I-DPREFETCH_ENABLE=1 \
 -I-DINSTRUCTION_CACHE_ENABLE=1 \
 -I-DDATA_CACHE_ENABLE=1 \
--IMiddlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS
+-IMiddlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS \
+-ICustomDrivers/Bicycle hardware \
+
 
 CXX_INCLUDES = $(C_INCLUDES) \
 

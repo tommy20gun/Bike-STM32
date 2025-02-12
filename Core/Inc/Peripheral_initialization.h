@@ -1,3 +1,12 @@
+/**
+  ******************************************************************************
+  * @file           : Peripheral_initialization.h
+  * @brief          : Header for Peripheral_initialization.c file.
+  *                   This file contains includes for Peripheral_initialization.c.
+  ******************************************************************************
+  * @attention
+  * */
+
 //prevent recursive inclusion
 #ifndef __PERIPHERAL_INITIALIZATION
 #define __PERIPHERAL_INITIALIZATION
