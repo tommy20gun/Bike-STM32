@@ -1,8 +1,11 @@
  /** 
-  * @file           : main.cpp
+  * 
   * @brief          : Main program body
-  ******************************************************************************
-  * @attention
+  * 
+  * This is the main body of the program. The MCU will run setup code such as Clock config, ISRVector table, and start the RTOS.
+  * Implements state machine.
+  *
+  * 
   */
 
 

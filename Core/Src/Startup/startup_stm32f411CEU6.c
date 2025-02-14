@@ -1,4 +1,13 @@
-/* refer to startup_stm32f411xe.s for ARM assembly code*/
+ /** 
+  * 
+  * @brief          : Set up vector table and reset entry point
+  * 
+  * Performs Reset Handler by allocating memory addresses and running main.
+  * Creates ISRVector table.
+  * 
+  * Translation of startup_stm32f411xe.s which is in ARM Assembly. 
+  * 
+  */
 
 #include <stdint.h>
 #include <system_stm32f4xx.h>

@@ -1,24 +1,21 @@
+ /** 
+  * 
+  * @brief          : Perpherial initialization
+  * 
+  * Setup code for System Clock, RTOS for non hardware specific usage.
+  * Specific GPIO, DMA, etc channels will be handeled by the driver of each component.
+  *
+  * 
+  */
+
 #include <Peripheral_initialization.h>
 
-	/*************>>>>>>> STEPS FOLLOWED <<<<<<<<************
-	
-	1. ENABLE HSE and wait for the HSE to become Ready
-	2. Set the POWER ENABLE CLOCK and VOLTAGE REGULATOR
-	3. Configure the FLASH PREFETCH and the LATENCY Related Settings
-	4. Configure the PRESCALARS HCLK, PCLK1, PCLK2
-	5. Configure the MAIN PLL
-	6. Enable the PLL and wait for it to become ready
-	7. Select the Clock Source and wait for it to be set
-	
-	********************************************************/
-
-//TODO do I need to set ifdef cplusplus etc
-/**
-  * @brief System Clock Configuration
-  * @retval None
-  */
 void SystemClock_Config(void)
 {
+/**
+  * @brief System Clock Configuration. STM32Cube Generated
+  * @retval None
+  */
   LL_FLASH_SetLatency(LL_FLASH_LATENCY_3);
   while(LL_FLASH_GetLatency()!= LL_FLASH_LATENCY_3)
   {

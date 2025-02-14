@@ -3,8 +3,6 @@
   * @file           : Horn.h
   * @brief          : Header for Horn.c file.
   *                   This file contains includes for Horn.c.
-  ******************************************************************************
-  * @attention
   * */
 
  
