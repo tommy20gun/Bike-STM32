@@ -56,6 +56,15 @@ extern "C" {
 #include "semphr.h"
 #include "event_groups.h"
 
+//customDrivers Includes
+#include "Headlight.h"
+#include "Horn.h"
+#include "Odometer.h"
+#include "Motion_Detector.h"
+#include "LED.h"
+#include "Lock.h"
+#include "TailLight.h"
+
 
 
 

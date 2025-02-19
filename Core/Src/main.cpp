@@ -13,22 +13,19 @@
 #include <string>
 
 using namespace std;
-static TaskHandle_t TurnonHeadlight = NULL;
-static SemaphoreHandle_t xSemaphore;
 
-void vTurnonHeadlight(void* pvParameters){
-  while(1){
-    //subtracts semaphore back down to 0, next while loop will block again
-    xSemaphoreTake(xSemaphore,portMAX_DELAY);
-    HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_SET);
-  }
-}
+
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
   //wakes up H
   BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    if (GPIO_Pin == GPIO_PIN_0){
-      xSemaphoreGiveFromISR(xSemaphore, &xHigherPriorityTaskWoken);
+    if (GPIO_Pin == GPIO_PIN_10){
+      //headlight TODO make correct semaphore
+      xSemaphoreGiveFromISR(bsemaphore, &xHigherPriorityTaskWoken);
+    }
+    else if (GPIO_Pin == GPIO_PIN_11){
+      //horn TODO make correct semaphore
+      xSemaphoreGiveFromISR(bsemaphore, &xHigherPriorityTaskWoken);
     }
     //Calls the next task Immediately instead of next Tick
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
@@ -39,17 +36,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 
 void RTOS_Setup(void){
   //TODO make sure we are not using systick
-  BaseType_t xReturned;
-  xReturned = xTaskCreate(vTurnonHeadlight,
-   "Turn on and off headlight",
-   512, 
-   NULL,
-   1,
-   &TurnonHeadlight );
-  assert_param(xReturned != pdPASS);
-  //Binary Semaphore used for ISR to turn on the headlight
-  xSemaphore = xSemaphoreCreateBinary();
-  assert_param(xSemaphore != NULL);
+  headlightSetup();
 }
 
 int main(){

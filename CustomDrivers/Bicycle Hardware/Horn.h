@@ -5,4 +5,21 @@
   *                   This file contains includes for Horn.c.
   * */
 
- 
+ //prevent recursive inclusion
+#ifndef __HORN
+#define __HORN
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "FreeRTOS.h"  
+
+#ifdef __cplusplus
+}
+#endif //__cplusplus
+
+
+
+#endif //__Peripheral_initialization
+

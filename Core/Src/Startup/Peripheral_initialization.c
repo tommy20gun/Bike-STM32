@@ -62,11 +62,17 @@ void SystemClock_Config(void)
 
 
 void GPIO_Setup(void){
-	//enable GPIO C13 as PP Output
-	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
+	//enable GPIO C13 as PP Output baremetal
+	/*RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
 	GPIOC -> MODER |= GPIO_MODER_MODE13_0;
 	GPIOC -> OTYPER = 0;
-	GPIOC -> OSPEEDR = 0;
+	GPIOC -> OSPEEDR = 0;*/
+  
+  //enables all clock for GPIO
+  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC);
+  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOH);
+  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
+  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
 
   
 }
