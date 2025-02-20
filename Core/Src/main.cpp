@@ -36,7 +36,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 
 void RTOS_Setup(void){
   //TODO make sure we are not using systick
-  headlightSetup();
+  Headlight headlight
 }
 
 int main(){
