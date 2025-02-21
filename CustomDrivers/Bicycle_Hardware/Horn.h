@@ -16,10 +16,21 @@ extern "C" {
 #include "FreeRTOS.h"  
 #include "main.h"
 
+
+
+void vTurnOnHorn(void* pvParameters);
+
 #ifdef __cplusplus
 }
 #endif //__cplusplus
 
+//non cpp code
+class Horn{
+  public:
+    SemaphoreHandle_t bsemaphore;
+    TaskHandle_t vTurnOnHornHandle = NULL;
+    Horn();
+}
 
 
 #endif //__Peripheral_initialization
