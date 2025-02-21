@@ -9,6 +9,7 @@
 #ifndef __HORN
 #define __HORN
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -17,20 +18,22 @@ extern "C" {
 #include "main.h"
 
 
-
+//void hornSetup();
 void vTurnOnHorn(void* pvParameters);
 
 #ifdef __cplusplus
 }
 #endif //__cplusplus
 
-//non cpp code
+
 class Horn{
   public:
-    SemaphoreHandle_t bsemaphore;
-    TaskHandle_t vTurnOnHornHandle = NULL;
-    Horn();
-}
+  SemaphoreHandle_t bsem_horn;
+  TaskHandle_t vTurnOnHornHandle;
+
+  Horn();
+};
+
 
 
 #endif //__Peripheral_initialization

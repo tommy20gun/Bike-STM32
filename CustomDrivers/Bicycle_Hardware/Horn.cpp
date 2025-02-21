@@ -9,11 +9,12 @@
 
 #include <Horn.h>
 
-static SemaphoreHandle_t bsem_horn;
-static TaskHandle_t vTurnOnHornHandle = NULL;
 
-hornSetup(){
 
+
+Horn::Horn(){
+  //set attribute to NULL
+  vTurnOnHornHandle = NULL;
   //Peripheral GPIO
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
   //init PB1
@@ -63,7 +64,7 @@ void vTurnOnHorn(void* pvParameters){
   bool pinState = NULL;
   while(1){
     //subtracts semaphore back down to 0, next while loop will block again
-    xSemaphoreTake(bsem_horn,portMAX_DELAY);
+    xSemaphoreTake(.bsem_horn,portMAX_DELAY);
     //detects the rising or falling edge of the input pin
     //allows the switch to have on/off function
     pinState = HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_11);

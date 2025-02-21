@@ -12,8 +12,20 @@
 #include <main.h> //includes LL
 #include <string>
 
+//CPP includes
+#include "Headlight.h"
+#include <Horn.h>
+#include "Odometer.h"
+#include "Motion_Detector.h"
+#include "LED.h"
+#include "Lock.h"
+#include "TailLight.h"
+
+
 using namespace std;
 
+
+extern Horn hornmain;
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
   //wakes up H
@@ -24,7 +36,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
     }
     else if (GPIO_Pin == GPIO_PIN_11){
       //horn TODO make correct semaphore
-      xSemaphoreGiveFromISR(bsem_horn, &xHigherPriorityTaskWoken);
+      xSemaphoreGiveFromISR(hornmain.bsem_horn, &xHigherPriorityTaskWoken);
     }
     //Calls the next task Immediately instead of next Tick
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
@@ -35,7 +47,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 
 void RTOS_Setup(void){
   //TODO make sure we are not using systick
-  hornSetup();
+  static Horn hornmain;
 }
 
 int main(){

@@ -11,7 +11,8 @@
 			"system_stm32f4xx.h": "c",
 			"cmsis_os.h": "c",
 			"peripheral_initialization.h": "c",
-			"string": "cpp"
+			"string": "cpp",
+			"stm32f4xx_ll_rcc.h": "c"
 		}
 	}
 }

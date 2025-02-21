@@ -80,7 +80,6 @@ Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c \
 
 CXX_SOURCES = \
 Core/Src/main.cpp \
-CustomDrivers/Bicycle_Hardware/Headlight.cpp \
 CustomDrivers/Bicycle_Hardware/Horn.cpp \
 
 # ASM sources
