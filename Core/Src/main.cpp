@@ -24,30 +24,31 @@
 
 using namespace std;
 
-
-extern Horn hornmain;
-
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
-  //wakes up H
-  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    if (GPIO_Pin == GPIO_PIN_10){
-      //headlight TODO make correct semaphore
-      //xSemaphoreGiveFromISR(bsemaphore, &xHigherPriorityTaskWoken);
-    }
-    else if (GPIO_Pin == GPIO_PIN_11){
-      //horn TODO make correct semaphore
-      xSemaphoreGiveFromISR(hornmain.bsem_horn, &xHigherPriorityTaskWoken);
-    }
-    //Calls the next task Immediately instead of next Tick
-    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-}
-
 //void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
 
+//task handles
+TaskHandle_t vTurnOnHornHandle;
+static Horn horn;
 
 void RTOS_Setup(void){
   //TODO make sure we are not using systick
-  static Horn hornmain;
+    Horn horn;
+  BaseType_t xReturned;
+  xReturned = xTaskCreate(vTurnOnHorn,
+    "Turn on and off headlight",
+    512, 
+    &horn,
+    1,
+    &vTurnOnHornHandle);
+  if(xReturned != pdPASS){
+    Error_Handler();
+  }
+  //Binary Semaphore used for ISR to turn on the headlight
+  horn.bsem = xSemaphoreCreateBinary();
+  if(horn.bsem != NULL){
+    Error_Handler();
+  }
+
 }
 
 int main(){
@@ -59,6 +60,20 @@ int main(){
   
 }
 
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+  //wakes up H
+  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    if (GPIO_Pin == GPIO_PIN_10){
+      //headlight TODO make correct semaphore
+      //xSemaphoreGiveFromISR(bsemaphore, &xHigherPriorityTaskWoken);
+    }
+    else if (GPIO_Pin == GPIO_PIN_11){
+      //horn TODO make correct semaphore
+      xSemaphoreGiveFromISR(horn.bsem, &xHigherPriorityTaskWoken);
+    }
+    //Calls the next task Immediately instead of next Tick
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}
 //static TaskHandle_t job2Handle;
 /*void UART_task(void const* args){
   //const uint8_t buffer[] = "deez nuts";

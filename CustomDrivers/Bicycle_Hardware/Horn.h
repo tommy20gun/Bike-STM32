@@ -28,9 +28,7 @@ void vTurnOnHorn(void* pvParameters);
 
 class Horn{
   public:
-  SemaphoreHandle_t bsem_horn;
-  TaskHandle_t vTurnOnHornHandle;
-
+  SemaphoreHandle_t bsem;
   Horn();
 };
 

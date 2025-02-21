@@ -9,12 +9,8 @@
 
 #include <Horn.h>
 
-
-
-
 Horn::Horn(){
-  //set attribute to NULL
-  vTurnOnHornHandle = NULL;
+
   //Peripheral GPIO
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
   //init PB1
@@ -45,17 +41,7 @@ Horn::Horn(){
   LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_11, LL_GPIO_MODE_INPUT);
 
   //RTOS Task setup
-  BaseType_t xReturned;
-  xReturned = xTaskCreate(vTurnOnHorn,
-    "Turn on and off headlight",
-    512, 
-    NULL,
-    1,
-    &vTurnOnHornHandle);
-  assert_param(xReturned != pdPASS);
-  //Binary Semaphore used for ISR to turn on the headlight
-  bsem_horn = xSemaphoreCreateBinary();
-  assert_param(bsem_horn != NULL);
+  
 }
 
 
@@ -63,8 +49,9 @@ void vTurnOnHorn(void* pvParameters){
   
   bool pinState = NULL;
   while(1){
+    Horn *horn = (Horn*) pvParameters;
     //subtracts semaphore back down to 0, next while loop will block again
-    xSemaphoreTake(.bsem_horn,portMAX_DELAY);
+    xSemaphoreTake(horn->bsem,portMAX_DELAY);
     //detects the rising or falling edge of the input pin
     //allows the switch to have on/off function
     pinState = HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_11);

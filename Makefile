@@ -71,8 +71,8 @@ Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c \
 Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c \
 Core/Src/sysmem.c \
 Core/Src/syscalls.c \
-Core/Src/Startup/startup_stm32f411CEU6.c \
-Core/Src/Startup/Peripheral_initialization.c \
+Core/Src/startup_stm32f411CEU6.c \
+Core/Src/Peripheral_initialization.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c \
 
 
