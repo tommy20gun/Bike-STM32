@@ -40,14 +40,12 @@ Horn::Horn(){
   LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_11, LL_GPIO_PULL_DOWN);
   LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_11, LL_GPIO_MODE_INPUT);
 
-  //RTOS Task setup
   
 }
 
 
 void vTurnOnHorn(void* pvParameters){
-  
-  bool pinState = NULL;
+  bool pinState;
   while(1){
     Horn *horn = (Horn*) pvParameters;
     //subtracts semaphore back down to 0, next while loop will block again

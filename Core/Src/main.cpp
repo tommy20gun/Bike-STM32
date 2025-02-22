@@ -13,7 +13,7 @@
 #include <string>
 
 //CPP includes
-#include "Headlight.h"
+#include <Headlight.h>
 #include <Horn.h>
 #include "Odometer.h"
 #include "Motion_Detector.h"
@@ -28,14 +28,17 @@ using namespace std;
 
 //task handles
 TaskHandle_t vTurnOnHornHandle;
+TaskHandle_t vTurnOnHeadlightHandle;
 static Horn horn;
+static Headlight headlight;
 
+/* create tasks, create object instances. object constructors set up hardware and own the semaphore*/
 void RTOS_Setup(void){
   //TODO make sure we are not using systick
-    Horn horn;
+  Horn horn;
   BaseType_t xReturned;
   xReturned = xTaskCreate(vTurnOnHorn,
-    "Turn on and off headlight",
+    "Turn on and off horn",
     512, 
     &horn,
     1,
@@ -45,10 +48,25 @@ void RTOS_Setup(void){
   }
   //Binary Semaphore used for ISR to turn on the headlight
   horn.bsem = xSemaphoreCreateBinary();
-  if(horn.bsem != NULL){
+  if(horn.bsem == NULL){
     Error_Handler();
   }
 
+  Headlight headlight;
+  xReturned = xTaskCreate(vTurnonHeadlight,
+    "Turn on and off headlight",
+    512, 
+    NULL,
+    1,
+    &vTurnOnHeadlightHandle);
+  if (xReturned != pdPASS){
+    Error_Handler();
+  }
+  //Binary Semaphore used for ISR to turn on the headlight
+  headlight.bsem = xSemaphoreCreateBinary();
+  if(headlight.bsem == NULL){
+    Error_Handler();
+  }
 }
 
 int main(){
