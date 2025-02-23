@@ -53,8 +53,7 @@ void vTurnLeft(void* pvParameters){
   Taillight *taillight = (Taillight*) pvParameters;
   while(1){
     xSemaphoreTake(taillight->bsemleft,portMAX_DELAY);
-    while(xSemaphoreTake(taillight->bsemleft,0)== pdFALSE){
-    //TODO currently the task cannot be controlled by non hardware
+    while(xSemaphoreTake(taillight->bsemleft,0)== pdFALSE && LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_8)){
     LL_GPIO_TogglePin(GPIOB,GPIO_PIN_8);
     vTaskDelay(1000);
     }
@@ -64,8 +63,7 @@ void vTurnRight(void* pvParameters){
   Taillight *taillight = (Taillight*) pvParameters;
   while(1){
     xSemaphoreTake(taillight->bsemright,portMAX_DELAY);
-    while(xSemaphoreTake(taillight->bsemright,0)== pdFALSE){
-      //TODO currently the task cannot be controlled by non hardware
+    while(xSemaphoreTake(taillight->bsemright,0)== pdFALSE && LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_9)){
       LL_GPIO_TogglePin(GPIOB,GPIO_PIN_9);
       vTaskDelay(1000);
     }
