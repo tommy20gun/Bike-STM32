@@ -83,7 +83,35 @@ void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName ){
   Error_Handler();
 }
 
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+/**
+  * @brief This function handles EXTI line[15:10] interrupts.
+  */
+ void EXTI15_10_IRQHandler(void)
+ {
+  //wakes up H
+  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+   if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_10) != RESET)
+   {
+     LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_10);
+     //headlight TODO make correct semaphore
+     xSemaphoreGiveFromISR(headlight.bsem, &xHigherPriorityTaskWoken);
+   }
+   if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_11) != RESET)
+   {
+     LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_11);
+     //horn TODO make correct semaphore
+     xSemaphoreGiveFromISR(horn.bsem, &xHigherPriorityTaskWoken);
+   }
+   if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_12) != RESET)
+   {
+     LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_12);
+   }
+   //Calls the next task Immediately instead of next Tick
+   portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+ }
+
+/*
+ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
   //wakes up H
   BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     if (GPIO_Pin == GPIO_PIN_10){
@@ -97,9 +125,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
     //Calls the next task Immediately instead of next Tick
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
-
-
-
+*/
 //static TaskHandle_t job2Handle;
 /*void UART_task(void const* args){
   //const uint8_t buffer[] = "deez nuts";
