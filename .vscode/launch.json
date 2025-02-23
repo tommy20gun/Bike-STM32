@@ -18,7 +18,8 @@
                 "target/stm32f4x.cfg"
     
             ],
-            "svdFile": "./STM32F411.svd"
+            "svdFile": "./STM32F411.svd",
+            "liveWatch": "true"
         }
     ]
 }

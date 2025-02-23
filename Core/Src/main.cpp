@@ -35,10 +35,10 @@ static Headlight headlight;
 /* create tasks, create object instances. object constructors set up hardware and own the semaphore*/
 void RTOS_Setup(void){
   //TODO make sure we are not using systick
-  Horn horn;
+  
   BaseType_t xReturned;
   xReturned = xTaskCreate(vTurnOnHorn,
-    "Turn on and off horn",
+    "horn On/Off",
     512, 
     &horn,
     1,
@@ -52,11 +52,11 @@ void RTOS_Setup(void){
     Error_Handler();
   }
 
-  Headlight headlight;
+  
   xReturned = xTaskCreate(vTurnonHeadlight,
-    "Turn on and off headlight",
+    "Headlight On/off",
     512, 
-    NULL,
+    &headlight,
     1,
     &vTurnOnHeadlightHandle);
   if (xReturned != pdPASS){
@@ -69,6 +69,7 @@ void RTOS_Setup(void){
   }
 }
 
+
 int main(){
   HAL_Init(); //TODO figure out what this does, figure out how to search all 
   SystemClock_Config();
@@ -78,12 +79,16 @@ int main(){
   
 }
 
+void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName ){
+  Error_Handler();
+}
+
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
   //wakes up H
   BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     if (GPIO_Pin == GPIO_PIN_10){
       //headlight TODO make correct semaphore
-      //xSemaphoreGiveFromISR(bsemaphore, &xHigherPriorityTaskWoken);
+      xSemaphoreGiveFromISR(headlight.bsem, &xHigherPriorityTaskWoken);
     }
     else if (GPIO_Pin == GPIO_PIN_11){
       //horn TODO make correct semaphore
@@ -92,6 +97,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
     //Calls the next task Immediately instead of next Tick
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
+
+
+
 //static TaskHandle_t job2Handle;
 /*void UART_task(void const* args){
   //const uint8_t buffer[] = "deez nuts";

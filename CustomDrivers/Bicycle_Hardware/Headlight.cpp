@@ -9,7 +9,7 @@
 #include <Headlight.h>
   
 Headlight::Headlight(){
-  
+  ErrorStatus success;
   //Peripheral GPIO
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
   //init PB0
@@ -18,14 +18,19 @@ Headlight::Headlight(){
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_OPENDRAIN;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
-  LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
+  success = LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  if (success != 0){
+    Error_Handler();
+  }
   //init PA11 as input wiht pulldown for the circuit
   GPIO_InitStruct.Pin = LL_GPIO_PIN_10;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_DOWN;
+  success =  LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
+  if (success != 0){
+    Error_Handler();
+  }
   LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA, LL_SYSCFG_EXTI_LINE10);
 
   LL_EXTI_InitTypeDef EXTI_InitStruct = {0};
@@ -34,8 +39,11 @@ Headlight::Headlight(){
   EXTI_InitStruct.LineCommand = ENABLE;
   EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
   EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;
+  success =  LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
   LL_EXTI_Init(&EXTI_InitStruct);
-
+  if (success != 0){
+    Error_Handler();
+  }
   LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_10, LL_GPIO_PULL_DOWN);
   LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_10, LL_GPIO_MODE_INPUT);
 
