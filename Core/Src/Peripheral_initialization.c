@@ -74,8 +74,11 @@ void GPIO_Setup(void){
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
 
-  NVIC_SetPriority(EXTI15_10_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),5, 0));
+  int prio = NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 5, 0);
+  NVIC_SetPriority(EXTI15_10_IRQn, prio);
   NVIC_EnableIRQ(EXTI15_10_IRQn);
+  NVIC_SetPriority(EXTI9_5_IRQn, prio);
+  NVIC_EnableIRQ(EXTI9_5_IRQn);
 }
 
 UART_HandleTypeDef* USART2_Setup(void){

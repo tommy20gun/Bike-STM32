@@ -59,11 +59,11 @@ void vTurnonHeadlight(void* pvParameters){
     //allows the switch to have on/off function
     pinState = HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_10);
     if (pinState){
-      HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_SET);
+      LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_0);
       //TODO update memory map
     }
     else if (!pinState){
-      HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_RESET);
+      LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_0);
       //TODO update memory map
     }
   } 

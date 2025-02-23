@@ -39,15 +39,13 @@ Horn::Horn(){
 
   LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_11, LL_GPIO_PULL_DOWN);
   LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_11, LL_GPIO_MODE_INPUT);
-
-  
 }
 
 
 void vTurnOnHorn(void* pvParameters){
   bool pinState;
+  Horn *horn = (Horn*) pvParameters;
   while(1){
-    Horn *horn = (Horn*) pvParameters;
     //subtracts semaphore back down to 0, next while loop will block again
     xSemaphoreTake(horn->bsem,portMAX_DELAY);
     //detects the rising or falling edge of the input pin

@@ -19,7 +19,7 @@
 #include "Motion_Detector.h"
 #include "LED.h"
 #include "Lock.h"
-#include "TailLight.h"
+#include "Taillight.h"
 
 
 using namespace std;
@@ -29,20 +29,19 @@ using namespace std;
 //task handles
 TaskHandle_t vTurnOnHornHandle;
 TaskHandle_t vTurnOnHeadlightHandle;
+TaskHandle_t vTurnLeftHandle;
+TaskHandle_t vTurnRightHandle;
+TaskHandle_t vBrakeHandle;
 static Horn horn;
 static Headlight headlight;
+static Taillight taillight;
 
 /* create tasks, create object instances. object constructors set up hardware and own the semaphore*/
 void RTOS_Setup(void){
   //TODO make sure we are not using systick
-  
+
   BaseType_t xReturned;
-  xReturned = xTaskCreate(vTurnOnHorn,
-    "horn On/Off",
-    512, 
-    &horn,
-    1,
-    &vTurnOnHornHandle);
+  xReturned = xTaskCreate(vTurnOnHorn,"horn On/Off",512, &horn,1,&vTurnOnHornHandle);
   if(xReturned != pdPASS){
     Error_Handler();
   }
@@ -51,14 +50,7 @@ void RTOS_Setup(void){
   if(horn.bsem == NULL){
     Error_Handler();
   }
-
-  
-  xReturned = xTaskCreate(vTurnonHeadlight,
-    "Headlight On/off",
-    512, 
-    &headlight,
-    1,
-    &vTurnOnHeadlightHandle);
+  xReturned = xTaskCreate(vTurnonHeadlight,"Headlight On/off",512, &headlight,1,&vTurnOnHeadlightHandle);
   if (xReturned != pdPASS){
     Error_Handler();
   }
@@ -67,6 +59,33 @@ void RTOS_Setup(void){
   if(headlight.bsem == NULL){
     Error_Handler();
   }
+  xReturned = xTaskCreate(vTurnLeft,"TurnLeft On/off",512, &taillight,1,&vTurnLeftHandle);
+  if (xReturned != pdPASS){
+    Error_Handler();
+  }
+  //Binary Semaphore used for ISR to turn on the headlight
+  taillight.bsemleft = xSemaphoreCreateBinary();
+  if(taillight.bsemleft == NULL){
+    Error_Handler();
+  } 
+  xReturned = xTaskCreate(vTurnRight,"TurnRight On/off",512, &taillight,1,&vTurnRightHandle);
+  if (xReturned != pdPASS){
+    Error_Handler();
+  }
+  //Binary Semaphore used for ISR to turn on the headlight
+  taillight.bsemright = xSemaphoreCreateBinary();
+  if(taillight.bsemright == NULL){
+    Error_Handler();
+  }
+  xReturned = xTaskCreate(vBrake,"Brake On/off",512, &taillight,1,&vBrakeHandle);
+  if (xReturned != pdPASS){
+    Error_Handler();
+  }
+  //Binary Semaphore used for ISR to turn on the headlight
+  taillight.bsembrake = xSemaphoreCreateBinary();
+  if(taillight.bsembrake == NULL){
+    Error_Handler();
+  } 
 }
 
 
@@ -76,7 +95,6 @@ int main(){
   GPIO_Setup();
   RTOS_Setup();
   vTaskStartScheduler();
-  
 }
 
 void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName ){
@@ -86,29 +104,41 @@ void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName ){
 /**
   * @brief This function handles EXTI line[15:10] interrupts.
   */
- void EXTI15_10_IRQHandler(void)
- {
+void EXTI15_10_IRQHandler(void){
   //wakes up H
   BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-   if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_10) != RESET)
-   {
-     LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_10);
-     //headlight TODO make correct semaphore
-     xSemaphoreGiveFromISR(headlight.bsem, &xHigherPriorityTaskWoken);
-   }
-   if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_11) != RESET)
-   {
-     LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_11);
-     //horn TODO make correct semaphore
-     xSemaphoreGiveFromISR(horn.bsem, &xHigherPriorityTaskWoken);
-   }
-   if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_12) != RESET)
-   {
-     LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_12);
-   }
+  if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_10) != RESET){
+    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_10);
+    xSemaphoreGiveFromISR(headlight.bsem, &xHigherPriorityTaskWoken);
+  }
+  if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_11) != RESET){
+    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_11);
+    xSemaphoreGiveFromISR(horn.bsem, &xHigherPriorityTaskWoken);
+  }
+  if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_12) != RESET){
+    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_12);
+    xSemaphoreGiveFromISR(taillight.bsembrake, &xHigherPriorityTaskWoken);
+  }
    //Calls the next task Immediately instead of next Tick
-   portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
- }
+  portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}
+
+void EXTI9_5_IRQHandler(void){
+  //wakes up H
+  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+  if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_8) != RESET){
+    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_8);
+    //if there is no Semaphore to take, then give it
+    xSemaphoreGiveFromISR(taillight.bsemleft, &xHigherPriorityTaskWoken);
+  }
+  if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_9) != RESET){
+    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_9);
+    xSemaphoreGiveFromISR(taillight.bsemright, &xHigherPriorityTaskWoken);
+  }
+  portYIELD_FROM_ISR(xHigherPriorityTaskWoken); 
+}
+
+
 
 /*
  void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){

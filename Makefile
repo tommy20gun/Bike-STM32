@@ -83,6 +83,7 @@ CXX_SOURCES = \
 Core/Src/main.cpp \
 CustomDrivers/Bicycle_Hardware/Horn.cpp \
 CustomDrivers/Bicycle_Hardware/Headlight.cpp \
+CustomDrivers/Bicycle_Hardware/Taillight.cpp \
 
 # ASM sources
 ASM_SOURCES = 

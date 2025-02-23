@@ -96,6 +96,7 @@ void Error_Handler(void);
 /* USER CODE BEGIN EFP */
 void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName );
 void EXTI15_10_IRQHandler(void);
+void EXTI9_5_IRQHandler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
