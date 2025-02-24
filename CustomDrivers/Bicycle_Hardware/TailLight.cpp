@@ -17,10 +17,14 @@ TaskHandle_t Taillight::vTurnRightHandle = nullptr;
 TaskHandle_t Taillight::vBrakeHandle = nullptr;
 
 Taillight::Taillight(){
-  
+  initTasks();
+  initPeripherals();
+}
+
+void Taillight:: initTasks(){
   BaseType_t xReturned;
   vTurnLeftHandle = nullptr;
-  xReturned = xTaskCreate(vTurnLeft,"TurnLeft On/off",512, this,1,&vTurnLeftHandle);
+  xReturned = xTaskCreate(vTurnLeft,"TurnLeft On/off",64, this,1,&vTurnLeftHandle);
   if (xReturned != pdPASS){
     Error_Handler();
   }
@@ -30,7 +34,7 @@ Taillight::Taillight(){
     Error_Handler();
   } 
 
-  xReturned = xTaskCreate(vTurnRight,"TurnRight On/off",512, this,1,&vTurnRightHandle);
+  xReturned = xTaskCreate(vTurnRight,"TurnRight On/off",64, this,1,&vTurnRightHandle);
   if (xReturned != pdPASS){
     Error_Handler();
   }
@@ -40,7 +44,7 @@ Taillight::Taillight(){
     Error_Handler();
   }
 
-  xReturned = xTaskCreate(vBrake,"Brake On/off",512,this,1,&vBrakeHandle);
+  xReturned = xTaskCreate(vBrake,"Brake On/off",64,this,1,&vBrakeHandle);
   if (xReturned != pdPASS){
     Error_Handler();
   }
@@ -49,7 +53,9 @@ Taillight::Taillight(){
   if(this->bsembrake == NULL){
     Error_Handler();
   } 
+}
 
+void Taillight::initPeripherals(){
 
   //Peripheral GPIO
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};

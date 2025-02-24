@@ -7,11 +7,16 @@
   */
 
 #include <Headlight.h>
-  
-Headlight::Headlight(){
+TaskHandle_t Headlight::vTurnOnHeadlightHandle = nullptr;
 
+Headlight::Headlight(){
+  initTasks();
+  initPeripherals();
+}
+
+void Headlight::initTasks(){
   BaseType_t xReturned;
-  xReturned = xTaskCreate(vTurnonHeadlight,"Headlight On/off",512, this,1,&vTurnOnHeadlightHandle);
+  xReturned = xTaskCreate(vTurnonHeadlight,"Headlight On/off",64, this,1,&vTurnOnHeadlightHandle);
   if (xReturned != pdPASS){
     Error_Handler();
   }
@@ -20,7 +25,9 @@ Headlight::Headlight(){
   if(this->bsem == NULL){
     Error_Handler();
   }
+}
 
+void Headlight::initPeripherals(){
   ErrorStatus success;
   //Peripheral GPIO
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -58,7 +65,6 @@ Headlight::Headlight(){
   }
   LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_10, LL_GPIO_PULL_DOWN);
   LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_10, LL_GPIO_MODE_INPUT);
-
 }
 
 void Headlight::vTurnonHeadlight(void* pvParameters){
