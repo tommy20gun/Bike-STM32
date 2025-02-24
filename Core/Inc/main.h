@@ -22,9 +22,12 @@
 #ifndef __MAIN_H
 #define __MAIN_H
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#pragma once
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"

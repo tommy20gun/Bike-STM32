@@ -12,8 +12,14 @@
   */
 #include <Taillight.h>
 
+TaskHandle_t Taillight::vTurnLeftHandle = nullptr;
+TaskHandle_t Taillight::vTurnRightHandle = nullptr;
+TaskHandle_t Taillight::vBrakeHandle = nullptr;
+
 Taillight::Taillight(){
+  
   BaseType_t xReturned;
+  vTurnLeftHandle = nullptr;
   xReturned = xTaskCreate(vTurnLeft,"TurnLeft On/off",512, this,1,&vTurnLeftHandle);
   if (xReturned != pdPASS){
     Error_Handler();

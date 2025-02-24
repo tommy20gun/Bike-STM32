@@ -20,9 +20,9 @@ class Taillight{
   SemaphoreHandle_t bsemleft;
   SemaphoreHandle_t bsemright;
   SemaphoreHandle_t bsembrake;
-  TaskHandle_t vTurnLeftHandle;
-  TaskHandle_t vTurnRightHandle;
-  TaskHandle_t vBrakeHandle;
+  static TaskHandle_t vTurnLeftHandle;
+  static TaskHandle_t vTurnRightHandle;
+  static TaskHandle_t vBrakeHandle;
   Taillight();
   static void vTurnLeft(void* pvParameters);
   static void vTurnRight(void* pvParameters);
