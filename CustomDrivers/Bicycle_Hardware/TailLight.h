@@ -15,23 +15,27 @@ extern "C" {
 
 #include "FreeRTOS.h" 
 #include "main.h"
-
-void vTurnLeft(void* pvParameters);
-void vTurnRight(void* pvParameters);
-void vBrake(void* pvParameters);
-
-#ifdef __cplusplus
-}
-#endif //__cplusplus
-
 class Taillight{
   public:
   SemaphoreHandle_t bsemleft;
   SemaphoreHandle_t bsemright;
   SemaphoreHandle_t bsembrake;
+  TaskHandle_t vTurnLeftHandle;
+  TaskHandle_t vTurnRightHandle;
+  TaskHandle_t vBrakeHandle;
   Taillight();
-
+  static void vTurnLeft(void* pvParameters);
+  static void vTurnRight(void* pvParameters);
+  static void vBrake(void* pvParameters);
 };
+
+
+
+#ifdef __cplusplus
+}
+#endif //__cplusplus
+
+
 
 
 #endif //__Peripheral_initialization

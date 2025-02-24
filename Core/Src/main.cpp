@@ -8,7 +8,7 @@
   * 
   */
 
-
+#pragma once
 #include <main.h> //includes LL
 #include <string>
 
@@ -27,79 +27,28 @@ using namespace std;
 //void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
 
 //task handles
-TaskHandle_t vTurnOnHornHandle;
-TaskHandle_t vTurnOnHeadlightHandle;
-TaskHandle_t vTurnLeftHandle;
-TaskHandle_t vTurnRightHandle;
-TaskHandle_t vBrakeHandle;
+
+
+
 static Horn horn;
 static Headlight headlight;
 static Taillight taillight;
 
 /* create tasks, create object instances. object constructors set up hardware and own the semaphore*/
-void RTOS_Setup(void){
+void RTOS_GlobalSetup(void){
   //TODO make sure we are not using systick
-
-  BaseType_t xReturned;
-  xReturned = xTaskCreate(vTurnOnHorn,"horn On/Off",512, &horn,1,&vTurnOnHornHandle);
-  if(xReturned != pdPASS){
-    Error_Handler();
-  }
-  //Binary Semaphore used for ISR to turn on the headlight
-  horn.bsem = xSemaphoreCreateBinary();
-  if(horn.bsem == NULL){
-    Error_Handler();
-  }
-  xReturned = xTaskCreate(vTurnonHeadlight,"Headlight On/off",512, &headlight,1,&vTurnOnHeadlightHandle);
-  if (xReturned != pdPASS){
-    Error_Handler();
-  }
-  //Binary Semaphore used for ISR to turn on the headlight
-  headlight.bsem = xSemaphoreCreateBinary();
-  if(headlight.bsem == NULL){
-    Error_Handler();
-  }
-  xReturned = xTaskCreate(vTurnLeft,"TurnLeft On/off",512, &taillight,1,&vTurnLeftHandle);
-  if (xReturned != pdPASS){
-    Error_Handler();
-  }
-  //Binary Semaphore used for ISR to turn on the headlight
-  taillight.bsemleft = xSemaphoreCreateBinary();
-  if(taillight.bsemleft == NULL){
-    Error_Handler();
-  } 
-  xReturned = xTaskCreate(vTurnRight,"TurnRight On/off",512, &taillight,1,&vTurnRightHandle);
-  if (xReturned != pdPASS){
-    Error_Handler();
-  }
-  //Binary Semaphore used for ISR to turn on the headlight
-  taillight.bsemright = xSemaphoreCreateBinary();
-  if(taillight.bsemright == NULL){
-    Error_Handler();
-  }
-  xReturned = xTaskCreate(vBrake,"Brake On/off",512, &taillight,1,&vBrakeHandle);
-  if (xReturned != pdPASS){
-    Error_Handler();
-  }
-  //Binary Semaphore used for ISR to turn on the headlight
-  taillight.bsembrake = xSemaphoreCreateBinary();
-  if(taillight.bsembrake == NULL){
-    Error_Handler();
-  } 
 }
 
 
 int main(){
   HAL_Init(); //TODO figure out what this does, figure out how to search all 
   SystemClock_Config();
-  GPIO_Setup();
-  RTOS_Setup();
+  GPIO_GlobalSetup();
+  RTOS_GlobalSetup();
   vTaskStartScheduler();
 }
 
-void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName ){
-  Error_Handler();
-}
+
 
 /**
   * @brief This function handles EXTI line[15:10] interrupts.

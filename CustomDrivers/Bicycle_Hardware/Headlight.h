@@ -5,14 +5,6 @@
   *                 This file contains includes for Headlight.c
   * */
 
- /**
-  ******************************************************************************
-  * @file           : Peripheral_initialization.h
-  * @brief          : Header for Peripheral_initialization.c file.
-  *                   This file contains includes for Peripheral_initialization.c.
-  ******************************************************************************
-  * @attention
-  * */
 
 //prevent recursive inclusion
 #ifndef __HEADLIGHT
@@ -26,16 +18,19 @@ extern "C" {
 #include "main.h"
 
 void vTurnonHeadlight(void* pvParameters);
+class Headlight{
+  public:
+    SemaphoreHandle_t bsem;
+    TaskHandle_t vTurnOnHeadlightHandle;
+    Headlight();
+    static void vTurnonHeadlight(void* pvParameters);
+};
 
 #ifdef __cplusplus
 }
 #endif //__cplusplus
 
-class Headlight{
-  public:
-    SemaphoreHandle_t bsem;
-    Headlight();
-};
+
 
 
 #endif //__Peripheral_initialization

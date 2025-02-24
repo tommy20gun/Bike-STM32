@@ -45,10 +45,10 @@ extern "C" {
 #include "stm32_assert.h"
 #endif /* USE_FULL_ASSERT */
 
-#include <Peripheral_initialization.h>
+#include "Peripheral_initialization.h"
 
 //RTOS includes
-#include <task.h>
+#include "task.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "timers.h"
@@ -94,7 +94,7 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName );
+
 void EXTI15_10_IRQHandler(void);
 void EXTI9_5_IRQHandler(void);
 /* USER CODE END EFP */

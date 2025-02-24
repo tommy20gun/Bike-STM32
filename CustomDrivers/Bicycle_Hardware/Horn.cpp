@@ -10,6 +10,16 @@
 #include <Horn.h>
 
 Horn::Horn(){
+  BaseType_t xReturned;
+  xReturned = xTaskCreate(vTurnOnHorn,"horn On/Off",512, this,1,&vTurnOnHornHandle);
+  if(xReturned != pdPASS){
+    Error_Handler();
+  }
+  //Binary Semaphore used for ISR to turn on the headlight
+  this->bsem = xSemaphoreCreateBinary();
+  if(this->bsem == NULL){
+    Error_Handler();
+  }
 
   //Peripheral GPIO
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -42,7 +52,7 @@ Horn::Horn(){
 }
 
 
-void vTurnOnHorn(void* pvParameters){
+void Horn::vTurnOnHorn(void* pvParameters){
   bool pinState;
   Horn *horn = (Horn*) pvParameters;
   while(1){

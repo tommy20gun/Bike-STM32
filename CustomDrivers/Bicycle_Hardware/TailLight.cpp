@@ -13,6 +13,38 @@
 #include <Taillight.h>
 
 Taillight::Taillight(){
+  BaseType_t xReturned;
+  xReturned = xTaskCreate(vTurnLeft,"TurnLeft On/off",512, this,1,&vTurnLeftHandle);
+  if (xReturned != pdPASS){
+    Error_Handler();
+  }
+  //Binary Semaphore used for ISR to turn on the headlight
+  this->bsemleft = xSemaphoreCreateBinary();
+  if(this->bsemleft == NULL){
+    Error_Handler();
+  } 
+
+  xReturned = xTaskCreate(vTurnRight,"TurnRight On/off",512, this,1,&vTurnRightHandle);
+  if (xReturned != pdPASS){
+    Error_Handler();
+  }
+  //Binary Semaphore used for ISR to turn on the headlight
+  this->bsemright = xSemaphoreCreateBinary();
+  if(this->bsemright == NULL){
+    Error_Handler();
+  }
+
+  xReturned = xTaskCreate(vBrake,"Brake On/off",512,this,1,&vBrakeHandle);
+  if (xReturned != pdPASS){
+    Error_Handler();
+  }
+  //Binary Semaphore used for ISR to turn on the headlight
+  this->bsembrake = xSemaphoreCreateBinary();
+  if(this->bsembrake == NULL){
+    Error_Handler();
+  } 
+
+
   //Peripheral GPIO
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
   //init PB8,PB9,PB2
@@ -49,8 +81,8 @@ Taillight::Taillight(){
   LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_12, LL_GPIO_MODE_INPUT);
 }
 
-void vTurnLeft(void* pvParameters){
-  Taillight *taillight = (Taillight*) pvParameters;
+void Taillight::vTurnLeft(void* pvParameters){
+  Taillight* taillight = (Taillight*) pvParameters;
   while(1){
     xSemaphoreTake(taillight->bsemleft,portMAX_DELAY);
     while(xSemaphoreTake(taillight->bsemleft,0)== pdFALSE && LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_8)){
@@ -59,8 +91,8 @@ void vTurnLeft(void* pvParameters){
     }
   }
 }
-void vTurnRight(void* pvParameters){
-  Taillight *taillight = (Taillight*) pvParameters;
+void Taillight::vTurnRight(void* pvParameters){
+  Taillight* taillight = (Taillight*) pvParameters;
   while(1){
     xSemaphoreTake(taillight->bsemright,portMAX_DELAY);
     while(xSemaphoreTake(taillight->bsemright,0)== pdFALSE && LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_9)){
@@ -69,9 +101,9 @@ void vTurnRight(void* pvParameters){
     }
   }
 }
-void vBrake(void* pvParameters){
+void Taillight::vBrake(void* pvParameters){
+  Taillight* taillight = (Taillight*) pvParameters;
   bool pinState;
-  Taillight *taillight = (Taillight*) pvParameters;
   while(1){
     //subtracts semaphore back down to 0, next while loop will block again
     xSemaphoreTake(taillight->bsembrake,portMAX_DELAY);

@@ -61,7 +61,7 @@ void SystemClock_Config(void)
 }
 
 
-void GPIO_Setup(void){
+void GPIO_GlobalSetup(void){
 	//enable GPIO C13 as PP Output baremetal
 	/*RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
 	GPIOC -> MODER |= GPIO_MODER_MODE13_0;
@@ -74,6 +74,7 @@ void GPIO_Setup(void){
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
 
+  //enable EXTI
   int prio = NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 5, 0);
   NVIC_SetPriority(EXTI15_10_IRQn, prio);
   NVIC_EnableIRQ(EXTI15_10_IRQn);
@@ -127,6 +128,9 @@ void Error_Handler(void)
   /* USER CODE END Error_Handler_Debug */
 }
 
+void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName ){
+  Error_Handler();
+}
 /**
   * @brief  Period elapsed callback in non blocking mode
   * @note   This function is called  when TIM1 interrupt took place, inside

@@ -9,6 +9,18 @@
 #include <Headlight.h>
   
 Headlight::Headlight(){
+
+  BaseType_t xReturned;
+  xReturned = xTaskCreate(vTurnonHeadlight,"Headlight On/off",512, this,1,&vTurnOnHeadlightHandle);
+  if (xReturned != pdPASS){
+    Error_Handler();
+  }
+  //Binary Semaphore used for ISR to turn on the headlight
+  this->bsem = xSemaphoreCreateBinary();
+  if(this->bsem == NULL){
+    Error_Handler();
+  }
+
   ErrorStatus success;
   //Peripheral GPIO
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -49,7 +61,7 @@ Headlight::Headlight(){
 
 }
 
-void vTurnonHeadlight(void* pvParameters){
+void Headlight::vTurnonHeadlight(void* pvParameters){
   bool pinState;
   Headlight* headlight = (Headlight*) pvParameters;
   while(1){

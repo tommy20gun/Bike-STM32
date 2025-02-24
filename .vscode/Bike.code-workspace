@@ -12,7 +12,9 @@
 			"cmsis_os.h": "c",
 			"peripheral_initialization.h": "c",
 			"string": "cpp",
-			"stm32f4xx_ll_rcc.h": "c"
+			"stm32f4xx_ll_rcc.h": "c",
+			"task.h": "c",
+			"main.h": "c"
 		}
 	}
 }

@@ -17,20 +17,22 @@ extern "C" {
 #include "FreeRTOS.h"  
 #include "main.h"
 
-
+class Horn{
+  public:
+  SemaphoreHandle_t bsem;
+  TaskHandle_t vTurnOnHornHandle;
+  Horn();
+  static void vTurnOnHorn(void* pvParameters);
+};
 //void hornSetup();
-void vTurnOnHorn(void* pvParameters);
+
 
 #ifdef __cplusplus
 }
 #endif //__cplusplus
 
 
-class Horn{
-  public:
-  SemaphoreHandle_t bsem;
-  Horn();
-};
+
 
 
 
