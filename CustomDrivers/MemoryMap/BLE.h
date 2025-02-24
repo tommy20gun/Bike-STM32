@@ -1,16 +1,10 @@
 /**
   ******************************************************************************
   *
-  * @brief          : Header for BLESend.c
-  *                 This file contains includes for BLESend.c
+  * @brief          : Header for BLE.c
+  *                 This file contains includes for BLE.c
   * */
 
-/**
-  ******************************************************************************
-  * @file           : Headlight.h
-  * @brief          : Header for Headlight.c
-  *                 This file contains includes for Headlight.c
-  * */
 
 
 //prevent recursive inclusion
@@ -24,25 +18,25 @@ extern "C" {
 #include "FreeRTOS.h"  
 #include "main.h"
 
-
-
-#ifdef __cplusplus
-}
-#endif //__cplusplus
-
 class BLE{
   public:
     typedef struct MemoryMap memorymap;
     UART_HandleTypeDef huart2;
 
     BLE();
-    MemoryMap* initBLEMemoryMap(MemoryMap* map);
+    void initUART();
+    void initPeripherials();
+    MemoryMap* initBLEMemoryMap();
     void send05hz(MemoryMap* map);
     void send50hz(MemoryMap* map);
     void sendSpecialCommand(MemoryMap* map);
     MemoryMap* BLERead( MemoryMap* map);
 };
 
+
+#ifdef __cplusplus
+}
+#endif //__cplusplus
 
 
 #endif //__Peripheral_initialization

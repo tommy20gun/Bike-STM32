@@ -21,6 +21,7 @@ void vTurnonHeadlight(void* pvParameters);
 class Headlight{
   public:
     SemaphoreHandle_t bsem;
+    //TODO static
     TaskHandle_t vTurnOnHeadlightHandle;
     Headlight();
     static void vTurnonHeadlight(void* pvParameters);
