@@ -31,17 +31,22 @@ class BLE{
     typedef bool BLEState;
     
     UART_HandleTypeDef huart2;
+    char BLEAddr[14];
+     
 
     BLE();
     
     void initPeripherials();
     void initHC05();
-    BLEState getState();
+    BLEState getConnectionState();
     MemoryMap* initBLEMemoryMap();
     void send05hz(MemoryMap* map);
     void send50hz(MemoryMap* map);
     void sendSpecialCommand(MemoryMap* map);
     MemoryMap* BLERead( MemoryMap* map);
+
+    private:
+    void mode(int mode);
 };
 
 
