@@ -18,14 +18,25 @@ extern "C" {
 #include "FreeRTOS.h"  
 #include "main.h"
 
+#define DATA_MODE 0
+#define COMMAND_MODE 1
+
+#define BLEConnected 1
+#define BLEDisconnected 0
+
 class BLE{
   public:
     typedef struct MemoryMap memorymap;
+    typedef int Mode;
+    typedef bool BLEState;
+    
     UART_HandleTypeDef huart2;
 
     BLE();
-    void initUART();
+    
     void initPeripherials();
+    void initHC05();
+    BLEState getState();
     MemoryMap* initBLEMemoryMap();
     void send05hz(MemoryMap* map);
     void send50hz(MemoryMap* map);

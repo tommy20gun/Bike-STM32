@@ -17,7 +17,7 @@ extern "C" {
 #include "FreeRTOS.h"  
 #include "main.h"
 
-void vTurnonHeadlight(void* pvParameters);
+
 class Headlight{
   public:
     SemaphoreHandle_t bsem;
