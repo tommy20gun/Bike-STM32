@@ -24,26 +24,45 @@ extern "C" {
 #define BLEConnected 1
 #define BLEDisconnected 0
 
-class BLE{
+class Bluetooth{
   public:
-    typedef struct MemoryMap memorymap;
-    typedef int Mode;
-    typedef bool BLEState;
+    typedef struct MemoryMap{
+      bool* headlightON;
+      
+      double* motorTemp;
+      double* current;
+      double* ADCreading72V;
+      double* ADCreading12V;
+      double* BattTemp;
+      struct PackVoltage{
+
+      };
+      double* Odometer;
+
+    }MemoryMap;
+
+    typedef int mode;
+    mode mode;
+    typedef bool BTState;
+    BTState state;
     
     UART_HandleTypeDef huart2;
     char BLEAddr[14];
      
 
-    BLE();
+    Bluetooth();
     
     void initPeripherials();
-    void initHC05();
     BLEState getConnectionState();
-    MemoryMap* initBLEMemoryMap();
-    void send05hz(MemoryMap* map);
-    void send50hz(MemoryMap* map);
-    void sendSpecialCommand(MemoryMap* map);
-    MemoryMap* BLERead( MemoryMap* map);
+    MemoryMap* initBTMemoryMap();
+    MemoryMap* BTRead( MemoryMap* map);
+
+    //FreeRTOS tasks
+    static void send05hz(MemoryMap* map);
+    static void send50hz(MemoryMap* map);
+    static void sendSpecialCommand(MemoryMap* map);
+
+    
 
     private:
     void mode(int mode);

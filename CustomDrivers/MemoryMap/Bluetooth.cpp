@@ -12,16 +12,17 @@
 #include "BLE.h"
 
  
-BLE::BLE(){
+Bluetooth(){
   
   initPeripherials();
   initBLEMemoryMap();
+  
 }
 
 
-void BLE::initPeripherials(){
+void Bluetooth::initPeripherials(){
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 38400;
+  huart2.Init.BaudRate = 9600;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;
@@ -73,7 +74,42 @@ void BLE::initPeripherials(){
 */
 };
 
-void BLE::initHC05(){
+
+
+void Bluetooth::mode(int mode){
+  if (mode){
+    LL_GPIO_SetOutputPin(GPIOA, GPIO_PIN_0);
+  }
+  else{
+    LL_GPIO_ResetOutputPin(GPIOA, GPIO_PIN_0);
+  }
+}
+BLEState Bluetooth::getConnectionState(){
+  return LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_1);
+}
+
+MemoryMap* Bluetooth::initBTMemoryMap(){
+  //memorymap = {
+  //  bool* HeadlightON;
+
+  //}
+};
+MemoryMap* Bluetooth::BTRead( MemoryMap* map){}
+
+
+
+void Bluetooth::send05hz(void* pvParameters){
+  while(1){};
+}
+void Bluetooth::send50hz(void* pvParameters){
+  while(1){};
+}
+void Bluetooth::sendSpecialCommand(MemoryMap* map){
+  while(1){};
+}
+
+/*
+void Bluetooth::setupSlaveToAndroid(){
   // should slow blink when in AT mode, fast blink in connection mode
   
   //enter Command mode
@@ -94,32 +130,5 @@ void BLE::initHC05(){
   //uu - UAP (8 bit Upper Address Portion)
   //ll - LAP (24 bit Lower Address Portion)
   //"+ADDR:11:6:230154" = "11:06:23:01:54"
-
-  
-
-
-
 };
-
-void BLE::mode(int mode){
-  if (mode){
-    LL_GPIO_SetOutputPin(GPIOA, GPIO_PIN_0);
-  }
-  else{
-    LL_GPIO_ResetOutputPin(GPIOA, GPIO_PIN_0);
-  }
-}
-BLEState BLE::getConnectionState(){
-  return LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_1);
-}
-
-MemoryMap* BLE::initBLEMemoryMap(){
-  //memorymap = {
-  //  bool* HeadlightON;
-
-  //}
-};
-void BLE::send05hz(MemoryMap* map){}
-void BLE::send50hz(MemoryMap* map){}
-void BLE::sendSpecialCommand(MemoryMap* map){}
-MemoryMap* BLE::BLERead( MemoryMap* map){}
+*/
