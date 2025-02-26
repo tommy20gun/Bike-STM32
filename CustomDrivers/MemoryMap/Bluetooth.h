@@ -8,8 +8,8 @@
 
 
 //prevent recursive inclusion
-#ifndef __BLESEND
-#define __BLESEND
+#ifndef __BLUETOOTH
+#define __BLUETOOTH
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,9 +41,9 @@ class Bluetooth{
 
     }MemoryMap;
 
-    typedef int mode;
-    mode mode;
-    typedef bool BTState;
+    typedef bool BTMode; 
+    BTMode mode;
+    typedef bool BTState; 
     BTState state;
     
     UART_HandleTypeDef huart2;
@@ -51,21 +51,21 @@ class Bluetooth{
      
 
     Bluetooth();
-    
+    void setupSlaveToAndroid();
     void initPeripherials();
-    BLEState getConnectionState();
-    MemoryMap* initBTMemoryMap();
-    MemoryMap* BTRead( MemoryMap* map);
+    BTState getConnectionState();
+    Bluetooth::MemoryMap* initBTMemoryMap();
+    Bluetooth::MemoryMap* BTRead( MemoryMap* map);
 
     //FreeRTOS tasks
-    static void send05hz(MemoryMap* map);
-    static void send50hz(MemoryMap* map);
-    static void sendSpecialCommand(MemoryMap* map);
+    static void send05hz(void* pvParameters);
+    static void send50hz(void* pvParameters);
+    static void sendSpecialCommand(void* pvParameters);
 
     
 
     private:
-    void mode(int mode);
+    void setmode(int mode);
 };
 
 
