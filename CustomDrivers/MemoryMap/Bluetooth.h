@@ -17,6 +17,8 @@ extern "C" {
 
 #include "FreeRTOS.h"  
 #include "main.h"
+#include "MemoryMap.h"
+#include "stm32f4xx_ll_usart.h"
 
 #define DATA_MODE 0
 #define COMMAND_MODE 1
@@ -26,34 +28,20 @@ extern "C" {
 
 class Bluetooth{
   public:
-    typedef struct MemoryMap{
-      bool* headlightON;
-      
-      double* motorTemp;
-      double* current;
-      double* ADCreading72V;
-      double* ADCreading12V;
-      double* BattTemp;
-      struct PackVoltage{
 
-      };
-      double* Odometer;
-
-    }MemoryMap;
 
     typedef int mode;
     mode mode;
     typedef bool BTState;
     BTState state;
     
-    UART_HandleTypeDef huart2;
     char BLEAddr[14];
      
 
     Bluetooth();
     
     void initPeripherials();
-    BLEState getConnectionState();
+    BTState getConnectionState();
     MemoryMap* initBTMemoryMap();
     MemoryMap* BTRead( MemoryMap* map);
 

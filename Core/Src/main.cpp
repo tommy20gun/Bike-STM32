@@ -13,13 +13,14 @@
 #include <string>
 
 //CPP includes
-#include <Headlight.h>
-#include <Horn.h>
+#include "Headlight.h"
+#include "Horn.h"
 #include "Odometer.h"
 #include "Motion_Detector.h"
 #include "LED.h"
 #include "Lock.h"
 #include "Taillight.h"
+#include "MemoryMap.h"
 
 
 using namespace std;
@@ -39,6 +40,10 @@ void RTOS_GlobalSetup(void){
   //TODO make sure we are not using systick
 }
 
+MemoryMap* MemoryMapSetup(){
+
+
+}
 
 int main(){
   HAL_Init(); //TODO figure out what this does, figure out how to search all 
@@ -87,7 +92,18 @@ void EXTI9_5_IRQHandler(void){
   portYIELD_FROM_ISR(xHigherPriorityTaskWoken); 
 }
 
+/**
+  * @brief This function handles DMA1 stream6 global interrupt.
+  */
+void DMA1_Stream6_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Stream6_IRQn 0 */
 
+  /* USER CODE END DMA1_Stream6_IRQn 0 */
+  /* USER CODE BEGIN DMA1_Stream6_IRQn 1 */
+
+  /* USER CODE END DMA1_Stream6_IRQn 1 */
+}
 
 /*
  void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
