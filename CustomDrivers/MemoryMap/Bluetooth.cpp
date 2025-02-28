@@ -2,7 +2,7 @@
   * @file           : BLESend.c
   * @brief          : Implementation of BLE polling of memory map, interface with HC05, many BLE send commands
   * 
-  * BLEKey/EN - PA0 output
+  * BLEKey/EN - PA0 output. This value must be set on startup to allow ATmode
   * BLEState - PA1 input
   * USART2TX - PA2
   * USART2RX - PA3
@@ -90,6 +90,8 @@ void Bluetooth::initPeripherials(){
 
 
 void Bluetooth::mode(int mode){
+  //todo pull this to low so on statup it will
+  //todo put an oscilloscope on this to check behavior of startup/reset
   if (mode){
     LL_GPIO_SetOutputPin(GPIOA, GPIO_PIN_0);
   }
