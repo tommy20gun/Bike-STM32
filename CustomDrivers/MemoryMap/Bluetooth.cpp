@@ -149,8 +149,7 @@ void Bluetooth::initPeripherials(){
 
 
 void Bluetooth::setmode(int mode){
-  //todo pull this to low so on statup it will
-  //todo put an oscilloscope on this to check behavior of startup/reset
+  // only works on powerup for hc05
   if (mode){
     LL_GPIO_SetOutputPin(GPIOA, GPIO_PIN_0);
   }

@@ -45,7 +45,7 @@ MemoryMap* MemoryMapSetup(){
 }
 
 int main(){
-  //HAL_Init(); //TODO figure out what this does, figure out how to search all 
+  HAL_Init(); //TODO figure out what this does, figure out how to search all 
   SystemClock_Config();
   bluetooth.initPeripherials();
   
