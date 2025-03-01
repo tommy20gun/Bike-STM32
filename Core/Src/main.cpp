@@ -13,15 +13,15 @@
 #include <string>
 
 //CPP includes
-#include "Headlight.h"
-#include "Horn.h"
+#include <Headlight.h>
+#include <Horn.h>
+#include <Bluetooth.h>
 #include "Odometer.h"
 #include "Motion_Detector.h"
 #include "LED.h"
 #include "Lock.h"
 #include "Taillight.h"
 #include "MemoryMap.h"
-
 
 using namespace std;
 
@@ -34,12 +34,12 @@ using namespace std;
 static Horn horn;
 static Headlight headlight;
 static Taillight taillight;
+static Bluetooth bluetooth;
 
 /* create tasks, create object instances. object constructors set up hardware and own the semaphore*/
 void RTOS_GlobalSetup(void){
   //TODO make sure we are not using systick
 }
-
 MemoryMap* MemoryMapSetup(){
 
 
@@ -48,9 +48,12 @@ MemoryMap* MemoryMapSetup(){
 int main(){
   HAL_Init(); //TODO figure out what this does, figure out how to search all 
   SystemClock_Config();
-  GPIO_GlobalSetup();
-  RTOS_GlobalSetup();
-  vTaskStartScheduler();
+  bluetooth.initPeripherials();
+  bluetooth.setupSlaveToAndroid();
+  
+  //GPIO_GlobalSetup();
+  //RTOS_GlobalSetup();
+  //vTaskStartScheduler();
 }
 
 
