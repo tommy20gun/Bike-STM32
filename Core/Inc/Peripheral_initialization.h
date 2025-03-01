@@ -30,7 +30,6 @@ extern "C" {
 
 void SystemClock_Config(void);
 void GPIO_GlobalSetup(void); //enable GPIO
-UART_HandleTypeDef* USART2_Setup(void); //enable USART2
 void Error_Handler(void);
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
 void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName );

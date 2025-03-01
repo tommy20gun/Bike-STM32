@@ -42,14 +42,12 @@ void RTOS_GlobalSetup(void){
 }
 MemoryMap* MemoryMapSetup(){
 
-
 }
 
 int main(){
-  HAL_Init(); //TODO figure out what this does, figure out how to search all 
+  //HAL_Init(); //TODO figure out what this does, figure out how to search all 
   SystemClock_Config();
   bluetooth.initPeripherials();
-  bluetooth.setupSlaveToAndroid();
   
   //GPIO_GlobalSetup();
   //RTOS_GlobalSetup();

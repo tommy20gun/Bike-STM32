@@ -42,8 +42,8 @@ class Bluetooth{
     
     void initPeripherials();
     BTState getConnectionState();
-    Bluetooth::MemoryMap* initBTMemoryMap();
-    Bluetooth::MemoryMap* BTRead( MemoryMap* map);
+    MemoryMap* initBTMemoryMap();
+    MemoryMap* BTRead( MemoryMap* map);
 
     //FreeRTOS tasks
     static void send05hz(void* pvParameters);

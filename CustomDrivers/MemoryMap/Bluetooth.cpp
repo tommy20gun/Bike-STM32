@@ -23,7 +23,7 @@ Bluetooth::Bluetooth(){
   
 }
 
-void Bluetooth::ATModeTesting(){
+/*void Bluetooth::ATModeTesting(){
   // should slow blink when in AT mode, fast blink in connection mode
   
   //enter Command mode
@@ -77,7 +77,7 @@ void Bluetooth::ATModeTesting(){
   while(1){
     HAL_UART_Receive(&huart2,txbuffer, 1, HAL_MAX_DELAY);
   }
-};
+};*/
 
 void Bluetooth::initPeripherials(){
 
@@ -132,7 +132,7 @@ void Bluetooth::initPeripherials(){
   //TODO look at CubeMX again for the setup
   //TODO watch a video on DMA to understand it
   LL_DMA_SetChannelSelection(DMA1, LL_DMA_STREAM_6, LL_DMA_CHANNEL_4);
-  LL_DMA_SetDataTransferDirection(DMA1,LL_DMA_STREAM_6, LL_DMA_DIRECTION_MEMORY_TO);
+  LL_DMA_SetDataTransferDirection(DMA1,LL_DMA_STREAM_6, LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
   LL_DMA_SetStreamPriorityLevel(DMA1,LL_DMA_STREAM_6,LL_DMA_PRIORITY_LOW);
   LL_DMA_SetMode(DMA1, LL_DMA_STREAM_6, LL_DMA_MODE_NORMAL);
   LL_DMA_SetPeriphIncMode(DMA1,LL_DMA_STREAM_6, LL_DMA_PERIPH_NOINCREMENT);
@@ -162,13 +162,14 @@ Bluetooth::BTState Bluetooth::getConnectionState(){
   return LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_1);
 }
 
-Bluetooth::MemoryMap* Bluetooth::initBTMemoryMap(){
+MemoryMap* Bluetooth::initBTMemoryMap(){
   //memorymap = {
   //  bool* HeadlightON;
 
   //}
+
 };
-Bluetooth::MemoryMap* Bluetooth::BTRead( MemoryMap* map){}
+MemoryMap* Bluetooth::BTRead( MemoryMap* map){}
 
 
 

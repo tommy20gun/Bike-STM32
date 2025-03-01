@@ -53,6 +53,7 @@ void SystemClock_Config(void)
 
 	//use timer1 as time base
    /* Update the time base */
+   //TODO can we get rid of HAL for timer1
   if (HAL_InitTick (TICK_INT_PRIORITY) != HAL_OK)
   {
     Error_Handler();

@@ -56,12 +56,25 @@ Middlewares/Third_Party/FreeRTOS/Source/queue.c \
 Middlewares/Third_Party/FreeRTOS/Source/stream_buffer.c \
 Middlewares/Third_Party/FreeRTOS/Source/tasks.c \
 Middlewares/Third_Party/FreeRTOS/Source/timers.c \
-Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c \
 Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c \
 Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_dma.c \
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usart.c
-
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usart.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c \
 
 
 

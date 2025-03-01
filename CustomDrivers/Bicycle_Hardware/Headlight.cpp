@@ -75,7 +75,7 @@ void Headlight::vTurnonHeadlight(void* pvParameters){
     xSemaphoreTake(headlight->bsem,portMAX_DELAY);
     //detects the rising or falling edge of the input pin
     //allows the switch to have on/off function
-    pinState = HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_10);
+    pinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_10);
     if (pinState){
       LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_0);
       //TODO update memory map

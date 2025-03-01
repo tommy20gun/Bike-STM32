@@ -67,13 +67,13 @@ void Horn::vTurnOnHorn(void* pvParameters){
     xSemaphoreTake(horn->bsem,portMAX_DELAY);
     //detects the rising or falling edge of the input pin
     //allows the switch to have on/off function
-    pinState = HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_11);
+    pinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_11);
     if (pinState){
-      HAL_GPIO_WritePin(GPIOB,GPIO_PIN_1,GPIO_PIN_SET);
+      LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_1);
       //TODO update memory map
     }
     else if (!pinState){
-      HAL_GPIO_WritePin(GPIOB,GPIO_PIN_1,GPIO_PIN_RESET);
+      LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_1);
       //TODO update memory map
     }
   }
