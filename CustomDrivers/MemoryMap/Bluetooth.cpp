@@ -19,6 +19,8 @@
 Bluetooth::Bluetooth(){
   
   initPeripherials();
+  initTasks();
+  initBTMemoryMap();
   //initBLEMemoryMap();
   
 }
@@ -81,6 +83,7 @@ Bluetooth::Bluetooth(){
 
 void Bluetooth::initPeripherials(){
 
+
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   //TXPA2 RXPA3 is automatic for AF7
@@ -125,8 +128,12 @@ void Bluetooth::initPeripherials(){
     Error_Handler();
   }
   LL_USART_ConfigAsyncMode(USART2);
+  LL_USART_EnableIT_RXNE(USART2);
   LL_USART_Enable(USART2);
 
+  //enables receive for UART IT
+  NVIC_SetPriority(USART2_IRQn, 5);
+  NVIC_EnableIRQ(USART2_IRQn);
 
   //DMA init
   //TODO look at CubeMX again for the setup
@@ -144,9 +151,18 @@ void Bluetooth::initPeripherials(){
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1);
   NVIC_SetPriority(DMA1_Stream6_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),5, 0));
   NVIC_EnableIRQ(DMA1_Stream6_IRQn);//TODO why do we need an IRQ for DMA?
+  
+  //enables Transfer Complete to trigger the IRQ
+  LL_DMA_EnableIT_TC(DMA1,LL_DMA_STREAM_6);
 };
 
-
+void Bluetooth::initTasks(){
+  BaseType_t xReturned;
+  xReturned = xTaskCreate(sendTest,"sendTest",64, this,1,&sendTestHandle);
+  if(xReturned != pdPASS){
+    Error_Handler();
+  }
+}
 
 void Bluetooth::setmode(int mode){
   // only works on powerup for hc05
@@ -161,14 +177,11 @@ Bluetooth::BTState Bluetooth::getConnectionState(){
   return LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_1);
 }
 
-MemoryMap* Bluetooth::initBTMemoryMap(){
-  //memorymap = {
-  //  bool* HeadlightON;
-
-  //}
-
+void Bluetooth::initBTMemoryMap(){
+  map = {0,0,0,0,0,0,0,0,0,0,0,0,0};
 };
-MemoryMap* Bluetooth::BTRead( MemoryMap* map){}
+
+//Bluetooth::MemoryMap* Bluetooth::BTRead( MemoryMap* map){}
 
 
 
@@ -180,4 +193,27 @@ void Bluetooth::send50hz(void* pvParameters){
 }
 void Bluetooth::sendSpecialCommand(void* pvParameters){
   while(1){};
+}
+void Bluetooth::sendTest(void* pvParameters){
+  //extracts the map out of bluetooth
+  Bluetooth::MemoryMap* map = &((Bluetooth*)pvParameters)->map;
+  LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, (uint32_t) map, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+  while(1){
+    LL_DMA_DisableStream(DMA1,LL_DMA_STREAM_6);
+    LL_DMA_SetDataLength(DMA1,LL_DMA_STREAM_6, sizeof(*map));
+    LL_DMA_EnableStream(DMA1,LL_DMA_STREAM_6);
+    LL_USART_EnableDMAReq_TX(USART2);
+    //transfer every 10 seconds
+    vTaskDelay(10000);
+  };
+}
+
+/**
+  * @brief This function handles DMA1 stream6 global interrupt.
+  */
+void DMA1_Stream6_IRQHandler(void)
+{
+  if(LL_DMA_IsActiveFlag_TC6(DMA1) == 1){
+    LL_DMA_ClearFlag_TC6(DMA1);
+  }
 }
