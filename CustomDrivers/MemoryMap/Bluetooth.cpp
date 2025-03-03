@@ -16,68 +16,11 @@
 #include "Bluetooth.h"
 #include <string.h>
  
-Bluetooth::Bluetooth(){
-  
 
-  //initBLEMemoryMap();
-  
+Bluetooth::Bluetooth(){
+
 }
 
-/*void Bluetooth::ATModeTesting(){
-  // should slow blink when in AT mode, fast blink in connection mode
-  
-  //enter Command mode
-  setmode(COMMAND_MODE);
-  uint8_t rxbuff[30];
-  char* atTest = "AT\r\n";
-  HAL_UART_Transmit(&huart2,(uint8_t*)atTest,strlen(atTest), HAL_MAX_DELAY);
-  HAL_UART_Receive(&huart2,rxbuff, 4, HAL_MAX_DELAY); //OK
-  memset(rxbuff, 0, sizeof rxbuff);
-  char* changename = "AT+NAME=DeezNuts\r\n";
-  HAL_UART_Transmit(&huart2,(uint8_t*)changename,strlen(changename), HAL_MAX_DELAY);
-  HAL_UART_Receive(&huart2,rxbuff, 4, HAL_MAX_DELAY); //OK
-  memset(rxbuff, 0, sizeof rxbuff);
-  char* Role = "AT+ROLE?\r\n";
-  HAL_UART_Transmit(&huart2,(uint8_t*)Role,strlen(Role), HAL_MAX_DELAY);
-  HAL_UART_Receive(&huart2,rxbuff, 9, HAL_MAX_DELAY); //0 is slave
-  memset(rxbuff, 0, sizeof rxbuff);
-  char* addr = "AT+ADDR?\r\n";
-  HAL_UART_Transmit(&huart2,(uint8_t*)addr,strlen(addr), HAL_MAX_DELAY);
-  HAL_UART_Receive(&huart2,rxbuff, 27, HAL_MAX_DELAY);
-  memset(rxbuff, 0, sizeof rxbuff);
-  //nn - NAP (16 bit Non-significant Address Portion)
-  //uu - UAP (8 bit Upper Address Portion)
-  //ll - LAP (24 bit Lower Address Portion)
-  //"+ADDR:11:6:230154" = "11:06:23:01:54"
-  char* baud = "AT+UART?\r\n";
-  HAL_UART_Transmit(&huart2,(uint8_t*)baud,strlen(baud), HAL_MAX_DELAY);
-  HAL_UART_Receive(&huart2,rxbuff, 20, HAL_MAX_DELAY); //+UART:<baud>,<stop>,<parity>\r\nOK\r\n
-  memset(rxbuff, 0, sizeof rxbuff);
-  baud = "AT+UART=9600,0,1\r\n";
-  HAL_UART_Transmit(&huart2,(uint8_t*)baud,strlen(baud), HAL_MAX_DELAY);
-  HAL_UART_Receive(&huart2,rxbuff, 4, HAL_MAX_DELAY); //OK
-  memset(rxbuff, 0, sizeof rxbuff);
-  baud =  "AT+UART?\r\n";
-  HAL_UART_Transmit(&huart2,(uint8_t*)baud,strlen(baud), HAL_MAX_DELAY);
-  HAL_UART_Receive(&huart2,rxbuff, 20, HAL_MAX_DELAY); //+UART:<baud>,<stop>,<parity>\r\nOK\r\n
-  memset(rxbuff, 0, sizeof rxbuff);
-  char* pw = "AT+PSWD?\r\n";
-  HAL_UART_Transmit(&huart2,(uint8_t*)pw,strlen(pw), HAL_MAX_DELAY);
-  HAL_UART_Receive(&huart2,rxbuff, 17, HAL_MAX_DELAY);
-  memset(rxbuff, 0, sizeof rxbuff);
-  pw = "AT+PSWD=\"6969\"\r\n";
-  HAL_UART_Transmit(&huart2,(uint8_t*)pw,strlen(pw), HAL_MAX_DELAY);
-  HAL_UART_Receive(&huart2,rxbuff, 4, HAL_MAX_DELAY);
-  memset(rxbuff, 0, sizeof rxbuff);
-  setmode(DATA_MODE);
-  
-  volatile Bluetooth::BTState state = getConnectionState();
-  uint8_t txbuffer[10];
-
-  while(1){
-    HAL_UART_Receive(&huart2,txbuffer, 1, HAL_MAX_DELAY);
-  }
-};*/
 
 void Bluetooth::initPeripherials(){
   LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART2);
@@ -156,10 +99,24 @@ void Bluetooth::initPeripherials(){
 
 void Bluetooth::initTasks(){
   BaseType_t xReturned;
-  xReturned = xTaskCreate(sendTest,"sendTest",64, this,1,&sendTestHandle);
+  xReturned = xTaskCreate(sendSlow,"sendSlow",64, this,1,&sendSlowHandle);
   if(xReturned != pdPASS){
     Error_Handler();
   }
+  xReturned = xTaskCreate(sendFast,"sendFast",64, this,1,&sendFastHandle);
+  if(xReturned != pdPASS){
+    Error_Handler();
+  }
+  xReturned = xTaskCreate(sendSpecialCommand,"sendSpecialCommand",64, this,1,&sendSpecialCommandHandle);
+  if(xReturned != pdPASS){
+    Error_Handler();
+  }
+  sendSemaphore = xSemaphoreCreateBinary();
+  if (sendSemaphore == NULL){
+    Error_Handler();
+  }
+  //init as give
+  xSemaphoreGive(sendSemaphore);
 }
 
 void Bluetooth::setmode(int mode){
@@ -171,42 +128,53 @@ void Bluetooth::setmode(int mode){
     LL_GPIO_ResetOutputPin(GPIOA, GPIO_PIN_0);
   }
 }
-Bluetooth::BTState Bluetooth::getConnectionState(){
+BTState Bluetooth::getConnectionState(){
   return LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_1);
 }
 
 void Bluetooth::initBTMemoryMap(){
-  map = {0,1,0,0,0,0,0,0,0,0,0,0,0};
-};
-
-//Bluetooth::MemoryMap* Bluetooth::BTRead( MemoryMap* map){}
-
-
-
-void Bluetooth::send05hz(void* pvParameters){
-  while(1){};
+  map = {1,0,0,0,0,0,1,0,0,0,0,0,0};
 }
-void Bluetooth::send50hz(void* pvParameters){
-  while(1){};
+
+//this is static
+void Bluetooth::sendSlow(void* pvParameters){
+  Bluetooth* tooth = (Bluetooth*)pvParameters;
+  MemoryMap* map = &(tooth->map);
+  while(1){
+    xSemaphoreTake(tooth->sendSemaphore,portMAX_DELAY);
+    uartTransmitDMA((uint32_t) map,48); //size is 48, addr: start of struct
+    xSemaphoreGive(tooth->sendSemaphore);
+    vTaskDelay(500);
+  }
+}
+void Bluetooth::sendFast(void* pvParameters){
+  Bluetooth* tooth = (Bluetooth*)pvParameters;
+  MemoryMap* map = &(tooth->map);
+  while(1){
+    xSemaphoreTake(tooth->sendSemaphore,portMAX_DELAY);
+    uartTransmitDMA((uint32_t)&(map->speed),24);//size is 24, addr is +48 after start of struct
+    xSemaphoreGive(tooth->sendSemaphore);
+    vTaskDelay(200); //sending at 5hz
+  }
 }
 void Bluetooth::sendSpecialCommand(void* pvParameters){
-  while(1){};
-}
-void Bluetooth::sendTest(void* pvParameters){
-  //extracts the map out of bluetooth
-  Bluetooth::MemoryMap* map = &((Bluetooth*)pvParameters)->map;
-  LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, (uint32_t) map, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+  //MemoryMap* map = &((Bluetooth*)pvParameters)->map;
   while(1){
-    LL_DMA_DisableStream(DMA1,LL_DMA_STREAM_6);
-    LL_DMA_SetDataLength(DMA1,LL_DMA_STREAM_6, sizeof(*map));
-    LL_DMA_EnableStream(DMA1,LL_DMA_STREAM_6);
-    LL_USART_EnableDMAReq_TX(USART2);
-
-    //transfer every 10 seconds
-    vTaskDelay(1000);
-  };
+    vTaskDelay(200);
+  }
 }
 
+//private functions
+/**
+  * @brief Helper for transmitting data through DMA given size and addr
+  */
+void Bluetooth::uartTransmitDMA(uint32_t srcAddr, uint32_t size){
+  LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, srcAddr, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+  LL_DMA_DisableStream(DMA1,LL_DMA_STREAM_6);
+  LL_DMA_SetDataLength(DMA1,LL_DMA_STREAM_6, size);
+  LL_DMA_EnableStream(DMA1,LL_DMA_STREAM_6);
+  LL_USART_EnableDMAReq_TX(USART2);
+  }
 /**
   * @brief This function handles DMA1 stream6 global interrupt.
   */
@@ -217,3 +185,59 @@ void DMA1_Stream6_IRQHandler(void)
     LL_DMA_ClearFlag_TC6(DMA1);
   }
 }
+
+/*void Bluetooth::ATModeTesting(){
+  // should slow blink when in AT mode, fast blink in connection mode
+  
+  //enter Command mode
+  setmode(COMMAND_MODE);
+  uint8_t rxbuff[30];
+  char* atTest = "AT\r\n";
+  HAL_UART_Transmit(&huart2,(uint8_t*)atTest,strlen(atTest), HAL_MAX_DELAY);
+  HAL_UART_Receive(&huart2,rxbuff, 4, HAL_MAX_DELAY); //OK
+  memset(rxbuff, 0, sizeof rxbuff);
+  char* changename = "AT+NAME=DeezNuts\r\n";
+  HAL_UART_Transmit(&huart2,(uint8_t*)changename,strlen(changename), HAL_MAX_DELAY);
+  HAL_UART_Receive(&huart2,rxbuff, 4, HAL_MAX_DELAY); //OK
+  memset(rxbuff, 0, sizeof rxbuff);
+  char* Role = "AT+ROLE?\r\n";
+  HAL_UART_Transmit(&huart2,(uint8_t*)Role,strlen(Role), HAL_MAX_DELAY);
+  HAL_UART_Receive(&huart2,rxbuff, 9, HAL_MAX_DELAY); //0 is slave
+  memset(rxbuff, 0, sizeof rxbuff);
+  char* addr = "AT+ADDR?\r\n";
+  HAL_UART_Transmit(&huart2,(uint8_t*)addr,strlen(addr), HAL_MAX_DELAY);
+  HAL_UART_Receive(&huart2,rxbuff, 27, HAL_MAX_DELAY);
+  memset(rxbuff, 0, sizeof rxbuff);
+  //nn - NAP (16 bit Non-significant Address Portion)
+  //uu - UAP (8 bit Upper Address Portion)
+  //ll - LAP (24 bit Lower Address Portion)
+  //"+ADDR:11:6:230154" = "11:06:23:01:54"
+  char* baud = "AT+UART?\r\n";
+  HAL_UART_Transmit(&huart2,(uint8_t*)baud,strlen(baud), HAL_MAX_DELAY);
+  HAL_UART_Receive(&huart2,rxbuff, 20, HAL_MAX_DELAY); //+UART:<baud>,<stop>,<parity>\r\nOK\r\n
+  memset(rxbuff, 0, sizeof rxbuff);
+  baud = "AT+UART=9600,0,1\r\n";
+  HAL_UART_Transmit(&huart2,(uint8_t*)baud,strlen(baud), HAL_MAX_DELAY);
+  HAL_UART_Receive(&huart2,rxbuff, 4, HAL_MAX_DELAY); //OK
+  memset(rxbuff, 0, sizeof rxbuff);
+  baud =  "AT+UART?\r\n";
+  HAL_UART_Transmit(&huart2,(uint8_t*)baud,strlen(baud), HAL_MAX_DELAY);
+  HAL_UART_Receive(&huart2,rxbuff, 20, HAL_MAX_DELAY); //+UART:<baud>,<stop>,<parity>\r\nOK\r\n
+  memset(rxbuff, 0, sizeof rxbuff);
+  char* pw = "AT+PSWD?\r\n";
+  HAL_UART_Transmit(&huart2,(uint8_t*)pw,strlen(pw), HAL_MAX_DELAY);
+  HAL_UART_Receive(&huart2,rxbuff, 17, HAL_MAX_DELAY);
+  memset(rxbuff, 0, sizeof rxbuff);
+  pw = "AT+PSWD=\"6969\"\r\n";
+  HAL_UART_Transmit(&huart2,(uint8_t*)pw,strlen(pw), HAL_MAX_DELAY);
+  HAL_UART_Receive(&huart2,rxbuff, 4, HAL_MAX_DELAY);
+  memset(rxbuff, 0, sizeof rxbuff);
+  setmode(DATA_MODE);
+  
+  volatile Bluetooth::BTState state = getConnectionState();
+  uint8_t txbuffer[10];
+
+  while(1){
+    HAL_UART_Receive(&huart2,txbuffer, 1, HAL_MAX_DELAY);
+  }
+};*/

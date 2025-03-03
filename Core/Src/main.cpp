@@ -23,14 +23,7 @@
 #include "Lock.h"
 #include "Taillight.h"
 
-
 using namespace std;
-
-//void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
-
-//task handles
-
-
 
 static Horn horn;
 static Headlight headlight;
@@ -51,17 +44,13 @@ void GlobalSetup(void){
   taillight.initTasks();
 }
 
-
 int main(){
   HAL_Init(); //TODO figure out what this does, figure out how to search all 
   SystemClock_Config();
   GPIO_GlobalSetup();
   GlobalSetup();
-  //bluetooth.sendTest((void*) &bluetooth); 
   vTaskStartScheduler();
 }
-
-
 
 /**
   * @brief This function handles EXTI line[15:10] interrupts.
@@ -101,53 +90,6 @@ void EXTI9_5_IRQHandler(void){
   portYIELD_FROM_ISR(xHigherPriorityTaskWoken); 
 }
 
-
-
 void USART2_IRQHandler(void){
 
 };
-/*
- void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
-  //wakes up H
-  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    if (GPIO_Pin == GPIO_PIN_10){
-      //headlight TODO make correct semaphore
-      xSemaphoreGiveFromISR(headlight.bsem, &xHigherPriorityTaskWoken);
-    }
-    else if (GPIO_Pin == GPIO_PIN_11){
-      //horn TODO make correct semaphore
-      xSemaphoreGiveFromISR(horn.bsem, &xHigherPriorityTaskWoken);
-    }
-    //Calls the next task Immediately instead of next Tick
-    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-}
-*/
-//static TaskHandle_t job2Handle;
-/*void UART_task(void const* args){
-  //const uint8_t buffer[] = "deez nuts";
-  //UART_HandleTypeDef* huartaddr = USART2_Setup();// will this work if static is on the other file?
-  while(1){
-    osDelay(1250);
-    LL_GPIO_TogglePin(GPIOC,LL_GPIO_PIN_13);
-
-
-    //Uart does not work without Bluetooth LOL
-    //HAL_UART_Transmit(huartaddr,buffer, sizeof(buffer), 1000);
-  }
-}
-*/
-
-/*
-BareMetal Scratch work
-void delay (volatile uint32_t clockticks){
-  while (clockticks--);
-}
-
-void on(){
-  GPIOC -> BSRR = (1U << 13);
-
-}
-void off(){
-  GPIOC -> BSRR = ((1U << 13) << 16);
-
-}*/
