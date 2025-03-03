@@ -17,8 +17,7 @@ TaskHandle_t Taillight::vTurnRightHandle = nullptr;
 TaskHandle_t Taillight::vBrakeHandle = nullptr;
 
 Taillight::Taillight(){
-  initTasks();
-  initPeripherals();
+
 }
 
 void Taillight:: initTasks(){

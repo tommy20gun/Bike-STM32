@@ -23,10 +23,10 @@ class Horn{
   static TaskHandle_t vTurnOnHornHandle;
   Horn();
   static void vTurnOnHorn(void* pvParameters);
-  
-  private:
   void initTasks();
   void initPeripherals();
+  private:
+
 };
 //void hornSetup();
 

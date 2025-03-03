@@ -24,10 +24,10 @@ class Headlight{
     static TaskHandle_t vTurnOnHeadlightHandle;
     Headlight();
     static void vTurnonHeadlight(void* pvParameters);
-
-    private:
     void initTasks();
     void initPeripherals();
+    private:
+
 };
 
 #ifdef __cplusplus

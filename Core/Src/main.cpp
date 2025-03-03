@@ -38,8 +38,17 @@ static Taillight taillight;
 static Bluetooth bluetooth;
 
 /* create tasks, create object instances. object constructors set up hardware and own the semaphore*/
-void RTOS_GlobalSetup(void){
+void GlobalSetup(void){
   //TODO make sure we are not using systick
+  bluetooth.initPeripherials();
+  bluetooth.initTasks();
+  bluetooth.initBTMemoryMap();
+  horn.initPeripherals();
+  horn.initTasks();
+  headlight.initPeripherals();
+  headlight.initTasks();
+  taillight.initPeripherals();
+  taillight.initTasks();
 }
 
 
@@ -47,7 +56,8 @@ int main(){
   HAL_Init(); //TODO figure out what this does, figure out how to search all 
   SystemClock_Config();
   GPIO_GlobalSetup();
-  RTOS_GlobalSetup();
+  GlobalSetup();
+  //bluetooth.sendTest((void*) &bluetooth); 
   vTaskStartScheduler();
 }
 
@@ -58,6 +68,7 @@ int main(){
   */
 void EXTI15_10_IRQHandler(void){
   //wakes up H
+  //TODO All buttons need to be debounced with timer instead of GPIO exti
   BaseType_t xHigherPriorityTaskWoken = pdFALSE;
   if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_10) != RESET){
     LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_10);
@@ -94,7 +105,7 @@ void EXTI9_5_IRQHandler(void){
 
 void USART2_IRQHandler(void){
 
-}
+};
 /*
  void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
   //wakes up H

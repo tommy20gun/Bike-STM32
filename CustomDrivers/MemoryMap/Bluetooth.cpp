@@ -18,9 +18,7 @@
  
 Bluetooth::Bluetooth(){
   
-  initPeripherials();
-  initTasks();
-  initBTMemoryMap();
+
   //initBLEMemoryMap();
   
 }
@@ -82,7 +80,8 @@ Bluetooth::Bluetooth(){
 };*/
 
 void Bluetooth::initPeripherials(){
-
+  LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART2);
+  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1);
 
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
 
@@ -91,8 +90,8 @@ void Bluetooth::initPeripherials(){
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_VERY_HIGH;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
-  GPIO_InitStruct.Alternate = LL_GPIO_AF_7;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_UP; 
+  GPIO_InitStruct.Alternate = LL_GPIO_AF_7;
   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 //todo make sure there is a pullup on RX for BLE module. Does this work?
 
@@ -113,8 +112,31 @@ void Bluetooth::initPeripherials(){
   //Ensure pin is reset for data mode on default
   LL_GPIO_ResetOutputPin(GPIOA, GPIO_PIN_0);
 
-  LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART2);
+  //DMA init
+  //TODO look at CubeMX again for the setup
+  //TODO watch a video on DMA to understand it
 
+  LL_DMA_SetChannelSelection(DMA1, LL_DMA_STREAM_6, LL_DMA_CHANNEL_4);
+  LL_DMA_SetDataTransferDirection(DMA1,LL_DMA_STREAM_6, LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+  LL_DMA_SetStreamPriorityLevel(DMA1,LL_DMA_STREAM_6,LL_DMA_PRIORITY_LOW);
+  LL_DMA_SetMode(DMA1, LL_DMA_STREAM_6, LL_DMA_MODE_NORMAL);
+  LL_DMA_SetPeriphIncMode(DMA1,LL_DMA_STREAM_6, LL_DMA_PERIPH_NOINCREMENT);
+  LL_DMA_SetMemoryIncMode(DMA1,LL_DMA_STREAM_6, LL_DMA_MEMORY_INCREMENT);
+  LL_DMA_SetPeriphSize(DMA1,LL_DMA_STREAM_6, LL_DMA_PDATAALIGN_BYTE);
+  LL_DMA_SetMemorySize(DMA1, LL_DMA_STREAM_6, LL_DMA_MDATAALIGN_BYTE);
+  LL_DMA_DisableFifoMode(DMA1, LL_DMA_STREAM_6); //TODO what is this?
+
+  NVIC_SetPriority(DMA1_Stream6_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),5, 0));
+  NVIC_EnableIRQ(DMA1_Stream6_IRQn);//TODO why do we need an IRQ for DMA?
+  
+  //enables receive for UART IT
+  NVIC_SetPriority(USART2_IRQn, 5);
+  NVIC_EnableIRQ(USART2_IRQn);
+
+  //enables Transfer Complete to trigger the IRQ
+  LL_DMA_EnableIT_TC(DMA1,LL_DMA_STREAM_6);
+
+ //UART init 
   LL_USART_InitTypeDef USART_InitStruct = {0};
 
   USART_InitStruct.BaudRate = 9600;
@@ -130,30 +152,6 @@ void Bluetooth::initPeripherials(){
   LL_USART_ConfigAsyncMode(USART2);
   LL_USART_EnableIT_RXNE(USART2);
   LL_USART_Enable(USART2);
-
-  //enables receive for UART IT
-  NVIC_SetPriority(USART2_IRQn, 5);
-  NVIC_EnableIRQ(USART2_IRQn);
-
-  //DMA init
-  //TODO look at CubeMX again for the setup
-  //TODO watch a video on DMA to understand it
-  LL_DMA_SetChannelSelection(DMA1, LL_DMA_STREAM_6, LL_DMA_CHANNEL_4);
-  LL_DMA_SetDataTransferDirection(DMA1,LL_DMA_STREAM_6, LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
-  LL_DMA_SetStreamPriorityLevel(DMA1,LL_DMA_STREAM_6,LL_DMA_PRIORITY_LOW);
-  LL_DMA_SetMode(DMA1, LL_DMA_STREAM_6, LL_DMA_MODE_NORMAL);
-  LL_DMA_SetPeriphIncMode(DMA1,LL_DMA_STREAM_6, LL_DMA_PERIPH_NOINCREMENT);
-  LL_DMA_SetMemoryIncMode(DMA1,LL_DMA_STREAM_6, LL_DMA_MEMORY_INCREMENT);
-  LL_DMA_SetPeriphSize(DMA1,LL_DMA_STREAM_6, LL_DMA_PDATAALIGN_BYTE);
-  LL_DMA_SetMemorySize(DMA1, LL_DMA_STREAM_6, LL_DMA_MDATAALIGN_BYTE);
-  LL_DMA_DisableFifoMode(DMA1, LL_DMA_STREAM_6); //TODO what is this?
-
-  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1);
-  NVIC_SetPriority(DMA1_Stream6_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),5, 0));
-  NVIC_EnableIRQ(DMA1_Stream6_IRQn);//TODO why do we need an IRQ for DMA?
-  
-  //enables Transfer Complete to trigger the IRQ
-  LL_DMA_EnableIT_TC(DMA1,LL_DMA_STREAM_6);
 };
 
 void Bluetooth::initTasks(){
@@ -178,7 +176,7 @@ Bluetooth::BTState Bluetooth::getConnectionState(){
 }
 
 void Bluetooth::initBTMemoryMap(){
-  map = {0,0,0,0,0,0,0,0,0,0,0,0,0};
+  map = {0,1,0,0,0,0,0,0,0,0,0,0,0};
 };
 
 //Bluetooth::MemoryMap* Bluetooth::BTRead( MemoryMap* map){}
@@ -203,8 +201,9 @@ void Bluetooth::sendTest(void* pvParameters){
     LL_DMA_SetDataLength(DMA1,LL_DMA_STREAM_6, sizeof(*map));
     LL_DMA_EnableStream(DMA1,LL_DMA_STREAM_6);
     LL_USART_EnableDMAReq_TX(USART2);
+
     //transfer every 10 seconds
-    vTaskDelay(10000);
+    vTaskDelay(1000);
   };
 }
 
@@ -213,6 +212,7 @@ void Bluetooth::sendTest(void* pvParameters){
   */
 void DMA1_Stream6_IRQHandler(void)
 {
+  //you cannot breakpoint this lol
   if(LL_DMA_IsActiveFlag_TC6(DMA1) == 1){
     LL_DMA_ClearFlag_TC6(DMA1);
   }

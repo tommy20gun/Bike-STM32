@@ -14,7 +14,8 @@
 			"string": "cpp",
 			"stm32f4xx_ll_rcc.h": "c",
 			"task.h": "c",
-			"main.h": "c"
+			"main.h": "c",
+			"functional": "cpp"
 		}
 	}
 }

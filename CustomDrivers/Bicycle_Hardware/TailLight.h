@@ -27,10 +27,10 @@ class Taillight{
   static void vTurnLeft(void* pvParameters);
   static void vTurnRight(void* pvParameters);
   static void vBrake(void* pvParameters);
-
-  private:
   void initTasks();
   void initPeripherals();
+  private:
+
 };
 
 

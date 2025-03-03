@@ -10,8 +10,7 @@
 TaskHandle_t Headlight::vTurnOnHeadlightHandle = nullptr;
 
 Headlight::Headlight(){
-  initTasks();
-  initPeripherals();
+
 }
 
 void Headlight::initTasks(){

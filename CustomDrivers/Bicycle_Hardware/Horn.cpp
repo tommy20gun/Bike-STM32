@@ -11,8 +11,7 @@
 TaskHandle_t Horn::vTurnOnHornHandle = nullptr;
 
 Horn::Horn(){
-  initTasks();
-  initPeripherals();
+
 }
 
 void Horn::initTasks(){

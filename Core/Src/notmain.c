@@ -241,6 +241,10 @@ static void MX_USART2_UART_Init(void)
 
   LL_DMA_DisableFifoMode(DMA1, LL_DMA_STREAM_6);
 
+  /* USART2 interrupt Init */
+  NVIC_SetPriority(USART2_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),5, 0));
+  NVIC_EnableIRQ(USART2_IRQn);
+
   /* USER CODE BEGIN USART2_Init 1 */
 
   /* USER CODE END USART2_Init 1 */
