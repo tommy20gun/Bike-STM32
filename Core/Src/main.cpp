@@ -31,6 +31,7 @@ static Horn horn;
 static Headlight headlight;
 static Taillight taillight;
 static Bluetooth bluetooth;
+QueueHandle_t messenger;
 
 /* create tasks, create object instances. object constructors set up hardware and own the semaphore*/
 void GlobalSetup(void){
@@ -46,7 +47,9 @@ void GlobalSetup(void){
   taillight.initTasks();
 
   //create global queue
-  qhandle = xQueueCreate(13,sizeof(double));
+  messenger = xQueueCreate(3,sizeof(double));
+  bluetooth.messenger = messenger;
+  headlight.messenger = messenger;
 }
 
 int main(){

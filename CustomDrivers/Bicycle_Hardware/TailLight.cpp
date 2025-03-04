@@ -100,7 +100,7 @@ void Taillight::vTurnLeft(void* pvParameters){
     while(xSemaphoreTake(taillight->bsemleft,0)== pdFALSE && LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_8)){
     LL_GPIO_TogglePin(GPIOB,GPIO_PIN_8);
     outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_8);
-    xQueueSendToBack(qhandle, &outPinState , 0);
+    //xQueueSendToBack(qhandle, &outPinState , 0);
     vTaskDelay(1000);
     }
   }
@@ -113,7 +113,7 @@ void Taillight::vTurnRight(void* pvParameters){
     while(xSemaphoreTake(taillight->bsemright,0)== pdFALSE && LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_9)){
       LL_GPIO_TogglePin(GPIOB,GPIO_PIN_9);
       outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_9);
-      xQueueSendToBack(qhandle, &outPinState , 0);
+      //xQueueSendToBack(qhandle, &outPinState , 0);
       vTaskDelay(1000);
     }
   }
@@ -131,13 +131,13 @@ void Taillight::vBrake(void* pvParameters){
     if (inPinState){
       LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_2);
       outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_2);
-      xQueueSendToBack(qhandle, &outPinState , 0);
+      //xQueueSendToBack(qhandle, &outPinState , 0);
       //TODO update memory map
     }
     else if (!inPinState){
       LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_2);
             outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_2);
-      xQueueSendToBack(qhandle, &outPinState , 0);
+      //xQueueSendToBack(qhandle, &outPinState , 0);
       //TODO update memory map
     }
   }

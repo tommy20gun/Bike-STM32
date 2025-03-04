@@ -71,13 +71,13 @@ void Horn::vTurnOnHorn(void* pvParameters){
     if (inPinState){
       LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_1);
       outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_1);
-      xQueueSendToBack(qhandle, &outPinState , 0);
+      //xQueueSendToBack(qhandle, &outPinState , 0);
       //TODO update memory map
     }
     else if (!inPinState){
       LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_1);
       outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_1);
-      xQueueSendToBack(qhandle, &outPinState , 0);
+      //xQueueSendToBack(qhandle, &outPinState , 0);
       //TODO update memory map
     }
   }

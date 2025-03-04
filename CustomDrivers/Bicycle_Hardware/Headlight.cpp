@@ -80,13 +80,13 @@ void Headlight::vTurnonHeadlight(void* pvParameters){
     if (pinState){
       LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_0);
       outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
-      xQueueSendToBack(qhandle, &outPinState , 0);
+      xQueueSendToBack(headlight->messenger, &outPinState , 0);
       //TODO update memory map
     }
     else if (!pinState){
       LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_0);
       outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
-      xQueueSendToBack(qhandle, &outPinState , 0);
+      xQueueSendToBack(headlight->messenger, &outPinState , 0);
       //TODO update memory map
     }
   } 

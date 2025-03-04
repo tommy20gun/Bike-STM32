@@ -34,7 +34,7 @@ class Taillight{
 
 };
 
-extern QueueHandle_t qhandle; 
+
 
 #ifdef __cplusplus
 }

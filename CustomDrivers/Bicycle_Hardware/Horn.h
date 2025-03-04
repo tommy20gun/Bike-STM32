@@ -29,8 +29,7 @@ class Horn{
   private:
 
 };
-//void hornSetup();
-extern QueueHandle_t qhandle; 
+
 
 #ifdef __cplusplus
 }

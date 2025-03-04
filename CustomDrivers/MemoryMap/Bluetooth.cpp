@@ -133,15 +133,19 @@ BTState Bluetooth::getConnectionState(){
 }
 
 void Bluetooth::initBTMemoryMap(){
-  map = {1,0,0,0,0,0,1,0,0,0,0,0,0};
+  map = {0,0,0,0,0,0,1,0,0,0,0,0,0};
 }
 
 //this is static
 void Bluetooth::sendSlow(void* pvParameters){
   Bluetooth* tooth = (Bluetooth*)pvParameters;
   MemoryMap* map = &(tooth->map);
+  double buffer;
   while(1){
     xSemaphoreTake(tooth->sendSemaphore,portMAX_DELAY);
+    xQueueReceive(tooth->messenger, (void*) &buffer, 0);
+    map->headlightON = buffer;
+    //this should send 1 when light is on
     uartTransmitDMA((uint32_t) map,48); //size is 48, addr: start of struct
     xSemaphoreGive(tooth->sendSemaphore);
     vTaskDelay(500);

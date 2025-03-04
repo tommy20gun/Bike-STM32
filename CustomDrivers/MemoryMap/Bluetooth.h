@@ -58,6 +58,7 @@ class Bluetooth{
     TaskHandle_t sendSlowHandle;
     TaskHandle_t sendFastHandle;
     TaskHandle_t sendSpecialCommandHandle;
+    QueueHandle_t messenger;
 
     SemaphoreHandle_t sendSemaphore;
     BTMode mode;

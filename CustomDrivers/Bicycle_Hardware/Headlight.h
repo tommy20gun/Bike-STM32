@@ -22,6 +22,7 @@ extern "C" {
 class Headlight{
   public:
     SemaphoreHandle_t bsem;
+    QueueHandle_t messenger;
     static TaskHandle_t vTurnOnHeadlightHandle;
     Headlight();
     static void vTurnonHeadlight(void* pvParameters);
@@ -31,7 +32,6 @@ class Headlight{
 
 };
 
-extern QueueHandle_t qhandle; 
 
 #ifdef __cplusplus
 }
