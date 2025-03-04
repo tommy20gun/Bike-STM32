@@ -16,6 +16,7 @@ extern "C" {
 #include "FreeRTOS.h" 
 #include "main.h"
 #include "MemoryMap.h"
+
 class Taillight{
   public:
   SemaphoreHandle_t bsemleft;
@@ -24,6 +25,8 @@ class Taillight{
   static TaskHandle_t vTurnLeftHandle;
   static TaskHandle_t vTurnRightHandle;
   static TaskHandle_t vBrakeHandle;
+  QueueHandle_t messenger;
+
   Taillight();
   static void vTurnLeft(void* pvParameters);
   static void vTurnRight(void* pvParameters);

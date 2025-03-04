@@ -22,6 +22,7 @@ class Horn{
   public:
   SemaphoreHandle_t bsem;
   static TaskHandle_t vTurnOnHornHandle;
+  QueueHandle_t messenger;
   Horn();
   static void vTurnOnHorn(void* pvParameters);
   void initTasks();

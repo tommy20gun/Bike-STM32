@@ -47,7 +47,7 @@ void GlobalSetup(void){
   taillight.initTasks();
 
   //create global queue
-  messenger = xQueueCreate(3,sizeof(double));
+  messenger = xQueueCreate(13,sizeof(struct taggedBuffer));
   bluetooth.messenger = messenger;
   headlight.messenger = messenger;
 

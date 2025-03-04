@@ -59,9 +59,10 @@ void Horn::initPeripherals(){
 }
 
 void Horn::vTurnOnHorn(void* pvParameters){
-  bool inPinState;
-  bool outPinState;
   Horn *horn = (Horn*) pvParameters;
+  bool inPinState;
+  struct taggedBuffer buff;
+  buff.tag = hornON;
   while(1){
     //subtracts semaphore back down to 0, next while loop will block again
     xSemaphoreTake(horn->bsem,portMAX_DELAY);
@@ -70,15 +71,13 @@ void Horn::vTurnOnHorn(void* pvParameters){
     inPinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_11);
     if (inPinState){
       LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_1);
-      outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_1);
-      //xQueueSendToBack(qhandle, &outPinState , 0);
-      //TODO update memory map
+      buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_1);
+      xQueueSendToBack(horn->messenger, &buff , 0);
     }
     else if (!inPinState){
       LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_1);
-      outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_1);
-      //xQueueSendToBack(qhandle, &outPinState , 0);
-      //TODO update memory map
+      buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_1);
+      xQueueSendToBack(horn->messenger, &buff , 0);
     }
   }
 }

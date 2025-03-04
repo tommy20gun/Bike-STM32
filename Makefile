@@ -84,8 +84,8 @@ Core/Src/main.cpp \
 CustomDrivers/Bicycle_Hardware/Horn.cpp \
 CustomDrivers/Bicycle_Hardware/Headlight.cpp \
 CustomDrivers/Bicycle_Hardware/Taillight.cpp \
-CustomDrivers/MemoryMap/Bluetooth.cpp \
-CustomDrivers/MemoryMap/MemoryMap.cpp\
+CustomDrivers/Communication/Bluetooth.cpp \
+CustomDrivers/Communication/MemoryMap.cpp\
 # ASM sources
 ASM_SOURCES = 
 
@@ -165,7 +165,7 @@ C_INCLUDES =  \
 -I-DINSTRUCTION_CACHE_ENABLE=1 \
 -I-DDATA_CACHE_ENABLE=1 \
 -ICustomDrivers/Bicycle_hardware \
--ICustomDrivers/MemoryMap \
+-ICustomDrivers/Communication \
 -IDrivers/STM32F4xx_HAL_Driver/Inc \
 -IMiddlewares/Third_Party/FreeRTOS/Source/include \
 -IMiddlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS \

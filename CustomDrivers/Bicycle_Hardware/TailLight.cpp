@@ -94,26 +94,28 @@ void Taillight::initPeripherals(){
 
 void Taillight::vTurnLeft(void* pvParameters){
   Taillight* taillight = (Taillight*) pvParameters;
-  bool outPinState;
+  struct taggedBuffer buff;
+  buff.tag = turningLeft;
   while(1){
     xSemaphoreTake(taillight->bsemleft,portMAX_DELAY);
     while(xSemaphoreTake(taillight->bsemleft,0)== pdFALSE && LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_8)){
     LL_GPIO_TogglePin(GPIOB,GPIO_PIN_8);
-    outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_8);
-    //xQueueSendToBack(qhandle, &outPinState , 0);
+    buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_8);
+    xQueueSendToBack(taillight->messenger,  &buff , 0);
     vTaskDelay(1000);
     }
   }
 }
 void Taillight::vTurnRight(void* pvParameters){
   Taillight* taillight = (Taillight*) pvParameters;
-  bool outPinState;
+  struct taggedBuffer buff;
+  buff.tag = turningRight;
   while(1){
     xSemaphoreTake(taillight->bsemright,portMAX_DELAY);
     while(xSemaphoreTake(taillight->bsemright,0)== pdFALSE && LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_9)){
       LL_GPIO_TogglePin(GPIOB,GPIO_PIN_9);
-      outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_9);
-      //xQueueSendToBack(qhandle, &outPinState , 0);
+      buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_9);
+      xQueueSendToBack(taillight->messenger,  &buff , 0);
       vTaskDelay(1000);
     }
   }
@@ -121,7 +123,8 @@ void Taillight::vTurnRight(void* pvParameters){
 void Taillight::vBrake(void* pvParameters){
   Taillight* taillight = (Taillight*) pvParameters;
   bool inPinState;
-  bool outPinState;
+  struct taggedBuffer buff;
+  buff.tag = brakeON;
   while(1){
     //subtracts semaphore back down to 0, next while loop will block again
     xSemaphoreTake(taillight->bsembrake,portMAX_DELAY);
@@ -130,15 +133,13 @@ void Taillight::vBrake(void* pvParameters){
     inPinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_12);
     if (inPinState){
       LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_2);
-      outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_2);
-      //xQueueSendToBack(qhandle, &outPinState , 0);
-      //TODO update memory map
+      buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_2);
+      xQueueSendToBack(taillight->messenger,  &buff , 0);
     }
     else if (!inPinState){
       LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_2);
-            outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_2);
-      //xQueueSendToBack(qhandle, &outPinState , 0);
-      //TODO update memory map
+      buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_2);
+      xQueueSendToBack(taillight->messenger,  &buff , 0);
     }
   }
 }
