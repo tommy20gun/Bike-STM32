@@ -18,6 +18,7 @@ extern "C" {
 #include "FreeRTOS.h"  
 #include "stm32f4xx_ll_usart.h"
 #include "main.h"
+#include "MemoryMap.h"
 //#include "MemoryMap.h"
 
 #define DATA_MODE 0
@@ -25,42 +26,20 @@ extern "C" {
 
 #define BLEConnected 1
 #define BLEDisconnected 0
-typedef struct MemoryMap{
-  //slow data
-  bool headlightON;
-  double motorTemp;
-  double ADCreading72V;
-  double ADCreading12V;
-  double battTemp;
-  double Odometer;
-  //fast data
-  double speed;
-  bool hornON;
-  bool brakeON;
-  bool turningLeft;
-  bool turningRight;
-  int RPM;
-  double throttleV;
 
-  //special command
-  /*
-  state_t* locked;
-  state_t* unlocked;
-  bool* BMSMOS_On;
-  */
-}MemoryMap;
+
 typedef bool BTState; 
 typedef bool BTMode; 
+
 class Bluetooth{
   public:
-    MemoryMap map;
-
     TaskHandle_t sendSlowHandle;
     TaskHandle_t sendFastHandle;
     TaskHandle_t sendSpecialCommandHandle;
     QueueHandle_t messenger;
-
     SemaphoreHandle_t sendSemaphore;
+
+    MemoryMap map;
     BTMode mode;
     BTState state;
     Bluetooth();
@@ -81,6 +60,7 @@ class Bluetooth{
     private:
     void setmode(int mode);
     void ATModeTesting();
+    static MemoryMap* receiveTaggedData(taggedBuffer* buff, MemoryMap* map);
     static void uartTransmitDMA(uint32_t srcAddr, uint32_t size);
 };
 

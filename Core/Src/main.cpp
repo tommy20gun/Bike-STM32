@@ -50,6 +50,7 @@ void GlobalSetup(void){
   messenger = xQueueCreate(3,sizeof(double));
   bluetooth.messenger = messenger;
   headlight.messenger = messenger;
+
 }
 
 int main(){

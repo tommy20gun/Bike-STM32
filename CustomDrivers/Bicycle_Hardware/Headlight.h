@@ -23,6 +23,8 @@ class Headlight{
   public:
     SemaphoreHandle_t bsem;
     QueueHandle_t messenger;
+    //tagged buffer: HeadlightON
+
     static TaskHandle_t vTurnOnHeadlightHandle;
     Headlight();
     static void vTurnonHeadlight(void* pvParameters);

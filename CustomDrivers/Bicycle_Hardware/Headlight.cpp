@@ -68,7 +68,8 @@ void Headlight::initPeripherals(){
 
 void Headlight::vTurnonHeadlight(void* pvParameters){
   bool pinState;
-  bool outPinState;
+  struct taggedBuffer buff;
+  buff.tag = headlightON;
   Headlight* headlight = (Headlight*) pvParameters;
   while(1){
     //subtracts semaphore back down to 0, next while loop will block again
@@ -79,14 +80,14 @@ void Headlight::vTurnonHeadlight(void* pvParameters){
     
     if (pinState){
       LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_0);
-      outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
-      xQueueSendToBack(headlight->messenger, &outPinState , 0);
+      buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
+      xQueueSendToBack(headlight->messenger, &buff , 0);
       //TODO update memory map
     }
     else if (!pinState){
       LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_0);
-      outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
-      xQueueSendToBack(headlight->messenger, &outPinState , 0);
+      buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
+      xQueueSendToBack(headlight->messenger, &buff , 0);
       //TODO update memory map
     }
   } 

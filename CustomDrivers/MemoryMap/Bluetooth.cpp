@@ -139,14 +139,14 @@ void Bluetooth::initBTMemoryMap(){
 //this is static
 void Bluetooth::sendSlow(void* pvParameters){
   Bluetooth* tooth = (Bluetooth*)pvParameters;
-  MemoryMap* map = &(tooth->map);
-  double buffer;
+  MemoryMap* mapcopy = &(tooth->map);
+  struct taggedBuffer buff;
   while(1){
     xSemaphoreTake(tooth->sendSemaphore,portMAX_DELAY);
-    xQueueReceive(tooth->messenger, (void*) &buffer, 0);
-    map->headlightON = buffer;
+    xQueueReceive(tooth->messenger, (void*) &buff, 0);
+    mapcopy = receiveTaggedData(&buff,mapcopy);
     //this should send 1 when light is on
-    uartTransmitDMA((uint32_t) map,48); //size is 48, addr: start of struct
+    uartTransmitDMA((uint32_t) mapcopy,48); //size is 48, addr: start of struct
     xSemaphoreGive(tooth->sendSemaphore);
     vTaskDelay(500);
   }
@@ -179,6 +179,51 @@ void Bluetooth::uartTransmitDMA(uint32_t srcAddr, uint32_t size){
   LL_DMA_EnableStream(DMA1,LL_DMA_STREAM_6);
   LL_USART_EnableDMAReq_TX(USART2);
   }
+MemoryMap* Bluetooth::receiveTaggedData(taggedBuffer* buff, MemoryMap* map){
+  switch (buff->tag)
+  {
+  case 0:
+    map->headlightON = buff->data;
+    break;
+  case 1:
+    map->motorTemp = buff->data;
+    break;
+  case 2:
+    map->ADCreading72V = buff->data;
+    break;
+  case 3:
+    map->ADCreading12V = buff->data;
+    break;
+  case 4:
+    map->battTemp = buff->data;
+    break;
+  case 5:
+    map->Odometer = buff->data;
+    break;
+  case 6:
+    map->speed = buff->data;
+    break;
+  case 7:
+    map->hornON = buff->data;
+    break;
+  case 8:
+    map->brakeON = buff->data;
+    break;
+  case 9:
+    map->turningLeft = buff->data;
+    break;
+  case 10:
+    map->turningRight = buff->data;
+    break;
+  case 11:
+    map->RPM = buff->data;
+    break;
+  case 12:
+    map->throttleV = buff->data;
+    break;
+  }
+  return map;
+}
 /**
   * @brief This function handles DMA1 stream6 global interrupt.
   */
