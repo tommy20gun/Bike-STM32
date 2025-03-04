@@ -68,6 +68,7 @@ void Headlight::initPeripherals(){
 
 void Headlight::vTurnonHeadlight(void* pvParameters){
   bool pinState;
+  bool outPinState;
   Headlight* headlight = (Headlight*) pvParameters;
   while(1){
     //subtracts semaphore back down to 0, next while loop will block again
@@ -75,12 +76,17 @@ void Headlight::vTurnonHeadlight(void* pvParameters){
     //detects the rising or falling edge of the input pin
     //allows the switch to have on/off function
     pinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_10);
+    
     if (pinState){
       LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_0);
+      outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
+      xQueueSendToBack(qhandle, &outPinState , 0);
       //TODO update memory map
     }
     else if (!pinState){
       LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_0);
+      outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
+      xQueueSendToBack(qhandle, &outPinState , 0);
       //TODO update memory map
     }
   } 

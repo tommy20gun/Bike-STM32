@@ -59,20 +59,25 @@ void Horn::initPeripherals(){
 }
 
 void Horn::vTurnOnHorn(void* pvParameters){
-  bool pinState;
+  bool inPinState;
+  bool outPinState;
   Horn *horn = (Horn*) pvParameters;
   while(1){
     //subtracts semaphore back down to 0, next while loop will block again
     xSemaphoreTake(horn->bsem,portMAX_DELAY);
     //detects the rising or falling edge of the input pin
     //allows the switch to have on/off function
-    pinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_11);
-    if (pinState){
+    inPinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_11);
+    if (inPinState){
       LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_1);
+      outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_1);
+      xQueueSendToBack(qhandle, &outPinState , 0);
       //TODO update memory map
     }
-    else if (!pinState){
+    else if (!inPinState){
       LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_1);
+      outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_1);
+      xQueueSendToBack(qhandle, &outPinState , 0);
       //TODO update memory map
     }
   }

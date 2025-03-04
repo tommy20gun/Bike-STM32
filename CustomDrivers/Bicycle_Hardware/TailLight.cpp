@@ -94,39 +94,50 @@ void Taillight::initPeripherals(){
 
 void Taillight::vTurnLeft(void* pvParameters){
   Taillight* taillight = (Taillight*) pvParameters;
+  bool outPinState;
   while(1){
     xSemaphoreTake(taillight->bsemleft,portMAX_DELAY);
     while(xSemaphoreTake(taillight->bsemleft,0)== pdFALSE && LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_8)){
     LL_GPIO_TogglePin(GPIOB,GPIO_PIN_8);
+    outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_8);
+    xQueueSendToBack(qhandle, &outPinState , 0);
     vTaskDelay(1000);
     }
   }
 }
 void Taillight::vTurnRight(void* pvParameters){
   Taillight* taillight = (Taillight*) pvParameters;
+  bool outPinState;
   while(1){
     xSemaphoreTake(taillight->bsemright,portMAX_DELAY);
     while(xSemaphoreTake(taillight->bsemright,0)== pdFALSE && LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_9)){
       LL_GPIO_TogglePin(GPIOB,GPIO_PIN_9);
+      outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_9);
+      xQueueSendToBack(qhandle, &outPinState , 0);
       vTaskDelay(1000);
     }
   }
 }
 void Taillight::vBrake(void* pvParameters){
   Taillight* taillight = (Taillight*) pvParameters;
-  bool pinState;
+  bool inPinState;
+  bool outPinState;
   while(1){
     //subtracts semaphore back down to 0, next while loop will block again
     xSemaphoreTake(taillight->bsembrake,portMAX_DELAY);
     //detects the rising or falling edge of the input pin
     //allows the switch to have on/off function
-    pinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_12);
-    if (pinState){
+    inPinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_12);
+    if (inPinState){
       LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_2);
+      outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_2);
+      xQueueSendToBack(qhandle, &outPinState , 0);
       //TODO update memory map
     }
-    else if (!pinState){
+    else if (!inPinState){
       LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_2);
+            outPinState = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_2);
+      xQueueSendToBack(qhandle, &outPinState , 0);
       //TODO update memory map
     }
   }

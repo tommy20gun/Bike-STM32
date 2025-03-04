@@ -15,7 +15,10 @@
 			"stm32f4xx_ll_rcc.h": "c",
 			"task.h": "c",
 			"main.h": "c",
-			"functional": "cpp"
+			"functional": "cpp",
+			"stm32f4xx_ll_utils.h": "c",
+			"stm32f4xx_ll_cortex.h": "c",
+			"freertos.h": "c"
 		}
 	}
 }

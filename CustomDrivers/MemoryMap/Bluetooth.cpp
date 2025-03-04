@@ -111,7 +111,7 @@ void Bluetooth::initTasks(){
   if(xReturned != pdPASS){
     Error_Handler();
   }
-  sendSemaphore = xSemaphoreCreateBinary();
+  sendSemaphore = xSemaphoreCreateMutex();
   if (sendSemaphore == NULL){
     Error_Handler();
   }
@@ -169,8 +169,8 @@ void Bluetooth::sendSpecialCommand(void* pvParameters){
   * @brief Helper for transmitting data through DMA given size and addr
   */
 void Bluetooth::uartTransmitDMA(uint32_t srcAddr, uint32_t size){
-  LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, srcAddr, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
   LL_DMA_DisableStream(DMA1,LL_DMA_STREAM_6);
+  LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, srcAddr, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
   LL_DMA_SetDataLength(DMA1,LL_DMA_STREAM_6, size);
   LL_DMA_EnableStream(DMA1,LL_DMA_STREAM_6);
   LL_USART_EnableDMAReq_TX(USART2);

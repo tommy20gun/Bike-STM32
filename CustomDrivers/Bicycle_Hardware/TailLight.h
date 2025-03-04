@@ -15,6 +15,7 @@ extern "C" {
 
 #include "FreeRTOS.h" 
 #include "main.h"
+#include "MemoryMap.h"
 class Taillight{
   public:
   SemaphoreHandle_t bsemleft;
@@ -33,7 +34,7 @@ class Taillight{
 
 };
 
-
+extern QueueHandle_t qhandle; 
 
 #ifdef __cplusplus
 }

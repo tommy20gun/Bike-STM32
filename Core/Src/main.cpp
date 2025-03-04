@@ -12,6 +12,8 @@
 #include <main.h> //includes LL
 #include <string>
 
+#include "Peripheral_initialization.h"
+
 //CPP includes
 #include <Headlight.h>
 #include <Horn.h>
@@ -22,8 +24,8 @@
 #include "LED.h"
 #include "Lock.h"
 #include "Taillight.h"
+#include "MemoryMap.h"
 
-using namespace std;
 
 static Horn horn;
 static Headlight headlight;
@@ -42,6 +44,9 @@ void GlobalSetup(void){
   headlight.initTasks();
   taillight.initPeripherals();
   taillight.initTasks();
+
+  //create global queue
+  qhandle = xQueueCreate(13,sizeof(double));
 }
 
 int main(){

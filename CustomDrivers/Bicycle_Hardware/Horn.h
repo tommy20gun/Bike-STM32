@@ -16,6 +16,7 @@ extern "C" {
 
 #include "FreeRTOS.h"  
 #include "main.h"
+#include "MemoryMap.h"
 
 class Horn{
   public:
@@ -29,7 +30,7 @@ class Horn{
 
 };
 //void hornSetup();
-
+extern QueueHandle_t qhandle; 
 
 #ifdef __cplusplus
 }

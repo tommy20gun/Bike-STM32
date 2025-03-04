@@ -16,6 +16,7 @@ extern "C" {
 
 #include "FreeRTOS.h"  
 #include "main.h"
+#include "MemoryMap.h"
 
 
 class Headlight{
@@ -29,6 +30,8 @@ class Headlight{
     private:
 
 };
+
+extern QueueHandle_t qhandle; 
 
 #ifdef __cplusplus
 }
