@@ -33,11 +33,12 @@ typedef bool BTMode;
 
 class Bluetooth{
   public:
+    TaskHandle_t sendHandle;
     TaskHandle_t sendSlowHandle;
     TaskHandle_t sendFastHandle;
     TaskHandle_t sendSpecialCommandHandle;
     QueueHandle_t messenger;
-    SemaphoreHandle_t sendSemaphore;
+    //SemaphoreHandle_t sendSemaphore;
 
     MemoryMap map;
     BTMode mode;
@@ -51,9 +52,10 @@ class Bluetooth{
     
 
     //FreeRTOS tasks
-    static void sendSlow(void* pvParameters);
+    static void send(void* pvParameters);
+    /*
     static void sendFast(void* pvParameters);
-    static void sendSpecialCommand(void* pvParameters);
+    static void sendSpecialCommand(void* pvParameters);*/
     
     
 
@@ -61,7 +63,8 @@ class Bluetooth{
     void setmode(int mode);
     void ATModeTesting();
     static MemoryMap* receiveTaggedData(taggedBuffer* buff, MemoryMap* map);
-    static void uartTransmitDMA(uint32_t srcAddr, uint32_t size);
+    static void uartTransmitDMA(uint32_t size);
+    static void CRC32(MemoryMap* map);
 };
 
 void DMA1_Stream6_IRQHandler(void);

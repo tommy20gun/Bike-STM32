@@ -14,7 +14,7 @@
   */
 
 #include "Bluetooth.h"
-#include <string.h>
+
  
 
 Bluetooth::Bluetooth(){
@@ -99,11 +99,11 @@ void Bluetooth::initPeripherials(){
 
 void Bluetooth::initTasks(){
   BaseType_t xReturned;
-  xReturned = xTaskCreate(sendSlow,"sendSlow",64, this,1,&sendSlowHandle);
+  xReturned = xTaskCreate(send,"send",64, this, 1, &sendHandle);
   if(xReturned != pdPASS){
     Error_Handler();
   }
-  xReturned = xTaskCreate(sendFast,"sendFast",64, this,1,&sendFastHandle);
+  /*xReturned = xTaskCreate(sendFast,"sendFast",64, this,1,&sendFastHandle);
   if(xReturned != pdPASS){
     Error_Handler();
   }
@@ -116,7 +116,7 @@ void Bluetooth::initTasks(){
     Error_Handler();
   }
   //init as give
-  xSemaphoreGive(sendSemaphore);
+  xSemaphoreGive(sendSemaphore);*/
 }
 
 void Bluetooth::setmode(int mode){
@@ -133,24 +133,52 @@ BTState Bluetooth::getConnectionState(){
 }
 
 void Bluetooth::initBTMemoryMap(){
-  map = {0,0,0,0,0,0,1,0,0,0,0,0,0};
+  map = {0,0,0,0,0,0,0,0,0,0,0,0,0};
 }
 
 //this is static
-void Bluetooth::sendSlow(void* pvParameters){
+void Bluetooth::send(void* pvParameters){
   Bluetooth* tooth = (Bluetooth*)pvParameters;
   MemoryMap* mapcopy = &(tooth->map);
   struct taggedBuffer buff;
+  LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, (uint32_t) mapcopy, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
   while(1){
-    xSemaphoreTake(tooth->sendSemaphore,portMAX_DELAY);
-    xQueueReceive(tooth->messenger, (void*) &buff, 0);
-    mapcopy = receiveTaggedData(&buff,mapcopy);
-    //this should send 1 when light is on
-    uartTransmitDMA((uint32_t) mapcopy,48); //size is 48, addr: start of struct
-    xSemaphoreGive(tooth->sendSemaphore);
-    vTaskDelay(500);
+    //xSemaphoreTake(tooth->sendSemaphore,portMAX_DELAY);
+    //empty queue
+    while (uxQueueMessagesWaiting(tooth->messenger) > 0){
+      xQueueReceive(tooth->messenger, (void*) &buff, 0);
+      mapcopy = receiveTaggedData(&buff,mapcopy);
+    }
+    uartTransmitDMA(72UL); //size is 72, addr: start of struct
+    //xSemaphoreGive(tooth->sendSemaphore);
+    //TODO create CRC, create magic number for starting of queue
+    vTaskDelay(100);
   }
 }
+void Bluetooth::CRC32(MemoryMap* map){
+  /*To compute a CRC of the supported data, go through the following steps:
+ 1. Enable the CRC peripheral clock via the RCC peripheral.
+ 2. Set the CRC data register to the initial CRC value by configuring the initial CRC value 
+register (CRC_INIT). In the more recent STM32 Series, it is possible to chain a CRC 
+calculation based on the previous CRC calculation as initial value. In this case, the 
+CRC_IDR register (not affected by the reset bit in CRC_CR) can be used. In HAL, this 
+is implemented by HAL_CRC_Calculate.
+3. Set the I/O reverse bit order through the REV_IN[1:0] and REV_OUT bits, respectively, 
+in the CRC control register (CRC_CR).
+4. Set the polynomial size and coefficients through the POLYSIZE[1:0] bits in CRC control 
+register (CRC_CR) and CRC polynomial register (CRC_POL), respectively.
+5. Reset the CRC peripheral through the Reset bit in the CRC control register (CRC_CR).
+6. Set the data to the CRC data register.
+7. Read the content of the CRC data register.
+8. Disable the CRC peripheral clock.
+
+ In the firmware package, the CRC_usage example runs the CRC checksum code 
+computing an array data (DataBuffer) of 256 supported data type. For a full description, 
+refer to the file Readme.txt in the CRC_usage folder*/
+ 
+}
+
+/*
 void Bluetooth::sendFast(void* pvParameters){
   Bluetooth* tooth = (Bluetooth*)pvParameters;
   MemoryMap* map = &(tooth->map);
@@ -166,15 +194,22 @@ void Bluetooth::sendSpecialCommand(void* pvParameters){
   while(1){
     vTaskDelay(200);
   }
+}*/
+//IT function
+void DMA1_Stream6_IRQHandler(void)
+{
+  //you cannot breakpoint this lol
+  if(LL_DMA_IsActiveFlag_TC6(DMA1) == 1){
+    LL_DMA_ClearFlag_TC6(DMA1);
+  }
 }
 
 //private functions
 /**
   * @brief Helper for transmitting data through DMA given size and addr
   */
-void Bluetooth::uartTransmitDMA(uint32_t srcAddr, uint32_t size){
+void Bluetooth::uartTransmitDMA(uint32_t size){
   LL_DMA_DisableStream(DMA1,LL_DMA_STREAM_6);
-  LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, srcAddr, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
   LL_DMA_SetDataLength(DMA1,LL_DMA_STREAM_6, size);
   LL_DMA_EnableStream(DMA1,LL_DMA_STREAM_6);
   LL_USART_EnableDMAReq_TX(USART2);
@@ -227,13 +262,7 @@ MemoryMap* Bluetooth::receiveTaggedData(taggedBuffer* buff, MemoryMap* map){
 /**
   * @brief This function handles DMA1 stream6 global interrupt.
   */
-void DMA1_Stream6_IRQHandler(void)
-{
-  //you cannot breakpoint this lol
-  if(LL_DMA_IsActiveFlag_TC6(DMA1) == 1){
-    LL_DMA_ClearFlag_TC6(DMA1);
-  }
-}
+
 
 /*void Bluetooth::ATModeTesting(){
   // should slow blink when in AT mode, fast blink in connection mode

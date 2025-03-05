@@ -23,7 +23,7 @@ Taillight::Taillight(){
 void Taillight:: initTasks(){
   BaseType_t xReturned;
   vTurnLeftHandle = nullptr;
-  xReturned = xTaskCreate(vTurnLeft,"TurnLeft On/off",64, this,1,&vTurnLeftHandle);
+  xReturned = xTaskCreate(vTurnLeft,"TurnLeft On/off",64, this,2,&vTurnLeftHandle);
   if (xReturned != pdPASS){
     Error_Handler();
   }
@@ -33,7 +33,7 @@ void Taillight:: initTasks(){
     Error_Handler();
   } 
 
-  xReturned = xTaskCreate(vTurnRight,"TurnRight On/off",64, this,1,&vTurnRightHandle);
+  xReturned = xTaskCreate(vTurnRight,"TurnRight On/off",64, this,2,&vTurnRightHandle);
   if (xReturned != pdPASS){
     Error_Handler();
   }
@@ -43,7 +43,7 @@ void Taillight:: initTasks(){
     Error_Handler();
   }
 
-  xReturned = xTaskCreate(vBrake,"Brake On/off",64,this,1,&vBrakeHandle);
+  xReturned = xTaskCreate(vBrake,"Brake On/off",64,this,2,&vBrakeHandle);
   if (xReturned != pdPASS){
     Error_Handler();
   }

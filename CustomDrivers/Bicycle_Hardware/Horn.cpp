@@ -16,7 +16,7 @@ Horn::Horn(){
 
 void Horn::initTasks(){
   BaseType_t xReturned;
-  xReturned = xTaskCreate(vTurnOnHorn,"horn On/Off",64, this,1,&vTurnOnHornHandle);
+  xReturned = xTaskCreate(vTurnOnHorn,"horn On/Off",64, this,2,&vTurnOnHornHandle);
   if(xReturned != pdPASS){
     Error_Handler();
   }

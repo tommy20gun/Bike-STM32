@@ -15,7 +15,7 @@ Headlight::Headlight(){
 
 void Headlight::initTasks(){
   BaseType_t xReturned;
-  xReturned = xTaskCreate(vTurnonHeadlight,"Headlight On/off",64, this,1,&vTurnOnHeadlightHandle);
+  xReturned = xTaskCreate(vTurnonHeadlight,"Headlight On/off",64, this,2,&vTurnOnHeadlightHandle);
   if (xReturned != pdPASS){
     Error_Handler();
   }
