@@ -121,6 +121,7 @@ void Bluetooth::initTasks(){
 
 void Bluetooth::setmode(int mode){
   // only works on powerup for hc05
+  //wire in switch to work on perffboard
   if (mode){
     LL_GPIO_SetOutputPin(GPIOA, GPIO_PIN_0);
   }
