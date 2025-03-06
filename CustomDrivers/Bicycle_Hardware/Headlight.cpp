@@ -70,6 +70,7 @@ void Headlight::vTurnonHeadlight(void* pvParameters){
   bool pinState;
   struct taggedBuffer buff;
   buff.tag = headlightON;
+  buff.data = 0;
   Headlight* headlight = (Headlight*) pvParameters;
   while(1){
     //subtracts semaphore back down to 0, next while loop will block again

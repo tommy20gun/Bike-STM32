@@ -50,6 +50,8 @@ void GlobalSetup(void){
   messenger = xQueueCreate(13,sizeof(struct taggedBuffer));
   bluetooth.messenger = messenger;
   headlight.messenger = messenger;
+  horn.messenger = messenger;
+  taillight.messenger = messenger;
 
 }
 

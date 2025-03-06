@@ -96,6 +96,7 @@ void Taillight::vTurnLeft(void* pvParameters){
   Taillight* taillight = (Taillight*) pvParameters;
   struct taggedBuffer buff;
   buff.tag = turningLeft;
+  buff.data = 0;
   while(1){
     xSemaphoreTake(taillight->bsemleft,portMAX_DELAY);
     while(xSemaphoreTake(taillight->bsemleft,0)== pdFALSE && LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_8)){
@@ -110,6 +111,7 @@ void Taillight::vTurnRight(void* pvParameters){
   Taillight* taillight = (Taillight*) pvParameters;
   struct taggedBuffer buff;
   buff.tag = turningRight;
+  buff.data = 0;
   while(1){
     xSemaphoreTake(taillight->bsemright,portMAX_DELAY);
     while(xSemaphoreTake(taillight->bsemright,0)== pdFALSE && LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_9)){
@@ -125,6 +127,7 @@ void Taillight::vBrake(void* pvParameters){
   bool inPinState;
   struct taggedBuffer buff;
   buff.tag = brakeON;
+  buff.data = 0;
   while(1){
     //subtracts semaphore back down to 0, next while loop will block again
     xSemaphoreTake(taillight->bsembrake,portMAX_DELAY);

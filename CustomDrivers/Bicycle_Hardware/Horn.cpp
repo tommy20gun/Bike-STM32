@@ -62,6 +62,7 @@ void Horn::vTurnOnHorn(void* pvParameters){
   Horn *horn = (Horn*) pvParameters;
   bool inPinState;
   struct taggedBuffer buff;
+  buff.data = 0;
   buff.tag = hornON;
   while(1){
     //subtracts semaphore back down to 0, next while loop will block again
