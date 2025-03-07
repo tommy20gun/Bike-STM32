@@ -19,6 +19,7 @@ extern "C" {
 #include "stm32f4xx_ll_usart.h"
 #include "main.h"
 #include "MemoryMap.h"
+#include <string.h>
 //#include "MemoryMap.h"
 
 #define DATA_MODE 0
@@ -62,9 +63,8 @@ class Bluetooth{
     private:
     void setmode(int mode);
     void ATModeTesting();
-    static MemoryMap* receiveTaggedData(taggedBuffer* buff, MemoryMap* map);
     static void uartTransmitDMA(uint32_t size);
-    static void CRC32(MemoryMap* map);
+    static uint32_t CRC32MemoryMap(MemoryMap* map);
 };
 
 void DMA1_Stream6_IRQHandler(void);

@@ -35,7 +35,6 @@ QueueHandle_t messenger;
 
 /* create tasks, create object instances. object constructors set up hardware and own the semaphore*/
 void GlobalSetup(void){
-  //TODO make sure we are not using systick
   bluetooth.initPeripherials();
   bluetooth.initTasks();
   bluetooth.initBTMemoryMap();

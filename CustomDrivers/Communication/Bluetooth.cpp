@@ -23,9 +23,11 @@ Bluetooth::Bluetooth(){
 
 
 void Bluetooth::initPeripherials(){
+
   LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART2);
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1);
 
+  //GPIO Init
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   //TXPA2 RXPA3 is automatic for AF7
@@ -56,7 +58,6 @@ void Bluetooth::initPeripherials(){
   LL_GPIO_ResetOutputPin(GPIOA, GPIO_PIN_0);
 
   //DMA init
-  //TODO look at CubeMX again for the setup
   //TODO watch a video on DMA to understand it
 
   LL_DMA_SetChannelSelection(DMA1, LL_DMA_STREAM_6, LL_DMA_CHANNEL_4);
@@ -67,10 +68,10 @@ void Bluetooth::initPeripherials(){
   LL_DMA_SetMemoryIncMode(DMA1,LL_DMA_STREAM_6, LL_DMA_MEMORY_INCREMENT);
   LL_DMA_SetPeriphSize(DMA1,LL_DMA_STREAM_6, LL_DMA_PDATAALIGN_BYTE);
   LL_DMA_SetMemorySize(DMA1, LL_DMA_STREAM_6, LL_DMA_MDATAALIGN_BYTE);
-  LL_DMA_DisableFifoMode(DMA1, LL_DMA_STREAM_6); //TODO what is this?
+  LL_DMA_DisableFifoMode(DMA1, LL_DMA_STREAM_6); 
 
   NVIC_SetPriority(DMA1_Stream6_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),5, 0));
-  NVIC_EnableIRQ(DMA1_Stream6_IRQn);//TODO why do we need an IRQ for DMA?
+  NVIC_EnableIRQ(DMA1_Stream6_IRQn);//IRQ is for transmit complete notification
   
   //enables receive for UART IT
   NVIC_SetPriority(USART2_IRQn, 5);
@@ -95,6 +96,9 @@ void Bluetooth::initPeripherials(){
   LL_USART_ConfigAsyncMode(USART2);
   LL_USART_EnableIT_RXNE(USART2);
   LL_USART_Enable(USART2);
+
+  //CRC Init
+  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_CRC);
 };
 
 void Bluetooth::initTasks(){
@@ -134,29 +138,30 @@ BTState Bluetooth::getConnectionState(){
 }
 
 void Bluetooth::initBTMemoryMap(){
-  map = {0,0,0,0,0,0,0,0,0,0,0,0,0};
+  map = {69420}; //set the magic number
 }
 
 //this is static
 void Bluetooth::send(void* pvParameters){
   Bluetooth* tooth = (Bluetooth*)pvParameters;
-  MemoryMap* mapcopy = &(tooth->map);
+  MemoryMap* map = &(tooth->map);
   struct taggedBuffer buff;
-  LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, (uint32_t) mapcopy, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+  LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, (uint32_t) map, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
   while(1){
     //xSemaphoreTake(tooth->sendSemaphore,portMAX_DELAY);
     //empty queue
     while (uxQueueMessagesWaiting(tooth->messenger) > 0){
       xQueueReceive(tooth->messenger, (void*) &buff, 0);
-      mapcopy = receiveTaggedData(&buff,mapcopy);
+      map = receiveTaggedData(&buff,map);
     }
-    uartTransmitDMA(72UL); //size is 72, addr: start of struct
+    map->CRC32 = CRC32MemoryMap(map);
+    uartTransmitDMA(sizeof(*map)); //size is 80 I think, addr: start of struct
     //xSemaphoreGive(tooth->sendSemaphore);
     //TODO create CRC, create magic number for starting of queue
     vTaskDelay(100);
   }
 }
-void Bluetooth::CRC32(MemoryMap* map){
+uint32_t Bluetooth::CRC32MemoryMap(MemoryMap* map){
   /*To compute a CRC of the supported data, go through the following steps:
  1. Enable the CRC peripheral clock via the RCC peripheral.
  2. Set the CRC data register to the initial CRC value by configuring the initial CRC value 
@@ -176,7 +181,74 @@ register (CRC_CR) and CRC polynomial register (CRC_POL), respectively.
  In the firmware package, the CRC_usage example runs the CRC checksum code 
 computing an array data (DataBuffer) of 256 supported data type. For a full description, 
 refer to the file Readme.txt in the CRC_usage folder*/
- 
+
+//calculates a checksum based on 12V ADC, 72V ADC, Odometer.
+//this is because i can iterate through the struct and it is a waste of time.
+//Uses CRC-32 polynomial: 0x4C11DB7
+  uint32_t sum = 0;
+  uint32_t CRCBuffer = 0;
+  //"-4" is there so it does not do the CRC as part of the CRC.
+  //danger!!
+  for (uint16_t i =0; i < (sizeof(*map)-4); i= i + 4){
+     LL_CRC_ResetCRCCalculationUnit(CRC);
+     memcpy(&CRCBuffer, map+i, 4);
+     LL_CRC_FeedData32(CRC, CRCBuffer);
+     sum += LL_CRC_ReadData32(CRC);
+  }
+  /*
+  LL_CRC_ResetCRCCalculationUnit(CRC);
+  LL_CRC_FeedData32(CRC, map->headlightON);
+  sum += LL_CRC_ReadData32(CRC);
+  
+  LL_CRC_ResetCRCCalculationUnit(CRC);
+  LL_CRC_FeedData32(CRC, map->motorTemp);
+  sum += LL_CRC_ReadData32(CRC);
+
+  LL_CRC_ResetCRCCalculationUnit(CRC);
+  LL_CRC_FeedData32(CRC, map->ADCreading72V);
+  sum += LL_CRC_ReadData32(CRC);
+
+  LL_CRC_ResetCRCCalculationUnit(CRC);
+  LL_CRC_FeedData32(CRC, map->ADCreading12V);
+  sum += LL_CRC_ReadData32(CRC);
+  
+  LL_CRC_ResetCRCCalculationUnit(CRC);
+  LL_CRC_FeedData32(CRC, map->battTemp);
+  sum += LL_CRC_ReadData32(CRC);
+
+  LL_CRC_ResetCRCCalculationUnit(CRC);
+  LL_CRC_FeedData32(CRC, map->Odometer);
+  sum += LL_CRC_ReadData32(CRC);
+
+  LL_CRC_ResetCRCCalculationUnit(CRC);
+  LL_CRC_FeedData32(CRC, map->speed);
+  sum += LL_CRC_ReadData32(CRC);
+
+  LL_CRC_ResetCRCCalculationUnit(CRC);
+  LL_CRC_FeedData32(CRC, map->hornON);
+  sum += LL_CRC_ReadData32(CRC);
+
+  LL_CRC_ResetCRCCalculationUnit(CRC);
+  LL_CRC_FeedData32(CRC, map->brakeON);
+  sum += LL_CRC_ReadData32(CRC);
+
+  LL_CRC_ResetCRCCalculationUnit(CRC);
+  LL_CRC_FeedData32(CRC, map->turningLeft);
+  sum += LL_CRC_ReadData32(CRC);
+
+  LL_CRC_ResetCRCCalculationUnit(CRC);
+  LL_CRC_FeedData32(CRC, map->turningRight);
+  sum += LL_CRC_ReadData32(CRC);
+
+  LL_CRC_ResetCRCCalculationUnit(CRC);
+  LL_CRC_FeedData32(CRC, map->RPM);
+  sum += LL_CRC_ReadData32(CRC);
+
+  LL_CRC_ResetCRCCalculationUnit(CRC);
+  LL_CRC_FeedData32(CRC, map->throttleV);
+  sum += LL_CRC_ReadData32(CRC);
+  */ 
+  return sum;
 }
 
 /*
@@ -215,51 +287,7 @@ void Bluetooth::uartTransmitDMA(uint32_t size){
   LL_DMA_EnableStream(DMA1,LL_DMA_STREAM_6);
   LL_USART_EnableDMAReq_TX(USART2);
   }
-MemoryMap* Bluetooth::receiveTaggedData(taggedBuffer* buff, MemoryMap* map){
-  switch (buff->tag)
-  {
-  case 0:
-    map->headlightON = buff->data;
-    break;
-  case 1:
-    map->motorTemp = buff->data;
-    break;
-  case 2:
-    map->ADCreading72V = buff->data;
-    break;
-  case 3:
-    map->ADCreading12V = buff->data;
-    break;
-  case 4:
-    map->battTemp = buff->data;
-    break;
-  case 5:
-    map->Odometer = buff->data;
-    break;
-  case 6:
-    map->speed = buff->data;
-    break;
-  case 7:
-    map->hornON = buff->data;
-    break;
-  case 8:
-    map->brakeON = buff->data;
-    break;
-  case 9:
-    map->turningLeft = buff->data;
-    break;
-  case 10:
-    map->turningRight = buff->data;
-    break;
-  case 11:
-    map->RPM = buff->data;
-    break;
-  case 12:
-    map->throttleV = buff->data;
-    break;
-  }
-  return map;
-}
+
 /**
   * @brief This function handles DMA1 stream6 global interrupt.
   */

@@ -8,20 +8,22 @@ extern "C" {
 #include "main.h"
 typedef struct MemoryMap{
   //slow data
+  uint32_t magicNumber;
   bool headlightON;
-  double motorTemp;
-  double ADCreading72V;
-  double ADCreading12V;
-  double battTemp;
-  double Odometer;
+  float motorTemp;
+  float ADCreading72V;
+  float ADCreading12V;
+  float battTemp;
+  float Odometer;
   //fast data
-  double speed;
+  float speed;
   bool hornON;
   bool brakeON;
   bool turningLeft;
   bool turningRight;
   int RPM;
-  double throttleV;
+  float throttleV;
+  uint32_t CRC32;
 
   //special command
   /*
@@ -52,7 +54,7 @@ struct taggedBuffer{
     uint32_t data;
 };
 
-
+MemoryMap* receiveTaggedData(taggedBuffer* buff, MemoryMap* map);
 #ifdef __cplusplus
 }
 #endif //__cplusplus
