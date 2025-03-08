@@ -70,15 +70,20 @@ void Horn::vTurnOnHorn(void* pvParameters){
     //detects the rising or falling edge of the input pin
     //allows the switch to have on/off function
     inPinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_11);
-    if (inPinState){
-      LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_1);
-      buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_1);
-      xQueueSendToBack(horn->messenger, &buff , 0);
-    }
-    else if (!inPinState){
-      LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_1);
-      buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_1);
-      xQueueSendToBack(horn->messenger, &buff , 0);
+    //debounce
+    vTaskDelay(100);
+    //read again to confirm the signal, if not, ignore it
+    if (inPinState == LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_11)){
+      if (inPinState){
+        LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_1);
+        buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_1);
+        xQueueSendToBack(horn->messenger, &buff , 0);
+      }
+      else if (!inPinState){
+        LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_1);
+        buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_1);
+        xQueueSendToBack(horn->messenger, &buff , 0);
+      }
     }
   }
 }

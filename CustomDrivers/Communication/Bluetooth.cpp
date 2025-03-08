@@ -138,7 +138,7 @@ BTState Bluetooth::getConnectionState(){
 }
 
 void Bluetooth::initBTMemoryMap(){
-  map = {69420}; //set the magic number
+  map = {69420,0,0,1,1,0,0,0,0,0,0,0,0,0,0}; //set the magic number
 }
 
 //this is static
@@ -185,70 +185,25 @@ refer to the file Readme.txt in the CRC_usage folder*/
 //calculates a checksum based on 12V ADC, 72V ADC, Odometer.
 //this is because i can iterate through the struct and it is a waste of time.
 //Uses CRC-32 polynomial: 0x4C11DB7
-  uint32_t sum = 0;
-  uint32_t CRCBuffer = 0;
-  //"-4" is there so it does not do the CRC as part of the CRC.
-  //danger!!
-  for (uint16_t i =0; i < (sizeof(*map)-4); i= i + 4){
-     LL_CRC_ResetCRCCalculationUnit(CRC);
-     memcpy(&CRCBuffer, map+i, 4);
-     LL_CRC_FeedData32(CRC, CRCBuffer);
-     sum += LL_CRC_ReadData32(CRC);
-  }
-  /*
-  LL_CRC_ResetCRCCalculationUnit(CRC);
-  LL_CRC_FeedData32(CRC, map->headlightON);
-  sum += LL_CRC_ReadData32(CRC);
   
   LL_CRC_ResetCRCCalculationUnit(CRC);
+
+  //doing it in this order triggers the hardware properly
+  //headlightON is a bool
   LL_CRC_FeedData32(CRC, map->motorTemp);
-  sum += LL_CRC_ReadData32(CRC);
-
-  LL_CRC_ResetCRCCalculationUnit(CRC);
+  LL_CRC_FeedData32(CRC, map->headlightON);
   LL_CRC_FeedData32(CRC, map->ADCreading72V);
-  sum += LL_CRC_ReadData32(CRC);
-
-  LL_CRC_ResetCRCCalculationUnit(CRC);
   LL_CRC_FeedData32(CRC, map->ADCreading12V);
-  sum += LL_CRC_ReadData32(CRC);
-  
-  LL_CRC_ResetCRCCalculationUnit(CRC);
   LL_CRC_FeedData32(CRC, map->battTemp);
-  sum += LL_CRC_ReadData32(CRC);
-
-  LL_CRC_ResetCRCCalculationUnit(CRC);
   LL_CRC_FeedData32(CRC, map->Odometer);
-  sum += LL_CRC_ReadData32(CRC);
-
-  LL_CRC_ResetCRCCalculationUnit(CRC);
   LL_CRC_FeedData32(CRC, map->speed);
-  sum += LL_CRC_ReadData32(CRC);
-
-  LL_CRC_ResetCRCCalculationUnit(CRC);
   LL_CRC_FeedData32(CRC, map->hornON);
-  sum += LL_CRC_ReadData32(CRC);
-
-  LL_CRC_ResetCRCCalculationUnit(CRC);
   LL_CRC_FeedData32(CRC, map->brakeON);
-  sum += LL_CRC_ReadData32(CRC);
-
-  LL_CRC_ResetCRCCalculationUnit(CRC);
   LL_CRC_FeedData32(CRC, map->turningLeft);
-  sum += LL_CRC_ReadData32(CRC);
-
-  LL_CRC_ResetCRCCalculationUnit(CRC);
   LL_CRC_FeedData32(CRC, map->turningRight);
-  sum += LL_CRC_ReadData32(CRC);
-
-  LL_CRC_ResetCRCCalculationUnit(CRC);
   LL_CRC_FeedData32(CRC, map->RPM);
-  sum += LL_CRC_ReadData32(CRC);
-
-  LL_CRC_ResetCRCCalculationUnit(CRC);
   LL_CRC_FeedData32(CRC, map->throttleV);
-  sum += LL_CRC_ReadData32(CRC);
-  */ 
-  return sum;
+  return LL_CRC_ReadData32(CRC);
 }
 
 /*

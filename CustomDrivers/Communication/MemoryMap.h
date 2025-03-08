@@ -9,7 +9,7 @@ extern "C" {
 typedef struct MemoryMap{
   //slow data
   uint32_t magicNumber;
-  bool headlightON;
+  int headlightON;
   float motorTemp;
   float ADCreading72V;
   float ADCreading12V;
