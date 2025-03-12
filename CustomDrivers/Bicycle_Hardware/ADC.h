@@ -20,10 +20,13 @@ extern "C" {
 
 class ADCDriver{
     public:
-    ADCDriver(uint16_t readingpin);
-    void init(float maxVoltage);
+    TaskHandle_t vADCPollHandle;
+    int pin4V;
+    int pin5V;
+    ADCDriver(int maxvoltage[]);
+    void init();
+    static void vADCPoll(void* pvParameters);
 
-    private:
 };
 
 #ifdef __cplusplus
