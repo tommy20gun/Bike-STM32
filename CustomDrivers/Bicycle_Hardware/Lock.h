@@ -14,7 +14,14 @@ extern "C" {
 #endif
 
 #include "FreeRTOS.h"  
+class Lock{
+  public:
+    Lock();
+    void init();
+    
 
+
+};
 #ifdef __cplusplus
 }
 #endif //__cplusplus
