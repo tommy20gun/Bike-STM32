@@ -31,6 +31,7 @@ static Horn horn;
 static Headlight headlight;
 static Taillight taillight;
 static Bluetooth bluetooth;
+static ADCDriver adc;
 QueueHandle_t messenger;
 
 /* create tasks, create object instances. object constructors set up hardware and own the semaphore*/
@@ -44,13 +45,15 @@ void GlobalSetup(void){
   headlight.initTasks();
   taillight.initPeripherals();
   taillight.initTasks();
+  adc.init();
 
-  //create global queue
+  //create global queue, assign to all obj
   messenger = xQueueCreate(13,sizeof(struct taggedBuffer));
   bluetooth.messenger = messenger;
   headlight.messenger = messenger;
   horn.messenger = messenger;
   taillight.messenger = messenger;
+  adc.messenger = messenger;
 
 }
 

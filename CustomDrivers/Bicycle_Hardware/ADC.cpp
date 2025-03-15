@@ -1,12 +1,9 @@
 #include "ADC.h"
 
-ADCDriver::ADCDriver(int maxvoltage[]){
+ADCDriver::ADCDriver(){
     //channel4 (12V), channel5 (72V)
-    if (sizeof(maxvoltage)/sizeof(maxvoltage[0]) != 2){
-        Error_Handler();
-    }
-    pin4V = maxvoltage[0];
-    pin5V = maxvoltage[1];
+    pin4V = 12;
+    pin5V = 5;
 }
 
 void ADCDriver::init(){
@@ -23,18 +20,18 @@ void ADCDriver::init(){
     LL_GPIO_Init(GPIOA,&GPIO_InitStruct);
 
     ADC_InitStruct.Resolution = LL_ADC_RESOLUTION_12B;
-    ADC_InitStruct.DataAlighment = LL_ADC_DATA_ALIGN_RIGHT;
-    ADC_InitStruct.SequencerScanMode - LL_ADC_SEQ_SCAN_ENABLE;//multiscan
+    ADC_InitStruct.DataAlignment = LL_ADC_DATA_ALIGN_RIGHT;
+    ADC_InitStruct.SequencersScanMode = LL_ADC_SEQ_SCAN_ENABLE;//multiscan
     LL_ADC_Init(ADC1,&ADC_InitStruct);
 
     ADC_REG_InitStruct.TriggerSource = LL_ADC_REG_TRIG_SOFTWARE;
     ADC_REG_InitStruct.SequencerLength = LL_ADC_REG_SEQ_SCAN_ENABLE_2RANKS;
-    ADC_REG_Initstruct.SequencerDiscont = LL_ADC_REG_SEQ_DISCONT_1RANK;
+    ADC_REG_InitStruct.SequencerDiscont = LL_ADC_REG_SEQ_DISCONT_1RANK;
     ADC_REG_InitStruct.ContinuousMode =  LL_ADC_REG_CONV_SINGLE;
     ADC_REG_InitStruct.DMATransfer = LL_ADC_REG_DMA_TRANSFER_NONE;
     LL_ADC_REG_Init(ADC1, &ADC_REG_InitStruct);
     LL_ADC_REG_SetFlagEndOfConversion(ADC1,LL_ADC_REG_FLAG_EOC_UNITARY_CONV);
-    LL_ADC_CommonInitStruct.CommonClock = LL_ADC_CLOCK_SYNC_PCLK_DIV4;
+    ADC_CommonInitStruct.CommonClock = LL_ADC_CLOCK_SYNC_PCLK_DIV4;
     LL_ADC_CommonInit(__LL_ADC_COMMON_INSTANCE(ADC1),&ADC_CommonInitStruct);
 
     LL_ADC_REG_SetSequencerRanks(ADC1,LL_ADC_REG_RANK_1,LL_ADC_CHANNEL_4);
@@ -87,32 +84,12 @@ The EOC bit is set in the ADC_SR register:
 The data converted from an injected channel are always stored into the ADC_JDRx
 registers.
 
-Discont
-This mode is enabled by setting the DISCEN bit in the ADC_CR1 register. It can be used to
-convert a short sequence of n conversions (n ≤ 8) that is part of the sequence of conversions
-selected in the ADC_SQRx registers. The value of n is specified by writing to the
-DISCNUM[2:0] bits in the ADC_CR1 register.
-When an external trigger occurs, it starts the next n conversions selected in the ADC_SQRx
-registers until all the conversions in the sequence are done. The total sequence length is
-defined by the L[3:0] bits in the ADC_SQR1 register.
-Example:
-• n = 3, channels to be converted = 0, 1, 2, 3, 6, 7, 9, 10
-• 1st trigger: sequence converted 0, 1, 2. An EOC event is generated at each
-conversion.
-• 2nd trigger: sequence converted 3, 6, 7. An EOC event is generated at each
-conversion
-• 3rd trigger: sequence converted 9, 10.An EOC event is generated at each conversion
-• 4th trigger: sequence converted 0, 1, 2. An EOC event is generated at each conversion
-Note: When a regular group is converted in discontinuous mode, no rollover occurs.
-When all subgroups are converted, the next trigger starts the conversion of the first
-subgroup. In the example above, the 4th trigger reconverts the channels 0, 1 and 2 in the
-1st subgroup.
 */
 void ADCDriver::vADCPoll(void* pvParameters){
-    ADCDriver* adcdriver = (ADCDriver*) pvParameters;
+    ADCDriver* adc = (ADCDriver*) pvParameters;
     LL_ADC_Enable(ADC1);
     //just in case clear the flag even
-    if (LL_ADC_IsActiveFlag_EOCS){
+    if (LL_ADC_IsActiveFlag_EOCS(ADC1)){
         LL_ADC_ClearFlag_EOCS(ADC1);
     }
     //delay to allow for ADC to enable 
@@ -126,10 +103,11 @@ void ADCDriver::vADCPoll(void* pvParameters){
             LL_ADC_REG_StartConversionSWStart(ADC1);
             //wait for complete
             while(!LL_ADC_IsActiveFlag_EOCS(ADC1));
-            adcdriver-> pinreading[channel-4] = LL_ADC_REG_ReadConversionData12(ADC1);
+            //TODO ADC pin needs to not float
+            adc-> pinreading[channel-4] = LL_ADC_REG_ReadConversionData12(ADC1);
             LL_ADC_ClearFlag_EOCS(ADC1);
         }
-        adcdriver->sendDataThroughQueue();
+        adc->sendDataThroughQueue();
         vTaskDelay(1000); //polling rate 1hz
     }
 }
@@ -137,42 +115,48 @@ void ADCDriver::vADCPoll(void* pvParameters){
 void ADCDriver::sendDataThroughQueue(){
     struct taggedBuffer buffer;
     buffer.tag = ADCreading12V;
-    buffer.data = pinreading[0];
+    buffer.data = ADCToBatteryPercent(pinreading[0],4);
     xQueueSendToBack(messenger,&buffer,0);
     buffer.tag = throttleV;
-    buffer.data = pinreading[1];
+    buffer.data = ADCToBatteryPercent(pinreading[1],2.5);
     xQueueSendToBack(messenger,&buffer,0);
 }
 
-float ADCDriver::ADCToBatteryPercent(uint16_t ADCReading,int maxvoltage){
+float ADCDriver::ADCToBatteryPercent(float ADCReading,float scale){
     float vdd = 3.33;
-    int resolution = 0xFFF;
-    float scale = maxvoltage/vdd;
-    int cellsInSeries = 3;
-    float voltage = ADCReading/resolution*vdd*scale/cellsInSeries; //assume 12bit resolution, 0-3.3V ADC range, yields 0-4.2V range
+    float resolution = 4096;
+    float cellsInSeries = 3;
+    float voltage = ADCReading/resolution*vdd*scale; //assume 12bit resolution, 0-3.3V ADC range, yields 0-4.2V range
+    float voltagePerCell = voltage/cellsInSeries;
 
     //coeff
     //voltage > 3.63
-    float a = -500.86;
-    int b = 5720;
-    int c = -21557;
-    int d = 26840;
+    float a = -500.86f;
+    float b = 5720.0f;
+    float c = -21557.0f;
+    float d = 26840.0f;
 
     //voltage < 3.63
-    float a1 = 21.0769;
-    int b1 = -3.5;
+    float a1 = 21.0769f;
+    float b1 = -3.5f;
 
     //x = -500.86y^3 + 5720y^2 -21557y+26840 (y in range of 3.63-4.2V)
     //x = 21.0769*(y-3.5) (y < 3.63)
     float batteryPercentage;
-    if (voltage > 3.63 && voltage < 4.3){
-        batteryPercentage = (((a*voltage+b)*voltage) + c)*voltage + d;
+    if (voltagePerCell > 3.63f){
+        batteryPercentage = (((a*voltagePerCell+b)*voltagePerCell) + c)*voltagePerCell + d;
     }
-    else if (voltage <= 3.63 && voltage > 2){
-        batteryPercentage = a1*(voltage+b1);
+    else if (voltagePerCell <= 3.63f && voltagePerCell > 2.0f){
+        batteryPercentage = a1*(voltagePerCell+b1);
     }
     else {
-        Error_Handler();
+        batteryPercentage = -1.0f;//Error bc battery% cant be negative
+    }
+    if (batteryPercentage> 50){
+        a = 5;
+    }
+    else{
+        a = 6;
     }
     return batteryPercentage;
 }

@@ -22,16 +22,16 @@ class ADCDriver{
     public:
     TaskHandle_t vADCPollHandle;
     QueueHandle_t messenger;
-
     int pin4V;
     int pin5V;
+
     int pinreading[2];
-    ADCDriver(int maxvoltage[]);
+    ADCDriver();
     void init();
     static void vADCPoll(void* pvParameters);
 
     private:
-    static float ADCToBatteryPercent(uint16_t ADCReading,int maxvoltage);
+    static float ADCToBatteryPercent(float ADCReading,float scale);
     void sendDataThroughQueue();
 };
 
