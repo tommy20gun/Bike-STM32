@@ -94,7 +94,7 @@ void Taillight::initPeripherals(){
 
 void Taillight::vTurnLeft(void* pvParameters){
   Taillight* taillight = (Taillight*) pvParameters;
-  struct taggedBuffer buff;
+  struct uint32_t_Buffer buff;
   buff.tag = turningLeft;
   buff.data = 0;
   while(1){
@@ -109,7 +109,7 @@ void Taillight::vTurnLeft(void* pvParameters){
 }
 void Taillight::vTurnRight(void* pvParameters){
   Taillight* taillight = (Taillight*) pvParameters;
-  struct taggedBuffer buff;
+  struct uint32_t_Buffer buff;
   buff.tag = turningRight;
   buff.data = 0;
   while(1){
@@ -125,7 +125,7 @@ void Taillight::vTurnRight(void* pvParameters){
 void Taillight::vBrake(void* pvParameters){
   Taillight* taillight = (Taillight*) pvParameters;
   bool inPinState;
-  struct taggedBuffer buff;
+  struct uint32_t_Buffer buff;
   buff.tag = brakeON;
   buff.data = 0;
   while(1){

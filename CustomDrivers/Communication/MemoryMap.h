@@ -49,12 +49,17 @@ typedef enum DataTable{
   throttleV
 }DataTable;
 
-struct taggedBuffer{ 
-    DataTable tag;
-    uint32_t data;
+struct uint32_t_Buffer{ 
+  DataTable tag;
+  uint32_t data;
 };
 
-MemoryMap* receiveTaggedData(taggedBuffer* buff, MemoryMap* map);
+struct floatBuffer{
+  DataTable tag;
+  float data;
+};
+
+MemoryMap* receiveTaggedData(uint32_t_Buffer* buff, MemoryMap* map);
 #ifdef __cplusplus
 }
 #endif //__cplusplus

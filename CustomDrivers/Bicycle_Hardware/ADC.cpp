@@ -113,7 +113,7 @@ void ADCDriver::vADCPoll(void* pvParameters){
 }
 
 void ADCDriver::sendDataThroughQueue(){
-    struct taggedBuffer buffer;
+    struct floatBuffer buffer;
     buffer.tag = ADCreading12V;
     buffer.data = ADCToBatteryPercent(pinreading[0],4);
     xQueueSendToBack(messenger,&buffer,0);
@@ -143,7 +143,7 @@ float ADCDriver::ADCToBatteryPercent(float ADCReading,float scale){
     //x = -500.86y^3 + 5720y^2 -21557y+26840 (y in range of 3.63-4.2V)
     //x = 21.0769*(y-3.5) (y < 3.63)
     float batteryPercentage;
-    if (voltagePerCell > 3.63f){
+    if (voltagePerCell > 3.63f && voltagePerCell < 4.3f){
         batteryPercentage = (((a*voltagePerCell+b)*voltagePerCell) + c)*voltagePerCell + d;
     }
     else if (voltagePerCell <= 3.63f && voltagePerCell > 2.0f){

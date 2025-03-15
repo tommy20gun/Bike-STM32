@@ -61,7 +61,7 @@ void Horn::initPeripherals(){
 void Horn::vTurnOnHorn(void* pvParameters){
   Horn *horn = (Horn*) pvParameters;
   bool inPinState;
-  struct taggedBuffer buff;
+  struct uint32_t_Buffer buff;
   buff.data = 0;
   buff.tag = hornON;
   while(1){

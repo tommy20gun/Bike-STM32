@@ -1,6 +1,6 @@
 #include "MemoryMap.h"
 
-MemoryMap* receiveTaggedData(taggedBuffer* buff, MemoryMap* map){
+MemoryMap* receiveTaggedData(uint32_t_Buffer* buff, MemoryMap* map){
   switch (buff->tag)
   {
   case 0:

@@ -145,7 +145,7 @@ void Bluetooth::initBTMemoryMap(){
 void Bluetooth::send(void* pvParameters){
   Bluetooth* tooth = (Bluetooth*)pvParameters;
   MemoryMap* map = &(tooth->map);
-  struct taggedBuffer buff;
+  struct uint32_t_Buffer buff;
   LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, (uint32_t) map, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
   while(1){
     //xSemaphoreTake(tooth->sendSemaphore,portMAX_DELAY);

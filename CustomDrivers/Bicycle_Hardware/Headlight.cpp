@@ -68,7 +68,7 @@ void Headlight::initPeripherals(){
 
 void Headlight::vTurnonHeadlight(void* pvParameters){
   bool pinState;
-  struct taggedBuffer buff;
+  struct uint32_t_Buffer buff;
   buff.tag = headlightON;
   buff.data = 0;
   Headlight* headlight = (Headlight*) pvParameters;

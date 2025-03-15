@@ -48,7 +48,7 @@ void GlobalSetup(void){
   adc.init();
 
   //create global queue, assign to all obj
-  messenger = xQueueCreate(13,sizeof(struct taggedBuffer));
+  messenger = xQueueCreate(13,sizeof(struct uint32_t_Buffer));
   bluetooth.messenger = messenger;
   headlight.messenger = messenger;
   horn.messenger = messenger;
