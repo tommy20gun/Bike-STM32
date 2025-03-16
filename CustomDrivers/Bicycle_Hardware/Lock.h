@@ -20,7 +20,7 @@ class Lock{
     void init();
     void 
 
-
+    void SPI3_IRQHandler(void);
 };
 #ifdef __cplusplus
 }
