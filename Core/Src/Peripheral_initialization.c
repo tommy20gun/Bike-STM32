@@ -103,6 +103,7 @@ void assert_failed(uint8_t *file, uint32_t line)
 }
 #endif /* USE_FULL_ASSERT */
 
+//TODO Error handler must print stack trace
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */

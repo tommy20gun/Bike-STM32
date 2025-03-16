@@ -33,6 +33,9 @@ static Taillight taillight;
 static Bluetooth bluetooth;
 static ADCDriver adc;
 QueueHandle_t messenger;
+TaskHandle_t stateMachineHandle;
+typedef enum{STATE_LOCKED, STATE_UNLOCKED} state_t;
+static state_t state;
 
 /* create tasks, create object instances. object constructors set up hardware and own the semaphore*/
 void GlobalSetup(void){
@@ -55,6 +58,57 @@ void GlobalSetup(void){
   taillight.messenger = messenger;
   adc.messenger = messenger;
 
+  BaseType_t xReturned = xTaskCreate(state_machine, "state_machine", 64, NULL, 2, &stateMachineHandle);
+  if (xReturned != pdPASS){
+    Error_Handler();
+  }
+
+}
+
+void state_machine(void* pvParameters){
+  state = STATE_LOCKED;
+  typedef state_t (*state_Transition)(state_t);
+  state_Transition transitiontable[2] = {unlock,lock};
+  while(1){
+    //state transition flag
+        state = transitiontable[state](state);
+  }
+
+}
+
+state_t unlock(state_t state){
+  if (state == STATE_LOCKED){
+    //vTaskSuspend(motionsensor);
+    vTaskResume(headlight.vTurnOnHeadlightHandle);
+    vTaskResume(taillight.vTurnLeftHandle);
+    vTaskResume(taillight.vTurnRightHandle);
+    vTaskResume(taillight.vBrakeHandle);
+    //vtaskResume(Fardriver);
+    //vTaskResume(ParkingBrake);
+    //vTaskResume(LED);
+    //log stateUnlocked suscessful
+    return STATE_UNLOCKED;
+  }
+  //log stateunlocked failed
+  return STATE_LOCKED;
+}
+
+state_t lock(state_t state){
+  if (state == STATE_UNLOCKED){
+    vTaskSuspend(headlight.vTurnOnHeadlightHandle);
+    vTaskSuspend(taillight.vTurnLeftHandle);
+    vTaskSuspend(taillight.vTurnRightHandle);
+    vTaskSuspend(taillight.vBrakeHandle);
+    //vTaskSuspend(LED);
+    //vtaskSuspend(ParkingBrake);
+    //vtaskSuspend(Fardriver);
+
+    //vTaskResume(motiondetection)
+    //log stateUnlocked suscessful
+    return STATE_LOCKED;
+  }
+  //log stateunlocked failed
+  return STATE_UNLOCKED;
 }
 
 int main(){

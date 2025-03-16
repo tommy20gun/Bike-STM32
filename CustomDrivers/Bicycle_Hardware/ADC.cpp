@@ -152,12 +152,6 @@ float ADCDriver::ADCToBatteryPercent(float ADCReading,float scale){
     else {
         batteryPercentage = -1.0f;//Error bc battery% cant be negative
     }
-    if (batteryPercentage> 50){
-        a = 5;
-    }
-    else{
-        a = 6;
-    }
     return batteryPercentage;
 }
 

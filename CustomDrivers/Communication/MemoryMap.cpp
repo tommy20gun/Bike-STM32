@@ -4,43 +4,43 @@ MemoryMap* receiveTaggedData(uint32_t_Buffer* buff, MemoryMap* map){
   switch (buff->tag)
   {
   case 0:
-    map->headlightON = (int) buff->data;
+    map->headlightON = buff->data;
     break;
   case 1:
-    map->motorTemp = (float) buff->data;
+    map->motorTemp = buff->data;
     break;
   case 2:
-    map->ADCreading72V = (float)buff->data;
+    map->ADCreading72V = buff->data;
     break;
   case 3:
-    map->ADCreading12V = (float) buff->data;
+    map->ADCreading12V = buff->data;
     break;
   case 4:
-    map->battTemp = (float) buff->data;
+    map->battTemp = buff->data;
     break;
   case 5:
-    map->Odometer = (float) buff->data;
+    map->Odometer = buff->data;
     break;
   case 6:
-    map->speed = (float) buff->data;
+    map->speed = buff->data;
     break;
   case 7:
-    map->hornON = (bool) buff->data;
+    map->hornON = buff->data;
     break;
   case 8:
-    map->brakeON = (bool) buff->data;
+    map->brakeON = buff->data;
     break;
   case 9:
-    map->turningLeft = (bool) buff->data;
+    map->turningLeft = buff->data;
     break;
   case 10:
-    map->turningRight = (bool) buff->data;
+    map->turningRight = buff->data;
     break;
   case 11:
-    map->RPM = (int) buff->data;
+    map->RPM = buff->data;
     break;
   case 12:
-    map->throttleV = (float) buff->data;
+    map->throttleV = buff->data;
     break;
   }
   return map;
