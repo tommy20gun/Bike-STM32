@@ -32,9 +32,9 @@ static Headlight headlight;
 static Taillight taillight;
 static Bluetooth bluetooth;
 static ADCDriver adc;
+static Lock SPILock;
 QueueHandle_t messenger;
 TaskHandle_t stateMachineHandle;
-typedef enum{STATE_LOCKED, STATE_UNLOCKED} state_t;
 static state_t state;
 
 /* create tasks, create object instances. object constructors set up hardware and own the semaphore*/
@@ -58,24 +58,31 @@ void GlobalSetup(void){
   taillight.messenger = messenger;
   adc.messenger = messenger;
 
+  
+
   BaseType_t xReturned = xTaskCreate(state_machine, "state_machine", 64, NULL, 2, &stateMachineHandle);
   if (xReturned != pdPASS){
     Error_Handler();
   }
+  SPILock = Lock(stateMachineHandle);
 
 }
 
 void state_machine(void* pvParameters){
   state = STATE_LOCKED;
   typedef state_t (*state_Transition)(state_t);
-  state_Transition transitiontable[2] = {unlock,lock};
+  state_Transition transitiontable[2] = {lock,unlock};
+  uint32_t notifiedValue;
   while(1){
-    //state transition flag
-        state = transitiontable[state](state);
+    xTaskNotifyWait(pdFALSE, 0xFFFFFFFF, &notifiedValue, portMAX_DELAY);
+    //notified value is the same enumeration where 1 calls unlock 0 calls locked
+    //STATE_UNLOCKED = 1
+    //STATE_LOCKED = 0
+    state = transitiontable[notifiedValue](state);
   }
 
 }
-
+//TODO future make this an event group where the notification uint32 has mapping of each task handle
 state_t unlock(state_t state){
   if (state == STATE_LOCKED){
     //vTaskSuspend(motionsensor);
@@ -160,3 +167,16 @@ void EXTI9_5_IRQHandler(void){
 void USART2_IRQHandler(void){
 
 };
+
+void SPI3_IRQHandler(void){
+    // handle received
+  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+  if(LL_SPI_IsActiveFlag_RXNE){
+    //this should autoclear
+      xSemaphoreGiveFromISR(SPILock.bsem,&xHigherPriorityTaskWoken);
+      portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+  }
+  else{
+    Error_Handler();
+  }
+}

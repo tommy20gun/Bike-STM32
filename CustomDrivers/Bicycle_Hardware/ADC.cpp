@@ -143,10 +143,11 @@ float ADCDriver::ADCToBatteryPercent(float ADCReading,float scale){
     //x = -500.86y^3 + 5720y^2 -21557y+26840 (y in range of 3.63-4.2V)
     //x = 21.0769*(y-3.5) (y < 3.63)
     float batteryPercentage;
-    if (voltagePerCell > 3.63f && voltagePerCell < 4.3f){
+    if (voltagePerCell > 3.63f){ //testing
+        //voltagePerCell > 3.63f && voltagePerCell < 4.25f real
         batteryPercentage = (((a*voltagePerCell+b)*voltagePerCell) + c)*voltagePerCell + d;
     }
-    else if (voltagePerCell <= 3.63f && voltagePerCell > 2.0f){
+    else if (voltagePerCell <= 3.63f && voltagePerCell > 3.45f){
         batteryPercentage = a1*(voltagePerCell+b1);
     }
     else {

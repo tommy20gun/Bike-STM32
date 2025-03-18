@@ -102,6 +102,8 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
+typedef enum{STATE_LOCKED, STATE_UNLOCKED} state_t;
+
 
 void EXTI15_10_IRQHandler(void);
 void EXTI9_5_IRQHandler(void);

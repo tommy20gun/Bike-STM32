@@ -13,15 +13,29 @@
 extern "C" {
 #endif
 
-#include "FreeRTOS.h"  
+#include "FreeRTOS.h" 
+#include "main.h"
+#include "MemoryMap.h"
+
 class Lock{
   public:
-    Lock();
-    void init();
-    void 
+    TaskHandle_t vLockFunctionHandle;
+    TaskHandle_t stateMachineHandle;
+    SemaphoreHandle_t bsem;
+    uint8_t unlockCode[100];
 
-    void SPI3_IRQHandler(void);
+    Lock(TaskHandle_t statetask);
+    void initPeripheral();
+    void initTask();
+
+    static void vLockFunction(void* pvParameters);
+
+    private:
+    uint8_t* receiveNFC();
+    
 };
+
+void SPI3_IRQHandler(void);
 #ifdef __cplusplus
 }
 #endif //__cplusplus
