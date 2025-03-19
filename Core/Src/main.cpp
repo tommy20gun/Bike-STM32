@@ -32,10 +32,11 @@ static Headlight headlight;
 static Taillight taillight;
 static Bluetooth bluetooth;
 static ADCDriver adc;
-static Lock SPILock;
+static Lock* SPILock;
 QueueHandle_t messenger;
 TaskHandle_t stateMachineHandle;
 static state_t state;
+
 
 /* create tasks, create object instances. object constructors set up hardware and own the semaphore*/
 void GlobalSetup(void){
@@ -64,7 +65,7 @@ void GlobalSetup(void){
   if (xReturned != pdPASS){
     Error_Handler();
   }
-  SPILock = Lock(stateMachineHandle);
+  SPILock = new Lock(stateMachineHandle);
 
 }
 
@@ -173,7 +174,7 @@ void SPI3_IRQHandler(void){
   BaseType_t xHigherPriorityTaskWoken = pdFALSE;
   if(LL_SPI_IsActiveFlag_RXNE){
     //this should autoclear
-      xSemaphoreGiveFromISR(SPILock.bsem,&xHigherPriorityTaskWoken);
+      xSemaphoreGiveFromISR(SPILock->bsem,&xHigherPriorityTaskWoken);
       portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
   }
   else{

@@ -58,7 +58,7 @@
     SPI_InitStruct.ClockPhase = LL_SPI_PHASE_1EDGE;
     SPI_InitStruct.NSS = LL_SPI_NSS_SOFT;
     SPI_InitStruct.BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV2;
-    SPI_InitStruct.BitOder = LL_SPI_MSB_FIRST;
+    SPI_InitStruct.BitOrder = LL_SPI_MSB_FIRST;
     SPI_InitStruct.CRCCalculation = LL_SPI_CRCCALCULATION_DISABLE;
     SPI_InitStruct.CRCPoly = 10; // not used
     LL_SPI_Init(SPI3,&SPI_InitStruct);
@@ -94,7 +94,7 @@ void Lock::initTask(){
 void Lock::vLockFunction(void* PvParameters){
     Lock* SPILock = (Lock*) PvParameters;
     uint8_t buffer[100] = {0};
-    int i;
+    uint32_t i;
     
     while(1){
         //receive buffer
@@ -103,12 +103,12 @@ void Lock::vLockFunction(void* PvParameters){
             xSemaphoreTake(SPILock->bsem,portMAX_DELAY);
             LL_SPI_Enable(SPI3);
             buffer[i] = LL_SPI_ReceiveData8(SPI3);
-            while(LL_SPI_IsActiveFlag_BSY); //wait until not busy
+            while((uint32_t) LL_SPI_IsActiveFlag_BSY == 1U); //wait until not busy
             LL_SPI_Disable(SPI3);
             i++;
         }
         //check password
-        for (int j = 0; j < sizeof(buffer); j++){
+        for (uint32_t j = 0; j < sizeof(buffer); j++){
             if (buffer[j] != SPILock->unlockCode[j]){
                 break; //does not notify task
             }
