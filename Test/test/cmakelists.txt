@@ -3,14 +3,14 @@ cmake_minimum_required(VERSION 4.0.0)
 set(This ExampleTests)
 
 set(Sources
-    ExampleTests.cpp
+    ADCTest.cpp
 )
 
 add_executable(${This} ${Sources})
 target_link_libraries(${This} PUBLIC
     gtest_main
     gmock_main
-    Example
+    MainTest
 )
 
 add_test(

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 4.0.0)
 
-set(This Example)
+set(This MainTest)
 
 project(${This} C CXX)
 set(CMAKE_C_STANDARD 17)
@@ -12,11 +12,11 @@ enable_testing()
 add_subdirectory(Test/googletest)
 
 set(Headers
-    Example.h
+    Test/Testable_Code.cpp
 )
 
 set(Sources
-    Example.cpp
+    Test/Testable_Code.h
 )
 
 add_library(${This} STATIC ${Sources} ${Headers})

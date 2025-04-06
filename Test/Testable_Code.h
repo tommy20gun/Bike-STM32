@@ -1,5 +1,5 @@
-#ifndef EXAMPLE_H
-#define EXAMPLE_H
+#ifndef TESTABLE
+#define TESTABLE
 float ADCToBatteryPercent(float ADCReading,float scale);
 
-#endif //example_h
+#endif TESTABLE
