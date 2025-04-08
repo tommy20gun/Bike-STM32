@@ -44,14 +44,14 @@
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_SPI3);
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
     
-    GPIO_InitStruct.Pin = LL_GPIO_PIN_3|LL_GPIO_PIN_4|LL_GPIO_PIN_5;
+    GPIO_InitStruct.Pin = LL_GPIO_PIN_3|LL_GPIO_PIN_4;
     GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
     GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
     GPIO_InitStruct.Alternate = LL_GPIO_AF_6;
     LL_GPIO_Init(GPIOA,&GPIO_InitStruct);
 
-    SPI_InitStruct.TransferDirection = LL_SPI_FULL_DUPLEX;
+    SPI_InitStruct.TransferDirection = LL_SPI_HALF_DUPLEX_TX;
     SPI_InitStruct.Mode = LL_SPI_MODE_MASTER;
     SPI_InitStruct.DataWidth = LL_SPI_DATAWIDTH_8BIT;
     SPI_InitStruct.ClockPolarity = LL_SPI_POLARITY_LOW;
@@ -134,14 +134,54 @@ void Lock:: sendByte(uint8_t buff){
 }
 
 void Lock:: receiveByte(uint8_t* dest){
+    /*1. Set the RXONLY bit in the SPI_CR1 register.
+    2. Enable the SPI by setting the SPE bit to 1:
+    a) In master mode, this immediately activates the generation of the SCK clock, and
+    data are serially received until the SPI is disabled (SPE=0).
+    b) In slave mode, data are received when the SPI master device drives NSS low and
+    generates the SCK clock.
+    3. Wait until RXNE=1 and read the SPI_DR register to get the received data (this clears
+    the RXNE bit). Repeat this operation for each data item to be received.
+    This procedure can also be implemented using dedicated interrupt subroutines launched at
+    each rising edge of the RXNE flag.
+    Note: If it is required to disable the SPI after the last transfer, follow the recommendation
+    described in Section 20.3.8: Disabling the SPI.*/
+
     xSemaphoreTake(bsem,portMAX_DELAY);
     *dest = LL_SPI_ReceiveData8(SPI3);
 }
 
-void sendCommandFrame(int command){
-    LL_SPI_Enable(SPI3);
+void Lock::sendCommandFrame(int command){
+    /*
+    Transmit-only procedure (BIDIMODE=0 RXONLY=0)
+In this mode, the procedure can be reduced as described below and the BSY bit can be
+used to wait until the completion of the transmission (see Figure 201 and Figure 202).
+1. Enable the SPI by setting the SPE bit to 1.
+2. Write the first data item to send into the SPI_DR register (this clears the TXE bit).
+3. Wait until TXE=1 and write the next data item to be transmitted. Repeat this step for
+each data item to be transmitted.
+4. After writing the last data item into the SPI_DR register, wait until TXE=1, then wait until
+BSY=0, this indicates that the transmission of the last data is complete.
+This procedure can be also implemented using dedicated interrupt subroutines launched at
+each rising edge of the TXE flag.
+Note: During discontinuous communications, there is a 2 APB clock period delay between the
+write operation to SPI_DR and the BSY bit setting. As a consequence, in transmit-only
+mode, it is mandatory to wait first until TXE is set and then until BSY is cleared after writing
+the last data.
+After transmitting two data items in transmit-only mode, the OVR flag is set in the SPI_SR
+register since the received data are never read.
+*/
+    LL_SPI_SetTransferDirection(SPI3,LL_SPI_HALF_DUPLEX_TX);
     chipSelect(true);
-    //TODO turn on Chip Select Pin
+    LL_SPI_Enable(SPI3);
+    while (1){ //not empty
+        while(LL_SPI_IsActiveFlag_TXE);
+        Lock::sendByte(1);
+    }
+    while(LL_SPI_IsActiveFlag_TXE && !LL_SPI_IsActiveFlag_BSY);
+     
+    
+
     LL_SPI_Disable(SPI3);
     chipSelect(false);
 }
