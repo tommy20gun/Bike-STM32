@@ -174,8 +174,11 @@ void SPI3_IRQHandler(void){
   BaseType_t xHigherPriorityTaskWoken = pdFALSE;
   if(LL_SPI_IsActiveFlag_RXNE){
     //this should autoclear
-      xSemaphoreGiveFromISR(SPILock->bsem,&xHigherPriorityTaskWoken);
+      xSemaphoreGiveFromISR(SPILock->bsemRXNE,&xHigherPriorityTaskWoken);
       portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+  }
+  else if (LL_SPI_IsActiveFlag_OVR){
+    Error_Handler();
   }
   else{
     Error_Handler();

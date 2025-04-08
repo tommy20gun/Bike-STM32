@@ -21,7 +21,8 @@ class Lock{
   public:
     TaskHandle_t vLockFunctionHandle;
     TaskHandle_t stateMachineHandle;
-    SemaphoreHandle_t bsem;
+    SemaphoreHandle_t bsemRXNE;
+    SemaphoreHandle_t bsemTXE;
     uint8_t unlockCode[100];
 
     Lock(TaskHandle_t statetask);
@@ -31,17 +32,18 @@ class Lock{
     static void vLockFunction(void* pvParameters);
 
     private:
+    typedef enum command{checkRDYFlag,bruh, bruh2};
+    char command1[2] = {0x03, 0x69}; //69 is magic stop
+    char command2[5];
+    char command3[5];
+    char* commandArray[3] = {command1, command2, command3};
+
+    void receiveData(uint8_t* dest);
+    void sendCommandFrame(command cmd);
+    void parseReceivedCommand(command cmd, uint8_t* dest);
+    void waitClockCycle(int cycles);
     void chipSelect(bool status);
-    void sendByte(uint8_t buff);
-    void receiveByte(uint8_t* dest);
-    void checkReady();
 
-    void sendCommandFrame(int command);
-    char* receiveCommandData();
-
-    uint8_t* receiveNFC();
-
-    
 };
 
 void SPI3_IRQHandler(void);
