@@ -38,9 +38,9 @@ class Lock{
     char command3[5];
     char* commandArray[3] = {command1, command2, command3};
 
-    void receiveData(uint8_t* dest);
+    void receiveData(uint8_t* dest, int length);
     void sendCommandFrame(command cmd);
-    void parseReceivedCommand(command cmd, uint8_t* dest);
+    bool isReady();
     void waitClockCycle(int cycles);
     void chipSelect(bool status);
 

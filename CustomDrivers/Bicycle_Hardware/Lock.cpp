@@ -99,6 +99,8 @@ void Lock::vLockFunction(void* PvParameters){
     uint32_t i;
     
     while(1){
+        SPILock->isReady();
+        vTaskDelay(1000);
         //receive buffer
 
 
@@ -122,28 +124,18 @@ void Lock::vLockFunction(void* PvParameters){
     }
 }
 
-void chipSelectLock(bool status){
-    if (!status){
-        LL_GPIO_SetOutputPin(GPIOB, GPIO_PIN_12);
-    }
-    else{    
-        LL_GPIO_ResetOutputPin(GPIOB, GPIO_PIN_12);
-    }
-}
 
-void Lock:: receiveData(uint8_t* dest){
+
+void Lock:: receiveData(uint8_t* dest, int length){
     chipSelectLock(true);
     LL_SPI_Enable(SPI3);
     uint8_t* head = dest;
-    xSemaphoreTake(bsemRXNE, portMAX_DELAY);
-    *dest = LL_SPI_ReceiveData8(SPI3);
 
-    while (something){
-        dest++;
-        if (pdFALSE == xSemaphoreTake(bsemRXNE, 100)){
-            Error_Handler();
-        }
+    while (length > 0){//TODO fix
+        xSemaphoreTake(bsemRXNE, portMAX_DELAY);
         *dest = LL_SPI_ReceiveData8(SPI3);
+        dest++;
+        length--;
     }
     //wait 1 SPI Clock cycle before turning off SPI
     waitClockCycle(1);
@@ -171,15 +163,31 @@ void Lock::sendCommandFrame(command cmd){
     chipSelectLock(false);
 }
 
-void Lock::parseReceivedCommand(command cmd, uint8_t* dest){
-    
+bool Lock::isReady(){
+    uint8_t buff;
+    sendCommandFrame(checkRDYFlag);
+    receiveData(&buff, 1);
+    if (buff){
+        return true;
+    }
+    else{
+        return false;
+    }
 }
+
 void Lock::waitClockCycle(int cycles){
     for (volatile int i = 0; i < 32*cycles; i++) {
         __NOP(); 
     }
 }
 
-    
+void chipSelectLock(bool status){
+    if (!status){
+        LL_GPIO_SetOutputPin(GPIOB, GPIO_PIN_12);
+    }
+    else{    
+        LL_GPIO_ResetOutputPin(GPIOB, GPIO_PIN_12);
+    }
+}
 
 
