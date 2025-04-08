@@ -31,7 +31,16 @@ class Lock{
     static void vLockFunction(void* pvParameters);
 
     private:
+    void chipSelect(bool status);
+    void sendByte(uint8_t buff);
+    void receiveByte(uint8_t* dest);
+    void checkReady();
+
+    void sendCommandFrame(int command);
+    char* receiveCommandData();
+
     uint8_t* receiveNFC();
+
     
 };
 

@@ -138,7 +138,7 @@ BTState Bluetooth::getConnectionState(){
 }
 
 void Bluetooth::initBTMemoryMap(){
-  map = {69420,0,0,1,1,0,0,0,0,0,0,0,0,0,0}; //set the magic number
+  map = {69420,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //set the magic number
 }
 
 //this is static

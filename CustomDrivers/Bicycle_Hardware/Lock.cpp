@@ -98,7 +98,9 @@ void Lock::vLockFunction(void* PvParameters){
     
     while(1){
         //receive buffer
-        while(i < sizeof(buffer)){
+
+
+        /*while(i < sizeof(buffer)){
             i = 0;
             xSemaphoreTake(SPILock->bsem,portMAX_DELAY);
             LL_SPI_Enable(SPI3);
@@ -114,6 +116,36 @@ void Lock::vLockFunction(void* PvParameters){
             }
             //STATE_UNLOCKED is enumeration from main.h describing the state
             xTaskNotify(SPILock->stateMachineHandle, STATE_UNLOCKED, eSetBits);
-        }
+        }*/
     }
 }
+
+void chipSelect(bool status){
+    if (!status){
+        LL_GPIO_SetOutputPin(GPIOB, GPIO_PIN_12);
+    }
+    else{    
+        LL_GPIO_ResetOutputPin(GPIOB, GPIO_PIN_12);
+    }
+}
+
+void Lock:: sendByte(uint8_t buff){
+
+}
+
+void Lock:: receiveByte(uint8_t* dest){
+    xSemaphoreTake(bsem,portMAX_DELAY);
+    *dest = LL_SPI_ReceiveData8(SPI3);
+}
+
+void sendCommandFrame(int command){
+    LL_SPI_Enable(SPI3);
+    chipSelect(true);
+    //TODO turn on Chip Select Pin
+    LL_SPI_Disable(SPI3);
+    chipSelect(false);
+}
+
+    
+
+
