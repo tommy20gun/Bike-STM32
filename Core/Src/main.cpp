@@ -172,12 +172,12 @@ void USART2_IRQHandler(void){
 void SPI3_IRQHandler(void){
     // handle received
   BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-  if(LL_SPI_IsActiveFlag_RXNE){
+  if(LL_SPI_IsActiveFlag_RXNE(SPI3)){
     //this should autoclear
       xSemaphoreGiveFromISR(SPILock->bsemRXNE,&xHigherPriorityTaskWoken);
       portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
   }
-  else if (LL_SPI_IsActiveFlag_OVR){
+  else if (LL_SPI_IsActiveFlag_OVR(SPI3)){
     Error_Handler();
   }
   else{

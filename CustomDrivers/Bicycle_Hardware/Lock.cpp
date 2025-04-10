@@ -95,14 +95,11 @@ void Lock::initTask(){
 
 void Lock::vLockFunction(void* PvParameters){
     Lock* SPILock = (Lock*) PvParameters;
-    uint8_t buffer[100] = {0};
-    uint32_t i;
+
     
     while(1){
         SPILock->isReady();
         vTaskDelay(1000);
-        //receive buffer
-
 
         /*while(i < sizeof(buffer)){
             i = 0;
@@ -127,9 +124,8 @@ void Lock::vLockFunction(void* PvParameters){
 
 
 void Lock:: receiveData(uint8_t* dest, int length){
-    chipSelectLock(true);
+    chipSelect(true);
     LL_SPI_Enable(SPI3);
-    uint8_t* head = dest;
 
     while (length > 0){//TODO fix
         xSemaphoreTake(bsemRXNE, portMAX_DELAY);
@@ -150,17 +146,17 @@ void Lock:: receiveData(uint8_t* dest, int length){
     char* commandArray[3] = {command1, command2, command3};
 */
 void Lock::sendCommandFrame(command cmd){
-    chipSelectLock(true);
+    chipSelect(true);
     LL_SPI_Enable(SPI3);
     int commandIndex = 0;
     while (commandArray[cmd][commandIndex] == 0x69){ //end of command magic number
-        while(LL_SPI_IsActiveFlag_TXE);
+        while(LL_SPI_IsActiveFlag_TXE(SPI3));
         LL_SPI_TransmitData8(SPI3, commandArray[cmd][commandIndex]);
         commandIndex++;
     }
-    while(LL_SPI_IsActiveFlag_TXE && !LL_SPI_IsActiveFlag_BSY);
+    while(LL_SPI_IsActiveFlag_TXE(SPI3) && !LL_SPI_IsActiveFlag_BSY(SPI3));
     LL_SPI_Disable(SPI3);
-    chipSelectLock(false);
+    chipSelect(false);
 }
 
 bool Lock::isReady(){
@@ -175,13 +171,17 @@ bool Lock::isReady(){
     }
 }
 
+void Lock::cardRegistration(){
+    
+}
+
 void Lock::waitClockCycle(int cycles){
     for (volatile int i = 0; i < 32*cycles; i++) {
         __NOP(); 
     }
 }
 
-void chipSelectLock(bool status){
+void Lock::chipSelect(bool status){
     if (!status){
         LL_GPIO_SetOutputPin(GPIOB, GPIO_PIN_12);
     }

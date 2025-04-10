@@ -32,15 +32,28 @@ class Lock{
     static void vLockFunction(void* pvParameters);
 
     private:
-    typedef enum command{checkRDYFlag,bruh, bruh2};
+    enum command{checkRDYFlag,bruh, bruh2};
     char command1[2] = {0x03, 0x69}; //69 is magic stop
-    char command2[5];
+    char command2[10] = {0x01, 
+    0x00, 
+    0xFF, 
+    sizeof(command2)-6, 
+    0 - (sizeof(command2)-6),
+    0xD4,
+    0x4A,//inListPassiveTarget
+    0x01, //maxTg
+    0x00, //106kbps type A
+    -(0x04+0x0A+0x01+0x00) //checksum is DCS = -(lower byte of TFI-pDN)
+    //no postamble
+    }
     char command3[5];
     char* commandArray[3] = {command1, command2, command3};
 
     void receiveData(uint8_t* dest, int length);
     void sendCommandFrame(command cmd);
     bool isReady();
+    void cardRegistration();
+    void startAutoPoll();
     void waitClockCycle(int cycles);
     void chipSelect(bool status);
 
