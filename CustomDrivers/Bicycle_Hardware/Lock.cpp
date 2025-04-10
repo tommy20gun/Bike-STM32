@@ -126,8 +126,12 @@ void Lock::vLockFunction(void* PvParameters){
 void Lock:: receiveData(uint8_t* dest, int length){
     chipSelect(true);
     LL_SPI_Enable(SPI3);
-
+    //send 0x02 to begin receiving data
+    while (isReady());
+    while(LL_SPI_IsActiveFlag_TXE(SPI3));
+    LL_SPI_TransmitData8(SPI3, 0x03);
     while (length > 0){//TODO fix
+
         xSemaphoreTake(bsemRXNE, portMAX_DELAY);
         *dest = LL_SPI_ReceiveData8(SPI3);
         dest++;
@@ -161,7 +165,7 @@ void Lock::sendCommandFrame(command cmd){
 
 bool Lock::isReady(){
     uint8_t buff;
-    sendCommandFrame(checkRDYFlag);
+    sendCommandFrame(CHECKRDYFLAG);
     receiveData(&buff, 1);
     if (buff){
         return true;
@@ -172,7 +176,15 @@ bool Lock::isReady(){
 }
 
 void Lock::cardRegistration(){
-    
+    //bruh i didnt have to do this
+}
+
+void Lock::startAutoPoll(){
+    uint8_t buff[20];
+    sendCommandFrame(INAUTOPOLL);
+    while (1){ //TODO test code only
+        receiveData(buff, 20);
+    }
 }
 
 void Lock::waitClockCycle(int cycles){
