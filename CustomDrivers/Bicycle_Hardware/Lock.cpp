@@ -44,20 +44,21 @@
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_SPI3);
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
     
-    GPIO_InitStruct.Pin = LL_GPIO_PIN_3|LL_GPIO_PIN_4;
+    GPIO_InitStruct.Pin = LL_GPIO_PIN_3|LL_GPIO_PIN_4|LL_GPIO_PIN_5;
     GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
     GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
     GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
     GPIO_InitStruct.Alternate = LL_GPIO_AF_6;
-    LL_GPIO_Init(GPIOA,&GPIO_InitStruct);
+    LL_GPIO_Init(GPIOB,&GPIO_InitStruct);
 
     SPI_InitStruct.TransferDirection = LL_SPI_FULL_DUPLEX;
     SPI_InitStruct.Mode = LL_SPI_MODE_MASTER;
     SPI_InitStruct.DataWidth = LL_SPI_DATAWIDTH_8BIT;
-    SPI_InitStruct.ClockPolarity = LL_SPI_POLARITY_HIGH;
+    SPI_InitStruct.ClockPolarity = LL_SPI_POLARITY_LOW;
     SPI_InitStruct.ClockPhase = LL_SPI_PHASE_1EDGE;
     SPI_InitStruct.NSS = LL_SPI_NSS_SOFT;
-    SPI_InitStruct.BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV32;
+    SPI_InitStruct.BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV64;
     SPI_InitStruct.BitOrder = LL_SPI_LSB_FIRST;
     SPI_InitStruct.CRCCalculation = LL_SPI_CRCCALCULATION_DISABLE;
     SPI_InitStruct.CRCPoly = 10; // not used
@@ -67,7 +68,7 @@
     NVIC_SetPriority(SPI3_IRQn, 5);
     NVIC_EnableIRQ(SPI3_IRQn);
 
-    LL_SPI_EnableIT_RXNE(SPI3);
+    //LL_SPI_EnableIT_RXNE(SPI3);
     LL_SPI_EnableIT_ERR(SPI3);
 
     GPIO_InitStruct.Pin = LL_GPIO_PIN_12;
@@ -123,12 +124,10 @@ void Lock::vLockFunction(void* PvParameters){
 
 
 
-void Lock:: receiveData(uint8_t* dest, int length){
-    chipSelect(true);
+void Lock:: receiveCFReturn(uint8_t* dest, int length){
     LL_SPI_Enable(SPI3);
-    //send 0x02 to begin receiving data
-    while (isReady());
-    while(LL_SPI_IsActiveFlag_TXE(SPI3));
+    chipSelect(true);
+    while(!LL_SPI_IsActiveFlag_TXE(SPI3));
     LL_SPI_TransmitData8(SPI3, 0x03);
     while (length > 0){//TODO fix
 
@@ -153,26 +152,39 @@ void Lock::sendCommandFrame(command cmd){
     chipSelect(true);
     LL_SPI_Enable(SPI3);
     int commandIndex = 0;
-    while (commandArray[cmd][commandIndex] == 0x69){ //end of command magic number
-        while(LL_SPI_IsActiveFlag_TXE(SPI3));
+    volatile uint8_t buff;
+    while (commandArray[cmd][commandIndex] != 0x69){ //end of command magic number
+        while(!LL_SPI_IsActiveFlag_TXE(SPI3));
+        LL_SPI_TransmitData8(SPI3, commandArray[cmd][commandIndex]);
         LL_SPI_TransmitData8(SPI3, commandArray[cmd][commandIndex]);
         commandIndex++;
+
     }
-    while(LL_SPI_IsActiveFlag_TXE(SPI3) && !LL_SPI_IsActiveFlag_BSY(SPI3));
+    while(!LL_SPI_IsActiveFlag_TXE(SPI3));
+    while(LL_SPI_IsActiveFlag_BSY(SPI3));
+
+
     LL_SPI_Disable(SPI3);
     chipSelect(false);
 }
 
 bool Lock::isReady(){
-    uint8_t buff;
+    volatile uint8_t buff;
     sendCommandFrame(CHECKRDYFLAG);
-    receiveData(&buff, 1);
+    chipSelect(true);
+    LL_SPI_Enable(SPI3);
+    //xSemaphoreTake(bsemRXNE, portMAX_DELAY);
+    while(!LL_SPI_IsActiveFlag_RXNE(SPI3));
+    buff = LL_SPI_ReceiveData8(SPI3);
     if (buff){
         return true;
     }
     else{
         return false;
     }
+    waitClockCycle(1);
+    LL_SPI_Disable(SPI3);
+    chipSelect(false);
 }
 
 void Lock::cardRegistration(){
@@ -183,7 +195,7 @@ void Lock::startAutoPoll(){
     uint8_t buff[20];
     sendCommandFrame(INAUTOPOLL);
     while (1){ //TODO test code only
-        receiveData(buff, 20);
+        receiveCFReturn(buff, 20);
     }
 }
 

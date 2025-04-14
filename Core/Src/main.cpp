@@ -66,7 +66,8 @@ void GlobalSetup(void){
     Error_Handler();
   }
   SPILock = new Lock(stateMachineHandle);
-
+  SPILock->initPeripheral();
+  SPILock->initTask();
 }
 
 void state_machine(void* pvParameters){
@@ -166,7 +167,6 @@ void EXTI9_5_IRQHandler(void){
 }
 
 void USART2_IRQHandler(void){
-
 };
 
 void SPI3_IRQHandler(void){
