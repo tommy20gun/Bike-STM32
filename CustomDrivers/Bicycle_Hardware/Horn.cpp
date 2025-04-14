@@ -3,7 +3,7 @@
   * @brief          : Implementation of driver for Horn control. 
   * 
   * The Horn uses an external GPIO Interrupt triggered on Rising edge caused by closing the switch of the bike control console.
-  * Input pin for EXTI is PA11
+  * Input pin for EXTI is PA8
   * Output pin to open transistor PB1 
   */
 
@@ -38,24 +38,24 @@ void Horn::initPeripherals(){
     GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
     LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
   
-    //init PA11 as input wiht pulldown for the circuit
-    GPIO_InitStruct.Pin = LL_GPIO_PIN_11;
+    //init PA8 as input wiht pulldown for the circuit
+    GPIO_InitStruct.Pin = LL_GPIO_PIN_8;
     GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
     GPIO_InitStruct.Pull = LL_GPIO_PULL_DOWN;
     LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
   
-    LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA, LL_SYSCFG_EXTI_LINE11);
+    LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA, LL_SYSCFG_EXTI_LINE8);
   
     LL_EXTI_InitTypeDef EXTI_InitStruct = {0};
   
-    EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_11;
+    EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_8;
     EXTI_InitStruct.LineCommand = ENABLE;
     EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
     EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;
     LL_EXTI_Init(&EXTI_InitStruct);
   
-    LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_11, LL_GPIO_PULL_DOWN);
-    LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_11, LL_GPIO_MODE_INPUT);
+    LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_8, LL_GPIO_PULL_DOWN);
+    LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_8, LL_GPIO_MODE_INPUT);
 }
 
 void Horn::vTurnOnHorn(void* pvParameters){
@@ -69,11 +69,11 @@ void Horn::vTurnOnHorn(void* pvParameters){
     xSemaphoreTake(horn->bsem,portMAX_DELAY);
     //detects the rising or falling edge of the input pin
     //allows the switch to have on/off function
-    inPinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_11);
+    inPinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_8);
     //debounce
     vTaskDelay(100);
     //read again to confirm the signal, if not, ignore it
-    if (inPinState == LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_11)){
+    if (inPinState == LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_8)){
       if (inPinState){
         LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_1);
         buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_1);
