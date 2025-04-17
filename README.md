@@ -22,7 +22,8 @@ This repository contains the implementation of a Tesla Center Console-like syste
 
 ### Microcontroller Pinout made with KiCAD EDA:
 
-![image](Docs/Diagrams/MCUPinout.png)
+<img src="Docs/Diagrams/MCUPinout.png" alt="MCUPinout" width="600"/>
+
 <a href=""><strong>Explore the eCAD » </strong> </a>
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
