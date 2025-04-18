@@ -69,6 +69,7 @@
     NVIC_EnableIRQ(SPI3_IRQn);
 
     //LL_SPI_EnableIT_RXNE(SPI3);
+    LL_SPI_EnableIT_TXE(SPI3);
     LL_SPI_EnableIT_ERR(SPI3);
 
     GPIO_InitStruct.Pin = LL_GPIO_PIN_12;
@@ -215,3 +216,12 @@ void Lock::chipSelect(bool status){
 }
 
 
+/*
+debug:
+regenerate setup code
+check for TXE = 0
+check for BSY = 1
+Check CS Pin low
+Check the state of MISO, why is it reading 0xFF when plugged in but low when not
+https://github.com/pe1mew/PN532-on-STM32/blob/master/Example%20project/SPI_NFC.cpp
+*/

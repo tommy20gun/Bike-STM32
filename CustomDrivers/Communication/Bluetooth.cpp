@@ -40,7 +40,7 @@ void Bluetooth::initPeripherials(){
   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 //todo make sure there is a pullup on RX for BLE module. Does this work?
 
-  //init PB0
+  //init PA0
   GPIO_InitStruct.Pin = LL_GPIO_PIN_0;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;

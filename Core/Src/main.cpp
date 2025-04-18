@@ -180,6 +180,9 @@ void SPI3_IRQHandler(void){
   else if (LL_SPI_IsActiveFlag_OVR(SPI3)){
     Error_Handler();
   }
+  else if(LL_SPI_IsActiveFlag_TXE(SPI3)){
+    Error_Handler();
+  }
   else{
     Error_Handler();
   }
