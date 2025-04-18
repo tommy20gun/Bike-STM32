@@ -11,7 +11,7 @@ This repository contains the implementation of a Tesla Center Console-like syste
 ![image](Docs/Diagrams/SoftwareModuleSummary.png)
 <a href="https://github.com/tommy20gun/Bike-STM32/tree/master/CustomDrivers"><strong>Explore the Code » </strong> </a>
 
-![image](Docs/Diagrams/bike.png)
+![image](Docs/Diagrams/bike.jpg)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
