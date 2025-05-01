@@ -65,7 +65,8 @@ class Lock{
     };
     uint8_t* commandArray[3] = {command1, command2, command3};
 
-    void receiveCFReturn(uint8_t* dest, int length);
+    uint8_t transmitReceiveByte(uint8_t byte);
+    void receiveCommandFrameReturn(uint8_t* dest, int length);
     void sendCommandFrame(command cmd);
     bool isReady();
     void cardRegistration();

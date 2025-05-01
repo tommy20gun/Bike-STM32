@@ -69,7 +69,7 @@
     NVIC_EnableIRQ(SPI3_IRQn);
 
     //LL_SPI_EnableIT_RXNE(SPI3);
-    LL_SPI_EnableIT_TXE(SPI3);
+    //LL_SPI_EnableIT_TXE(SPI3);
     LL_SPI_EnableIT_ERR(SPI3);
 
     GPIO_InitStruct.Pin = LL_GPIO_PIN_12;
@@ -123,25 +123,13 @@ void Lock::vLockFunction(void* PvParameters){
     }
 }
 
-
-
-void Lock:: receiveCFReturn(uint8_t* dest, int length){
-    LL_SPI_Enable(SPI3);
-    chipSelect(true);
+uint8_t Lock::transmitReceiveByte(uint8_t byte){
     while(!LL_SPI_IsActiveFlag_TXE(SPI3));
-    LL_SPI_TransmitData8(SPI3, 0x03);
-    while (length > 0){//TODO fix
-
-        xSemaphoreTake(bsemRXNE, portMAX_DELAY);
-        *dest = LL_SPI_ReceiveData8(SPI3);
-        dest++;
-        length--;
-    }
-    //wait 1 SPI Clock cycle before turning off SPI
-    waitClockCycle(1);
-    LL_SPI_Disable(SPI3);
-    chipSelect(false);
+    LL_SPI_TransmitData8(SPI3, byte); //transmit on transmi, send dummy on receive,
+    while(LL_SPI_IsActiveFlag_BSY(SPI3));
+    return LL_SPI_ReceiveData8(SPI3); //clear RXNE on transmit, return on receive
 }
+
 /*
     typedef enum command{checkRDYFlag,bruh, bruh2};
     char command1[1] = {0x03};
@@ -153,13 +141,12 @@ void Lock::sendCommandFrame(command cmd){
     chipSelect(true);
     LL_SPI_Enable(SPI3);
     int commandIndex = 0;
-    volatile uint8_t buff;
+    //volatile uint8_t buff;
     while (commandArray[cmd][commandIndex] != 0x69){ //end of command magic number
         while(!LL_SPI_IsActiveFlag_TXE(SPI3));
-        LL_SPI_TransmitData8(SPI3, commandArray[cmd][commandIndex]);
-        LL_SPI_TransmitData8(SPI3, commandArray[cmd][commandIndex]);
+        transmitReceiveByte(commandArray[cmd][commandIndex]);
+        //LL_SPI_TransmitData8(SPI3, commandArray[cmd][commandIndex]);
         commandIndex++;
-
     }
     while(!LL_SPI_IsActiveFlag_TXE(SPI3));
     while(LL_SPI_IsActiveFlag_BSY(SPI3));
@@ -176,7 +163,7 @@ bool Lock::isReady(){
     LL_SPI_Enable(SPI3);
     //xSemaphoreTake(bsemRXNE, portMAX_DELAY);
     while(!LL_SPI_IsActiveFlag_RXNE(SPI3));
-    buff = LL_SPI_ReceiveData8(SPI3);
+    buff = transmitReceiveByte(0x00);
     if (buff){
         return true;
     }
@@ -188,6 +175,24 @@ bool Lock::isReady(){
     chipSelect(false);
 }
 
+void Lock::receiveCommandFrameReturn(uint8_t* dest, int length){
+    LL_SPI_Enable(SPI3);
+    chipSelect(true);
+    
+    while (length > 0){//TODO fix
+
+        xSemaphoreTake(bsemRXNE, portMAX_DELAY);
+        *dest = transmitReceiveByte(0x00);
+        dest++;
+        length--;
+    }
+    //wait 1 SPI Clock cycle before turning off SPI
+    waitClockCycle(1);
+    LL_SPI_Disable(SPI3);
+    chipSelect(false);
+}
+
+
 void Lock::cardRegistration(){
     //bruh i didnt have to do this
 }
@@ -196,7 +201,7 @@ void Lock::startAutoPoll(){
     uint8_t buff[20];
     sendCommandFrame(INAUTOPOLL);
     while (1){ //TODO test code only
-        receiveCFReturn(buff, 20);
+        receiveCommandFrameReturn(buff, 20);
     }
 }
 
