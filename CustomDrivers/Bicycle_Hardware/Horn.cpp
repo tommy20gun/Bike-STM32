@@ -44,7 +44,7 @@ void Horn::initPeripherals(){
     GPIO_InitStruct.Pull = LL_GPIO_PULL_DOWN;
     LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
   
-    LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA, LL_SYSCFG_EXTI_LINE8);
+    //LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA, LL_SYSCFG_EXTI_LINE8);
   
     LL_EXTI_InitTypeDef EXTI_InitStruct = {0};
   
@@ -52,7 +52,7 @@ void Horn::initPeripherals(){
     EXTI_InitStruct.LineCommand = ENABLE;
     EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
     EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;
-    LL_EXTI_Init(&EXTI_InitStruct);
+    //LL_EXTI_Init(&EXTI_InitStruct);
   
     LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_8, LL_GPIO_PULL_DOWN);
     LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_8, LL_GPIO_MODE_INPUT);
@@ -66,14 +66,14 @@ void Horn::vTurnOnHorn(void* pvParameters){
   buff.tag = hornON;
   while(1){
     //subtracts semaphore back down to 0, next while loop will block again
-    xSemaphoreTake(horn->bsem,portMAX_DELAY);
+    //xSemaphoreTake(horn->bsem,portMAX_DELAY);
     //detects the rising or falling edge of the input pin
     //allows the switch to have on/off function
     inPinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_8);
     //debounce
     vTaskDelay(100);
     //read again to confirm the signal, if not, ignore it
-    if (inPinState == LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_8)){
+    if (inPinState == LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_8) && inPinState == true){
       if (inPinState){
         LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_1);
         buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_1);
