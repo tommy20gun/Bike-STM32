@@ -68,9 +68,8 @@ class Lock{
     uint8_t transmitReceiveByte(uint8_t byte);
     void receiveCommandFrameReturn(uint8_t* dest, int length);
     void sendCommandFrame(command cmd);
-    bool isReady();
-    void cardRegistration();
-    void startAutoPoll();
+    bool isReadyCommand();
+    void startAutoPollCommand();
     void waitClockCycle(int cycles);
     void chipSelect(bool status);
 

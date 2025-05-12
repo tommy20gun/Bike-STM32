@@ -170,7 +170,7 @@ void USART2_IRQHandler(void){
 };
 
 void SPI3_IRQHandler(void){
-    // handle received
+  /*  // handle received
   BaseType_t xHigherPriorityTaskWoken = pdFALSE;
   if(LL_SPI_IsActiveFlag_RXNE(SPI3)){
     //this should autoclear
@@ -186,4 +186,5 @@ void SPI3_IRQHandler(void){
   else{
     Error_Handler();
   }
+  */
 }
