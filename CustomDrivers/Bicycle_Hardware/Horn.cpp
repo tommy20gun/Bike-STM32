@@ -45,7 +45,7 @@ void Horn::initPeripherals(){
     LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
   
     //LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA, LL_SYSCFG_EXTI_LINE8);
-  
+  /*
     LL_EXTI_InitTypeDef EXTI_InitStruct = {0};
   
     EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_8;
@@ -53,7 +53,7 @@ void Horn::initPeripherals(){
     EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
     EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;
     //LL_EXTI_Init(&EXTI_InitStruct);
-  
+  */
     LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_8, LL_GPIO_PULL_DOWN);
     LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_8, LL_GPIO_MODE_INPUT);
 }
@@ -61,6 +61,7 @@ void Horn::initPeripherals(){
 void Horn::vTurnOnHorn(void* pvParameters){
   Horn *horn = (Horn*) pvParameters;
   bool inPinState;
+  bool prevPinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_8);
   struct uint32_t_Buffer buff;
   buff.data = 0;
   buff.tag = hornON;
@@ -73,16 +74,18 @@ void Horn::vTurnOnHorn(void* pvParameters){
     //debounce
     vTaskDelay(100);
     //read again to confirm the signal, if not, ignore it
-    if (inPinState == LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_8) && inPinState == true){
+    if (inPinState == LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_8) && inPinState != prevPinState){
       if (inPinState){
         LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_1);
         buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_1);
         xQueueSendToBack(horn->messenger, &buff , 0);
+        prevPinState = inPinState;
       }
       else if (!inPinState){
         LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_1);
         buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_1);
         xQueueSendToBack(horn->messenger, &buff , 0);
+        prevPinState = inPinState;
       }
     }
   }

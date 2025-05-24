@@ -27,19 +27,9 @@ void Taillight:: initTasks(){
   if (xReturned != pdPASS){
     Error_Handler();
   }
-  //Binary Semaphore used for ISR to turn on the headlight
-  this->bsemleft = xSemaphoreCreateBinary();
-  if(this->bsemleft == NULL){
-    Error_Handler();
-  } 
 
   xReturned = xTaskCreate(vTurnRight,"TurnRight On/off",64, this,2,&vTurnRightHandle);
   if (xReturned != pdPASS){
-    Error_Handler();
-  }
-  //Binary Semaphore used for ISR to turn on the headlight
-  this->bsemright = xSemaphoreCreateBinary();
-  if(this->bsemright == NULL){
     Error_Handler();
   }
 
@@ -47,11 +37,6 @@ void Taillight:: initTasks(){
   if (xReturned != pdPASS){
     Error_Handler();
   }
-  //Binary Semaphore used for ISR to turn on the headlight
-  this->bsembrake = xSemaphoreCreateBinary();
-  if(this->bsembrake == NULL){
-    Error_Handler();
-  } 
 }
 
 void Taillight::initPeripherals(){
@@ -72,21 +57,8 @@ void Taillight::initPeripherals(){
   GPIO_InitStruct.Pull = LL_GPIO_PULL_DOWN;
   LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
   GPIO_InitStruct.Pin = LL_GPIO_PIN_9;
-   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
   
-//TODO does this work?
-  LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB, LL_SYSCFG_EXTI_LINE6);
-  LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB, LL_SYSCFG_EXTI_LINE7);
-  LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA, LL_SYSCFG_EXTI_LINE9);
-
-  LL_EXTI_InitTypeDef EXTI_InitStruct = {0};
-
-  EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_6|LL_EXTI_LINE_7|LL_EXTI_LINE_2;
-  EXTI_InitStruct.LineCommand = ENABLE;
-  EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
-  EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;
-  LL_EXTI_Init(&EXTI_InitStruct);
-
   LL_GPIO_SetPinPull(GPIOB, LL_GPIO_PIN_6, LL_GPIO_PULL_DOWN);
   LL_GPIO_SetPinPull(GPIOB, LL_GPIO_PIN_7, LL_GPIO_PULL_DOWN);
   LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_9, LL_GPIO_PULL_DOWN);
@@ -100,13 +72,15 @@ void Taillight::vTurnLeft(void* pvParameters){
   struct uint32_t_Buffer buff;
   buff.tag = turningLeft;
   buff.data = 0;
+  bool inPinState;
   while(1){
-    xSemaphoreTake(taillight->bsemleft,portMAX_DELAY);
-    while(xSemaphoreTake(taillight->bsemleft,0)== pdFALSE && LL_GPIO_IsInputPinSet(GPIOB,GPIO_PIN_6)){
-    LL_GPIO_TogglePin(GPIOB,GPIO_PIN_8);
-    buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_8);
-    xQueueSendToBack(taillight->messenger,  &buff , 0);
-    vTaskDelay(1000);
+    inPinState = LL_GPIO_IsInputPinSet(GPIOB,GPIO_PIN_6);
+    vTaskDelay(50);
+    while(inPinState == true && LL_GPIO_IsInputPinSet(GPIOB,GPIO_PIN_6) == inPinState){
+      LL_GPIO_TogglePin(GPIOB,GPIO_PIN_8);
+      buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_8);
+      xQueueSendToBack(taillight->messenger,  &buff , 0);//TODO this will not broadcast light off
+      vTaskDelay(1000);
     }
   }
 }
@@ -115,37 +89,42 @@ void Taillight::vTurnRight(void* pvParameters){
   struct uint32_t_Buffer buff;
   buff.tag = turningRight;
   buff.data = 0;
+  bool inPinState;
   while(1){
-    xSemaphoreTake(taillight->bsemright,portMAX_DELAY);
-    while(xSemaphoreTake(taillight->bsemright,0)== pdFALSE && LL_GPIO_IsInputPinSet(GPIOB,GPIO_PIN_7)){
+    inPinState = LL_GPIO_IsInputPinSet(GPIOB,GPIO_PIN_7);
+    vTaskDelay(50);
+    while(inPinState == true && LL_GPIO_IsInputPinSet(GPIOB,GPIO_PIN_7) == inPinState){
       LL_GPIO_TogglePin(GPIOB,GPIO_PIN_9);
       buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_9);
-      xQueueSendToBack(taillight->messenger,  &buff , 0);
+      xQueueSendToBack(taillight->messenger,  &buff , 0);//TODO this will not broadcast light off
       vTaskDelay(1000);
     }
   }
 }
-void Taillight::vBrake(void* pvParameters){
+void Taillight::vBrake(void* pvParameters){ //TODO make this a generic function,
+  //TODO make the parent class work by adding pin designation
   Taillight* taillight = (Taillight*) pvParameters;
   bool inPinState;
+  bool prevPinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_9);
   struct uint32_t_Buffer buff;
   buff.tag = brakeON;
   buff.data = 0;
   while(1){
-    //subtracts semaphore back down to 0, next while loop will block again
-    xSemaphoreTake(taillight->bsembrake,portMAX_DELAY);
-    //detects the rising or falling edge of the input pin
-    //allows the switch to have on/off function
     inPinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_9);
-    if (inPinState){
-      LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_2);
-      buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_2);
-      xQueueSendToBack(taillight->messenger,  &buff , 0);
-    }
-    else if (!inPinState){
-      LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_2);
-      buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_2);
-      xQueueSendToBack(taillight->messenger,  &buff , 0);
+    vTaskDelay(100);
+    if (inPinState == LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_9) && inPinState != prevPinState){
+      if (inPinState){
+        LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_2);
+        buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_2);
+        xQueueSendToBack(taillight->messenger,  &buff , 0);
+        prevPinState = inPinState;
+      }
+      else if (!inPinState){
+        LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_2);
+        buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_2);
+        xQueueSendToBack(taillight->messenger,  &buff , 0);
+        prevPinState = inPinState;
+      }
     }
   }
 }

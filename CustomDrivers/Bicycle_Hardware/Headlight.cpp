@@ -20,10 +20,10 @@ void Headlight::initTasks(){
     Error_Handler();
   }
   //Binary Semaphore used for ISR to turn on the headlight
-  this->bsem = xSemaphoreCreateBinary();
+  /*this->bsem = xSemaphoreCreateBinary();
   if(this->bsem == NULL){
     Error_Handler();
-  }
+  }*/
 }
 
 void Headlight::initPeripherals(){
@@ -49,7 +49,7 @@ void Headlight::initPeripherals(){
   if (success != 0){
     Error_Handler();
   }
-  LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA, LL_SYSCFG_EXTI_LINE10);
+  /*LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA, LL_SYSCFG_EXTI_LINE10);
 
   LL_EXTI_InitTypeDef EXTI_InitStruct = {0};
 
@@ -62,32 +62,39 @@ void Headlight::initPeripherals(){
   if (success != 0){
     Error_Handler();
   }
+    */
   LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_10, LL_GPIO_PULL_DOWN);
   LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_10, LL_GPIO_MODE_INPUT);
 }
 
 void Headlight::vTurnonHeadlight(void* pvParameters){
-  bool pinState;
+  bool inPinState;
+  bool prevPinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_10);
   struct uint32_t_Buffer buff;
   buff.tag = headlightON;
   buff.data = 0;
   Headlight* headlight = (Headlight*) pvParameters;
   while(1){
     //subtracts semaphore back down to 0, next while loop will block again
-    xSemaphoreTake(headlight->bsem,portMAX_DELAY);
+    //xSemaphoreTake(headlight->bsem,portMAX_DELAY);
     //detects the rising or falling edge of the input pin
     //allows the switch to have on/off function
-    pinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_10);
-    
-    if (pinState){
-      LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_0);
-      buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
-      xQueueSendToBack(headlight->messenger, &buff , 0);
-    }
-    else if (!pinState){
-      LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_0);
-      buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
-      xQueueSendToBack(headlight->messenger, &buff , 0);
+    inPinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_10);
+    vTaskDelay(100);
+
+    if (inPinState == LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_10) && inPinState != prevPinState){
+      if (inPinState){  
+        LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_0);
+        buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
+        xQueueSendToBack(headlight->messenger, &buff , 0);
+        prevPinState = inPinState;
+      }
+      else if (!inPinState){
+        LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_0);
+        buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
+        xQueueSendToBack(headlight->messenger, &buff , 0);
+        prevPinState = inPinState;
+      }
     }
   } 
 }
