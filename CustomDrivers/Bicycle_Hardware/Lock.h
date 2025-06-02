@@ -22,6 +22,8 @@ class Lock{
     TaskHandle_t vLockFunctionHandle;
     TaskHandle_t stateMachineHandle;
     SemaphoreHandle_t bsem;
+    QueueHandle_t messenger;
+
 
     Lock(TaskHandle_t statetask);
     void initPeripheral();

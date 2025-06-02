@@ -23,6 +23,7 @@ typedef struct MemoryMap{
   bool turningRight;
   int RPM;
   float throttleV;
+  bool StateMachineStatus;
   uint32_t CRC32;
 
   //special command
@@ -46,7 +47,8 @@ typedef enum DataTable{
   turningLeft,
   turningRight,
   RPM,
-  throttleV
+  throttleV,
+  StateMachineStatus
 }DataTable;
 
 struct uint32_t_Buffer{ 

@@ -6,7 +6,7 @@
   * Communication with the NFC reader such as passwords, SPI protocol is implemented.
   * Provides commands to access the state machine for Lock and Unlocking
   *
-  * SPI communication protocol-PA7
+  * Lock input-PA7
   * 
   * FardriverEN_72V - PA6
   * 
@@ -50,9 +50,22 @@ void Lock::initTask(){
 }
 
 void Lock::vLockFunction(void* PvParameters){
-    //Lock* SPILock = (Lock*) PvParameters;
+    Lock* SPILock = (Lock*) PvParameters;
+    bool inPinState;
+    bool prevPinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_7);
+    struct uint32_t_Buffer buff;
+    buff.data = 0;
+    buff.tag = StateMachineStatus;
     while(1){
-        vTaskDelay(1000);
-    }
+        inPinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_7);
+        vTaskDelay(100);
+        if (LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_7) == prevPinState){
+            //state machine
+            buff.data = LL_GPIO_IsOutputPinSet(GPIOA,GPIO_PIN_7);
+            xQueueSendToBack(SPILock->messenger, &buff , 0);
+            prevPinState = LL_GPIO_IsOutputPinSet(GPIOA,GPIO_PIN_7);
+        }
+        vTaskDelay(2000);
+  }
 }
 

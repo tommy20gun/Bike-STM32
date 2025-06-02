@@ -42,6 +42,8 @@ MemoryMap* receiveTaggedData(uint32_t_Buffer* buff, MemoryMap* map){
   case 12:
     map->throttleV = buff->data;
     break;
+  case 13:
+    map->StateMachineStatus = buff->data;
   }
   return map;
 }
