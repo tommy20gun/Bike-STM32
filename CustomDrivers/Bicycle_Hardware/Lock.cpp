@@ -7,7 +7,6 @@
   * Provides commands to access the state machine for Lock and Unlocking
   *
   * Lock input-PA7
-  * 
   * FardriverEN_72V - PA6
   * 
   */
@@ -19,7 +18,6 @@ Lock::Lock(TaskHandle_t statetask){
 }
 
 void Lock::initPeripheral(){
-
     LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
 
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
@@ -46,26 +44,34 @@ void Lock::initTask(){
     Error_Handler();
     }
     bsem = xSemaphoreCreateBinary();
-
 }
 
+/*
+pin high external interrupt
+check pin status with debounce
+if false positive, pass
+if truth, toggle state = 1, delay for 10 seconds
+
+result:
+- holding pin for more than 10 seconds will trigger second state change
+- pressing pin for longer than debounce timer (+poll timer) will trigger state change
+- pressing not long enough does nothing
+*/
 void Lock::vLockFunction(void* PvParameters){
     Lock* SPILock = (Lock*) PvParameters;
     bool inPinState;
-    bool prevPinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_7);
     struct uint32_t_Buffer buff;
     buff.data = 0;
     buff.tag = StateMachineStatus;
     while(1){
+        //every loop toggles the state
         inPinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_7);
-        vTaskDelay(100);
-        if (LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_7) == prevPinState){
-            //state machine
-            buff.data = LL_GPIO_IsOutputPinSet(GPIOA,GPIO_PIN_7);
+        vTaskDelay(100); //debounce and poll rate
+        if (inPinState == true && inPinState == LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_7)){
+            xTaskNotifyGive(SPILock->stateMachineHandle); //increments notif value by 1.
+            buff.data = buff.data ^ 1U; //toggles the first bit
             xQueueSendToBack(SPILock->messenger, &buff , 0);
-            prevPinState = LL_GPIO_IsOutputPinSet(GPIOA,GPIO_PIN_7);
+            vTaskDelay(10000); //cannot change state again for more than seconds
         }
-        vTaskDelay(2000);
-  }
+    }
 }
-

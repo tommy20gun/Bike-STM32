@@ -9,7 +9,7 @@ extern "C" {
 typedef struct MemoryMap{
   //slow data
   uint32_t magicNumber;
-  int headlightON;
+  uint32_t headlightON;
   float motorTemp;
   float ADCreading72V;
   float ADCreading12V;
@@ -17,13 +17,13 @@ typedef struct MemoryMap{
   float Odometer;
   //fast data
   float speed;
-  bool hornON;
-  bool brakeON;
-  bool turningLeft;
-  bool turningRight;
-  int RPM;
+  uint32_t hornON;
+  uint32_t brakeON;
+  uint32_t turningLeft;
+  uint32_t turningRight;
+  uint32_t RPM;
   float throttleV;
-  bool StateMachineStatus;
+  uint32_t StateMachineStatus;
   uint32_t CRC32;
 
   //special command

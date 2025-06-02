@@ -80,38 +80,39 @@ void state_machine(void* pvParameters){
     //notified value is the same enumeration where 1 calls unlock 0 calls locked
     //STATE_UNLOCKED = 1
     //STATE_LOCKED = 0
-    state = transitiontable[notifiedValue](state);
+    state = transitiontable[notifiedValue & 1U](state); //reads the last bit to determine 0 or 1
   }
-
 }
 //TODO future make this an event group where the notification uint32 has mapping of each task handle
+/*
+FardriverEN_72V - PA6
+*/
 state_t unlock(state_t state){
   if (state == STATE_LOCKED){
-    //vTaskSuspend(motionsensor);
     vTaskResume(headlight.vTurnOnHeadlightHandle);
     vTaskResume(taillight.vTurnLeftHandle);
     vTaskResume(taillight.vTurnRightHandle);
     vTaskResume(taillight.vBrakeHandle);
-    //vtaskResume(Fardriver);
-    //vTaskResume(ParkingBrake);
+    LL_GPIO_ResetOutputPin(GPIOA,GPIO_PIN_6); //fardriver Pin
     //vTaskResume(LED);
+    //vTaskSuspend(motionsensor);
     //log stateUnlocked suscessful
     return STATE_UNLOCKED;
   }
   //log stateunlocked failed
   return STATE_LOCKED;
 }
-
+/*
+FardriverEN_72V - PA6
+*/
 state_t lock(state_t state){
   if (state == STATE_UNLOCKED){
     vTaskSuspend(headlight.vTurnOnHeadlightHandle);
     vTaskSuspend(taillight.vTurnLeftHandle);
     vTaskSuspend(taillight.vTurnRightHandle);
     vTaskSuspend(taillight.vBrakeHandle);
+    LL_GPIO_SetOutputPin(GPIOA,GPIO_PIN_6); //fardriver Pin
     //vTaskSuspend(LED);
-    //vtaskSuspend(ParkingBrake);
-    //vtaskSuspend(Fardriver);
-
     //vTaskResume(motiondetection)
     //log stateUnlocked suscessful
     return STATE_LOCKED;
@@ -131,6 +132,7 @@ int main(){
 /**
   * @brief This function handles EXTI line[15:10] interrupts.
   */
+ /*
 void EXTI15_10_IRQHandler(void){
   //wakes up H
   //TODO All buttons need to be debounced with timer instead of GPIO exti
@@ -171,4 +173,4 @@ void USART2_IRQHandler(void){
 
 void SPI3_IRQHandler(void){
 
-}
+}*/

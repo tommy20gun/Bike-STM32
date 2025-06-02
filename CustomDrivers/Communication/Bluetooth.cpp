@@ -203,7 +203,7 @@ refer to the file Readme.txt in the CRC_usage folder*/
   LL_CRC_FeedData32(CRC, map->turningRight);
   LL_CRC_FeedData32(CRC, map->RPM);
   LL_CRC_FeedData32(CRC, map->throttleV);
-  LL_CRC_FeedData32(CRC, map->Lock);
+  LL_CRC_FeedData32(CRC, map->StateMachineStatus);
   return LL_CRC_ReadData32(CRC);
 }
 
