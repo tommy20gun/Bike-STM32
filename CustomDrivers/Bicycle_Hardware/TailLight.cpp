@@ -6,7 +6,7 @@
   * Braking will change the light to full brightness. Rising Edge GPIO EXTI will implement changing of brightness. 
   * Turn signal will blink the specfied light at full brightness. Timed GPIO Output will implement the blinking of TailLights. Trigger will be implemented by Rising edge GPIO EXTI
   * 
-  * Input Pin for EXTI PB6(left), PB7(right), PA9 (brake). TODO these need to be 12V with transistor
+  * Input Pin PB6(left), PB7(right), PA9 (brake). TODO these need to be 12V with transistor
   * Output Pin for turn signal transistor PB8 (left), PB9 (right), PB2 (brake)
   * 
   */
@@ -79,8 +79,8 @@ void Taillight::vTurnLeft(void* pvParameters){
     while(inPinState == true && LL_GPIO_IsInputPinSet(GPIOB,GPIO_PIN_6) == inPinState){
       LL_GPIO_TogglePin(GPIOB,GPIO_PIN_8);
       buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_8);
-      xQueueSendToBack(taillight->messenger,  &buff , 0);//TODO this will not broadcast light off
-      vTaskDelay(1000);
+      xQueueSendToBack(taillight->messenger,  &buff , 0);
+      vTaskDelay(500);
     }
   }
 }
@@ -94,15 +94,17 @@ void Taillight::vTurnRight(void* pvParameters){
     inPinState = LL_GPIO_IsInputPinSet(GPIOB,GPIO_PIN_7);
     vTaskDelay(50);
     while(inPinState == true && LL_GPIO_IsInputPinSet(GPIOB,GPIO_PIN_7) == inPinState){
+      //TODO test this lol
       LL_GPIO_TogglePin(GPIOB,GPIO_PIN_9);
       buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_9);
-      xQueueSendToBack(taillight->messenger,  &buff , 0);//TODO this will not broadcast light off
-      vTaskDelay(1000);
+      xQueueSendToBack(taillight->messenger,  &buff , 0);
+      vTaskDelay(500);
     }
   }
 }
 void Taillight::vBrake(void* pvParameters){ //TODO make this a generic function,
   //TODO make the parent class work by adding pin designation
+  // do this after testing fixture is complete
   Taillight* taillight = (Taillight*) pvParameters;
   bool inPinState;
   bool prevPinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_9);

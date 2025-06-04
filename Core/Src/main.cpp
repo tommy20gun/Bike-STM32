@@ -8,7 +8,6 @@
   * 
   */
 
-
 #include "main.h" //includes LL
 #include <string>
 
@@ -122,7 +121,7 @@ state_t lock(state_t state){
 }
 
 int main(){
-  HAL_Init(); //TODO figure out what this does, figure out how to search all 
+  HAL_Init(); //TODO Try to run code without this
   SystemClock_Config();
   GPIO_GlobalSetup();
   GlobalSetup();
@@ -135,7 +134,6 @@ int main(){
  /*
 void EXTI15_10_IRQHandler(void){
   //wakes up H
-  //TODO All buttons need to be debounced with timer instead of GPIO exti
   BaseType_t xHigherPriorityTaskWoken = pdFALSE;
   if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_10) != RESET){
     LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_10);

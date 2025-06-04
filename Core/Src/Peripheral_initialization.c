@@ -53,7 +53,8 @@ void SystemClock_Config(void)
 
 	//use timer1 as time base
    /* Update the time base */
-   //TODO can we get rid of HAL for timer1
+   //TODO Timer is used for HAL to work. it is not an option to get rid of this as 
+  // the time base source in CubeMX
   if (HAL_InitTick (TICK_INT_PRIORITY) != HAL_OK)
   {
     Error_Handler();
@@ -63,12 +64,7 @@ void SystemClock_Config(void)
 
 
 void GPIO_GlobalSetup(void){
-	//enable GPIO C13 as PP Output baremetal
-	/*RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
-	GPIOC -> MODER |= GPIO_MODER_MODE13_0;
-	GPIOC -> OTYPER = 0;
-	GPIOC -> OSPEEDR = 0;*/
-  
+
   //enables all clock for GPIO
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC);
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOH);
@@ -76,12 +72,13 @@ void GPIO_GlobalSetup(void){
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
 
   //enable EXTI
+  /*
   int prio = NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 5, 0);
   NVIC_SetPriority(EXTI15_10_IRQn, prio);
   NVIC_EnableIRQ(EXTI15_10_IRQn);
   NVIC_SetPriority(EXTI9_5_IRQn, prio);
   NVIC_EnableIRQ(EXTI9_5_IRQn);
-
+*/
   
 }
 
@@ -103,14 +100,26 @@ void assert_failed(uint8_t *file, uint32_t line)
 }
 #endif /* USE_FULL_ASSERT */
 
-//TODO Error handler must print stack trace
+
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
+  typedef struct errorinfo{
+    char* file;
+    int line; 
+  } errorinfo;
+
+  errorinfo errors = { __FILE__,__LINE__};
+  LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, (uint32_t) &errors, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+
   while (1)
   {
+    LL_DMA_DisableStream(DMA1,LL_DMA_STREAM_6);
+    LL_DMA_SetDataLength(DMA1,LL_DMA_STREAM_6, sizeof(errors));
+    LL_DMA_EnableStream(DMA1,LL_DMA_STREAM_6);
+    LL_USART_EnableDMAReq_TX(USART2);
   }
   /* USER CODE END Error_Handler_Debug */
 }

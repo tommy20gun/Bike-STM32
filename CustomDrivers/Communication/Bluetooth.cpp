@@ -14,6 +14,7 @@
   */
 
 #include "Bluetooth.h"
+#include <string>
 
  
 
@@ -58,7 +59,7 @@ void Bluetooth::initPeripherials(){
   LL_GPIO_ResetOutputPin(GPIOA, GPIO_PIN_0);
 
   //DMA init
-  //TODO watch a video on DMA to understand it
+
 
   LL_DMA_SetChannelSelection(DMA1, LL_DMA_STREAM_6, LL_DMA_CHANNEL_4);
   LL_DMA_SetDataTransferDirection(DMA1,LL_DMA_STREAM_6, LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
@@ -142,24 +143,67 @@ void Bluetooth::initBTMemoryMap(){
 }
 
 //this is static
+#define TESTING
+
 void Bluetooth::send(void* pvParameters){
   Bluetooth* tooth = (Bluetooth*)pvParameters;
   MemoryMap* map = &(tooth->map);
-  struct uint32_t_Buffer buff;
-  LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, (uint32_t) map, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
-  while(1){
-    //xSemaphoreTake(tooth->sendSemaphore,portMAX_DELAY);
-    //empty queue
-    while (uxQueueMessagesWaiting(tooth->messenger) > 0){
-      xQueueReceive(tooth->messenger, (void*) &buff, 0);
-      map = receiveTaggedData(&buff,map);
+  #ifndef TESTING
+    struct uint32_t_Buffer buff;
+    LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, (uint32_t) map, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+    while(1){
+      //xSemaphoreTake(tooth->sendSemaphore,portMAX_DELAY);
+      //empty queue
+      //TODO maybe do a mutex and separate these tasks
+      while (uxQueueMessagesWaiting(tooth->messenger) > 0){
+        xQueueReceive(tooth->messenger, (void*) &buff, 0);
+        map = receiveTaggedData(&buff,map);
+      }
+      map->CRC32 = CRC32MemoryMap(map);
+      uartTransmitDMA(sizeof(*map)); //size is 80 I think, addr: start of struct
+      //xSemaphoreGive(tooth->sendSemaphore);
+      vTaskDelay(100);
     }
+  #else //code for testing is below
     map->CRC32 = CRC32MemoryMap(map);
-    uartTransmitDMA(sizeof(*map)); //size is 80 I think, addr: start of struct
-    //xSemaphoreGive(tooth->sendSemaphore);
-    //TODO create CRC, create magic number for starting of queue
-    vTaskDelay(100);
-  }
+
+    std::string TestingString = "Magic Number: ";
+    TestingString.append(std::to_string(map->magicNumber));
+    TestingString.append("\nHeadlight ON: ");
+    TestingString.append(std::to_string(map->headlightON));
+    TestingString.append("\nMotor Temp: ");
+    TestingString.append(std::to_string(map->motorTemp));
+    TestingString.append("\nADC Reading 72V: ");
+    TestingString.append(std::to_string(map->ADCreading72V));
+    TestingString.append("\nADC Reading 12V: ");
+    TestingString.append(std::to_string(map->ADCreading12V));
+    TestingString.append("\nBattery Temp: ");
+    TestingString.append(std::to_string(map->battTemp));
+    TestingString.append("\nOdometer: ");
+    TestingString.append(std::to_string(map->Odometer));
+    TestingString.append("\nSpeed: ");
+    TestingString.append(std::to_string(map->speed));
+    TestingString.append("\nHorn ON: ");
+    TestingString.append(std::to_string(map->hornON));
+    TestingString.append("\nBrake ON: ");
+    TestingString.append(std::to_string(map->brakeON));
+    TestingString.append("\nTurning Left: ");
+    TestingString.append(std::to_string(map->turningLeft));
+    TestingString.append("\nTurning Right: ");
+    TestingString.append(std::to_string(map->turningRight));
+    TestingString.append("\nRPM: ");
+    TestingString.append(std::to_string(map->RPM));
+    TestingString.append("\nThrottle Voltage: ");
+    TestingString.append(std::to_string(map->throttleV));
+    TestingString.append("\nState Machine Status: ");
+    TestingString.append(std::to_string(map->StateMachineStatus));
+    TestingString.append("\nCRC32: ");
+    TestingString.append(std::to_string(map->CRC32));
+    
+    LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6,(uint32_t) &TestingString, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+    uartTransmitDMA(sizeof(TestingString.size()));
+    vTaskDelay(1000);
+  #endif
 }
 uint32_t Bluetooth::CRC32MemoryMap(MemoryMap* map){
   /*To compute a CRC of the supported data, go through the following steps:
