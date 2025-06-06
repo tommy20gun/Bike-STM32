@@ -69,6 +69,10 @@ void GlobalSetup(void){
   SPILock->initTask();
 }
 
+//TODO there is a possiblity to implement lock level 2 for motion detection
+/*
+State machine should stay in main
+*/
 void state_machine(void* pvParameters){
   state = STATE_LOCKED;
   typedef state_t (*state_Transition)(state_t);
@@ -128,47 +132,3 @@ int main(){
   vTaskStartScheduler();
 }
 
-/**
-  * @brief This function handles EXTI line[15:10] interrupts.
-  */
- /*
-void EXTI15_10_IRQHandler(void){
-  //wakes up H
-  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-  if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_10) != RESET){
-    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_10);
-    xSemaphoreGiveFromISR(headlight.bsem, &xHigherPriorityTaskWoken);
-  }
-  if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_11) != RESET){
-    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_11);
-    xSemaphoreGiveFromISR(horn.bsem, &xHigherPriorityTaskWoken);
-  }
-  if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_12) != RESET){
-    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_12);
-    xSemaphoreGiveFromISR(taillight.bsembrake, &xHigherPriorityTaskWoken);
-  }
-   //Calls the next task Immediately instead of next Tick
-  portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-}
-
-void EXTI9_5_IRQHandler(void){
-  //wakes up H
-  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-  if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_8) != RESET){
-    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_8);
-    //if there is no Semaphore to take, then give it
-    xSemaphoreGiveFromISR(taillight.bsemleft, &xHigherPriorityTaskWoken);
-  }
-  if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_9) != RESET){
-    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_9);
-    xSemaphoreGiveFromISR(taillight.bsemright, &xHigherPriorityTaskWoken);
-  }
-  portYIELD_FROM_ISR(xHigherPriorityTaskWoken); 
-}
-
-void USART2_IRQHandler(void){
-};
-
-void SPI3_IRQHandler(void){
-
-}*/

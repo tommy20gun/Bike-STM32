@@ -67,7 +67,7 @@ class Bluetooth{
     static uint32_t CRC32MemoryMap(MemoryMap* map);
 };
 
-void DMA1_Stream6_IRQHandler(void);
+
 #ifdef __cplusplus
 }
 #endif //__cplusplus

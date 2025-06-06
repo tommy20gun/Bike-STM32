@@ -39,7 +39,6 @@ void Bluetooth::initPeripherials(){
   GPIO_InitStruct.Pull = LL_GPIO_PULL_UP; 
   GPIO_InitStruct.Alternate = LL_GPIO_AF_7;
   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-//todo make sure there is a pullup on RX for BLE module. Does this work?
 
   //init PA0
   GPIO_InitStruct.Pin = LL_GPIO_PIN_0;
@@ -268,14 +267,7 @@ void Bluetooth::sendSpecialCommand(void* pvParameters){
     vTaskDelay(200);
   }
 }*/
-//IT function
-void DMA1_Stream6_IRQHandler(void)
-{
-  //you cannot breakpoint this lol
-  if(LL_DMA_IsActiveFlag_TC6(DMA1) == 1){
-    LL_DMA_ClearFlag_TC6(DMA1);
-  }
-}
+
 
 //private functions
 /**

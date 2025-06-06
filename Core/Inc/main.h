@@ -105,9 +105,7 @@ void Error_Handler(void);
 typedef enum{STATE_LOCKED, STATE_UNLOCKED} state_t;
 
 
-void EXTI15_10_IRQHandler(void);
-void EXTI9_5_IRQHandler(void);
-void USART2_IRQHandler(void);
+
 void state_machine(void* pvParameters);
 state_t unlock(state_t state);
 state_t lock(state_t state);

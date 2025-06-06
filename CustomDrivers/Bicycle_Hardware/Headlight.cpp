@@ -74,6 +74,7 @@ void Headlight::vTurnonHeadlight(void* pvParameters){
   buff.tag = headlightON;
   buff.data = 0;
   Headlight* headlight = (Headlight*) pvParameters;
+  //TODO if debounce ever needs to be changed: https://www.reddit.com/r/embedded/comments/1d82i2b/debouncing_and_interrupts/
   while(1){
     //subtracts semaphore back down to 0, next while loop will block again
     //xSemaphoreTake(headlight->bsem,portMAX_DELAY);
