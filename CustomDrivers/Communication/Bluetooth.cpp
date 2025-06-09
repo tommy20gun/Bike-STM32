@@ -164,44 +164,47 @@ void Bluetooth::send(void* pvParameters){
       vTaskDelay(100);
     }
   #else //code for testing is below
-    map->CRC32 = CRC32MemoryMap(map);
+    std::string TestingString;
 
-    std::string TestingString = "Magic Number: ";
-    TestingString.append(std::to_string(map->magicNumber));
-    TestingString.append("\nHeadlight ON: ");
-    TestingString.append(std::to_string(map->headlightON));
-    TestingString.append("\nMotor Temp: ");
-    TestingString.append(std::to_string(map->motorTemp));
-    TestingString.append("\nADC Reading 72V: ");
-    TestingString.append(std::to_string(map->ADCreading72V));
-    TestingString.append("\nADC Reading 12V: ");
-    TestingString.append(std::to_string(map->ADCreading12V));
-    TestingString.append("\nBattery Temp: ");
-    TestingString.append(std::to_string(map->battTemp));
-    TestingString.append("\nOdometer: ");
-    TestingString.append(std::to_string(map->Odometer));
-    TestingString.append("\nSpeed: ");
-    TestingString.append(std::to_string(map->speed));
-    TestingString.append("\nHorn ON: ");
-    TestingString.append(std::to_string(map->hornON));
-    TestingString.append("\nBrake ON: ");
-    TestingString.append(std::to_string(map->brakeON));
-    TestingString.append("\nTurning Left: ");
-    TestingString.append(std::to_string(map->turningLeft));
-    TestingString.append("\nTurning Right: ");
-    TestingString.append(std::to_string(map->turningRight));
-    TestingString.append("\nRPM: ");
-    TestingString.append(std::to_string(map->RPM));
-    TestingString.append("\nThrottle Voltage: ");
-    TestingString.append(std::to_string(map->throttleV));
-    TestingString.append("\nState Machine Status: ");
-    TestingString.append(std::to_string(map->StateMachineStatus));
-    TestingString.append("\nCRC32: ");
-    TestingString.append(std::to_string(map->CRC32));
-    
-    LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6,(uint32_t) &TestingString, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
-    uartTransmitDMA(sizeof(TestingString.size()));
-    vTaskDelay(1000);
+    while (1){
+      map->CRC32 = CRC32MemoryMap(map);
+      TestingString = "Magic Number: ";
+      TestingString.append(std::to_string(map->magicNumber));
+      TestingString.append("\nHeadlight ON: ");
+      TestingString.append(std::to_string(map->headlightON));
+      TestingString.append("\nMotor Temp: ");
+      TestingString.append(std::to_string(map->motorTemp));
+      TestingString.append("\nADC Reading 72V: ");
+      TestingString.append(std::to_string(map->ADCreading72V));
+      TestingString.append("\nADC Reading 12V: ");
+      TestingString.append(std::to_string(map->ADCreading12V));
+      TestingString.append("\nBattery Temp: ");
+      TestingString.append(std::to_string(map->battTemp));
+      TestingString.append("\nOdometer: ");
+      TestingString.append(std::to_string(map->Odometer));
+      TestingString.append("\nSpeed: ");
+      TestingString.append(std::to_string(map->speed));
+      TestingString.append("\nHorn ON: ");
+      TestingString.append(std::to_string(map->hornON));
+      TestingString.append("\nBrake ON: ");
+      TestingString.append(std::to_string(map->brakeON));
+      TestingString.append("\nTurning Left: ");
+      TestingString.append(std::to_string(map->turningLeft));
+      TestingString.append("\nTurning Right: ");
+      TestingString.append(std::to_string(map->turningRight));
+      TestingString.append("\nRPM: ");
+      TestingString.append(std::to_string(map->RPM));
+      TestingString.append("\nThrottle Voltage: ");
+      TestingString.append(std::to_string(map->throttleV));
+      TestingString.append("\nState Machine Status: ");
+      TestingString.append(std::to_string(map->StateMachineStatus));
+      TestingString.append("\nCRC32: ");
+      TestingString.append(std::to_string(map->CRC32));
+      TestingString.append("\n\n");
+      LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6,(uint32_t) TestingString.c_str(), LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+      uartTransmitDMA(TestingString.size());
+      vTaskDelay(1000);
+    }
   #endif
 }
 uint32_t Bluetooth::CRC32MemoryMap(MemoryMap* map){
