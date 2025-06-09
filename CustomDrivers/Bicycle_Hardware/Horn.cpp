@@ -18,12 +18,12 @@ void Horn::initTasks(){
   BaseType_t xReturned;
   xReturned = xTaskCreate(vTurnOnHorn,"horn On/Off",64, this,2,&vTurnOnHornHandle);
   if(xReturned != pdPASS){
-    Error_Handler();
+    Error_Handler(__FILE__,__LINE__);
   }
   //Binary Semaphore used for ISR to turn on the headlight
   this->bsem = xSemaphoreCreateBinary();
   if(this->bsem == NULL){
-    Error_Handler();
+    Error_Handler(__FILE__,__LINE__);
   }
 }
 

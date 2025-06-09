@@ -51,7 +51,7 @@ void ADCDriver::init(){
     BaseType_t xReturned;
     xReturned = xTaskCreate(vADCPoll,"ADCPoll",64, this,1,&vADCPollHandle);
     if (xReturned != pdPASS){
-    Error_Handler();
+        Error_Handler(__FILE__,__LINE__);
     }
 
 
@@ -103,7 +103,7 @@ void ADCDriver::vADCPoll(void* pvParameters){
     //delay to allow for ADC to enable 
     vTaskDelay(1000);
     if (!LL_ADC_IsEnabled(ADC1)){
-        Error_Handler();
+        Error_Handler(__FILE__,__LINE__);
     }
     //infiniteLoop
     while(1){

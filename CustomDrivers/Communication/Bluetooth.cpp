@@ -92,7 +92,7 @@ void Bluetooth::initPeripherials(){
   USART_InitStruct.HardwareFlowControl = LL_USART_HWCONTROL_NONE;
   USART_InitStruct.OverSampling = LL_USART_OVERSAMPLING_16;
   if ((LL_USART_Init(USART2, &USART_InitStruct))){
-    Error_Handler();
+    Error_Handler(__FILE__,__LINE__);
   }
   LL_USART_ConfigAsyncMode(USART2);
   LL_USART_EnableIT_RXNE(USART2);
@@ -106,19 +106,19 @@ void Bluetooth::initTasks(){
   BaseType_t xReturned;
   xReturned = xTaskCreate(send,"send",512, this, 1, &sendHandle);
   if(xReturned != pdPASS){
-    Error_Handler();
+    Error_Handler(__FILE__,__LINE__);
   }
   /*xReturned = xTaskCreate(sendFast,"sendFast",64, this,1,&sendFastHandle);
   if(xReturned != pdPASS){
-    Error_Handler();
+    Error_Handler(__FILE__,__LINE__);
   }
   xReturned = xTaskCreate(sendSpecialCommand,"sendSpecialCommand",64, this,1,&sendSpecialCommandHandle);
   if(xReturned != pdPASS){
-    Error_Handler();
+    Error_Handler(__FILE__,__LINE__);
   }
   sendSemaphore = xSemaphoreCreateMutex();
   if (sendSemaphore == NULL){
-    Error_Handler();
+    Error_Handler(__FILE__,__LINE__);
   }
   //init as give
   xSemaphoreGive(sendSemaphore);*/
@@ -148,17 +148,14 @@ void Bluetooth::initBTMemoryMap(){
 void Bluetooth::send(void* pvParameters){
   Bluetooth* tooth = (Bluetooth*)pvParameters;
   MemoryMap* map = &(tooth->map);
+
   #ifndef TESTING
-    struct uint32_t_Buffer buff;
     LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, (uint32_t) map, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
     while(1){
       //xSemaphoreTake(tooth->sendSemaphore,portMAX_DELAY);
       //empty queue
       //TODO maybe do a mutex and separate these tasks
-      while (uxQueueMessagesWaiting(tooth->messenger) > 0){
-        xQueueReceive(tooth->messenger, (void*) &buff, 0);
-        map = receiveTaggedData(&buff,map);
-      }
+      queueReceive(map,tooth);
       map->CRC32 = CRC32MemoryMap(map);
       uartTransmitDMA(sizeof(*map)); //size is 80 I think, addr: start of struct
       //xSemaphoreGive(tooth->sendSemaphore);
@@ -168,6 +165,7 @@ void Bluetooth::send(void* pvParameters){
     std::string TestingString;
 
     while (1){
+      queueReceive(map,tooth);
       map->CRC32 = CRC32MemoryMap(map);
       TestingString = "Magic Number: ";
       TestingString.append(std::to_string(map->magicNumber));
@@ -208,31 +206,22 @@ void Bluetooth::send(void* pvParameters){
     }
   #endif
 }
+/*
+helper function to pull all data from queue before sending out
+*/
+void Bluetooth::queueReceive(MemoryMap* map, Bluetooth* tooth){
+  struct uint32_t_Buffer buff;
+  while (uxQueueMessagesWaiting(tooth->messenger) > 0){
+    xQueueReceive(tooth->messenger, (void*) &buff, 0);
+    map = receiveTaggedData(&buff,map);
+  }
+}
+/*
+calculates a checksum based on 12V ADC, 72V ADC, Odometer.
+this is because i can iterate through the struct and it is a waste of time.
+Uses CRC-32 polynomial: 0x4C11DB7
+*/
 uint32_t Bluetooth::CRC32MemoryMap(MemoryMap* map){
-  /*To compute a CRC of the supported data, go through the following steps:
- 1. Enable the CRC peripheral clock via the RCC peripheral.
- 2. Set the CRC data register to the initial CRC value by configuring the initial CRC value 
-register (CRC_INIT). In the more recent STM32 Series, it is possible to chain a CRC 
-calculation based on the previous CRC calculation as initial value. In this case, the 
-CRC_IDR register (not affected by the reset bit in CRC_CR) can be used. In HAL, this 
-is implemented by HAL_CRC_Calculate.
-3. Set the I/O reverse bit order through the REV_IN[1:0] and REV_OUT bits, respectively, 
-in the CRC control register (CRC_CR).
-4. Set the polynomial size and coefficients through the POLYSIZE[1:0] bits in CRC control 
-register (CRC_CR) and CRC polynomial register (CRC_POL), respectively.
-5. Reset the CRC peripheral through the Reset bit in the CRC control register (CRC_CR).
-6. Set the data to the CRC data register.
-7. Read the content of the CRC data register.
-8. Disable the CRC peripheral clock.
-
- In the firmware package, the CRC_usage example runs the CRC checksum code 
-computing an array data (DataBuffer) of 256 supported data type. For a full description, 
-refer to the file Readme.txt in the CRC_usage folder*/
-
-//calculates a checksum based on 12V ADC, 72V ADC, Odometer.
-//this is because i can iterate through the struct and it is a waste of time.
-//Uses CRC-32 polynomial: 0x4C11DB7
-  
   LL_CRC_ResetCRCCalculationUnit(CRC);
 
   //doing it in this order triggers the hardware properly

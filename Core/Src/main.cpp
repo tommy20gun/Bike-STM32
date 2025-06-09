@@ -62,7 +62,7 @@ void GlobalSetup(void){
 
   BaseType_t xReturned = xTaskCreate(state_machine, "state_machine", 64, NULL, 2, &stateMachineHandle);
   if (xReturned != pdPASS){
-    Error_Handler();
+    Error_Handler(__FILE__,__LINE__);
   }
   SPILock = new Lock(stateMachineHandle);
   SPILock->initPeripheral();

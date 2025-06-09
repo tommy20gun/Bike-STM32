@@ -65,6 +65,7 @@ class Bluetooth{
     void ATModeTesting();
     static void uartTransmitDMA(uint32_t size);
     static uint32_t CRC32MemoryMap(MemoryMap* map);
+    static void queueReceive(MemoryMap* map, Bluetooth* tooth);
 };
 
 void DMA1_Stream6_IRQHandler(void);

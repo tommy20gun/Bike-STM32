@@ -44,7 +44,6 @@ Core/Src/system_stm32f4xx.c \
 Core/Src/sysmem.c \
 Core/Src/syscalls.c \
 Core/Src/startup_stm32f411CEU6.c \
-Core/Src/Peripheral_initialization.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_gpio.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_rcc.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_utils.c \
@@ -92,6 +91,7 @@ CustomDrivers/Bicycle_Hardware/ADC.cpp \
 CustomDrivers/Bicycle_Hardware/Lock.cpp \
 CustomDrivers/Communication/Bluetooth.cpp \
 CustomDrivers/Communication/MemoryMap.cpp\
+Core/Src/Peripheral_initialization.c \
 # ASM sources
 ASM_SOURCES = 
 

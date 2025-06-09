@@ -17,12 +17,12 @@ void Headlight::initTasks(){
   BaseType_t xReturned;
   xReturned = xTaskCreate(vTurnonHeadlight,"Headlight On/off",64, this,2,&vTurnOnHeadlightHandle);
   if (xReturned != pdPASS){
-    Error_Handler();
+    Error_Handler(__FILE__,__LINE__);
   }
   //Binary Semaphore used for ISR to turn on the headlight
   /*this->bsem = xSemaphoreCreateBinary();
   if(this->bsem == NULL){
-    Error_Handler();
+    Error_Handler(__FILE__,__LINE__);
   }*/
 }
 
@@ -38,7 +38,7 @@ void Headlight::initPeripherals(){
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   success = LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
   if (success != 0){
-    Error_Handler();
+    Error_Handler(__FILE__,__LINE__);
   }
   //init PA11 as input wiht pulldown for the circuit
   GPIO_InitStruct.Pin = LL_GPIO_PIN_10;
@@ -47,7 +47,7 @@ void Headlight::initPeripherals(){
   success =  LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
   if (success != 0){
-    Error_Handler();
+    Error_Handler(__FILE__,__LINE__);
   }
   /*LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA, LL_SYSCFG_EXTI_LINE10);
 
@@ -60,7 +60,7 @@ void Headlight::initPeripherals(){
   success =  LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
   LL_EXTI_Init(&EXTI_InitStruct);
   if (success != 0){
-    Error_Handler();
+    Error_Handler(__FILE__,__LINE__);
   }
     */
   LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_10, LL_GPIO_PULL_DOWN);

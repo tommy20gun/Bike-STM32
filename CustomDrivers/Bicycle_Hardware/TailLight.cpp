@@ -25,17 +25,17 @@ void Taillight:: initTasks(){
   vTurnLeftHandle = nullptr;
   xReturned = xTaskCreate(vTurnLeft,"TurnLeft On/off",64, this,2,&vTurnLeftHandle);
   if (xReturned != pdPASS){
-    Error_Handler();
+    Error_Handler(__FILE__,__LINE__);
   }
 
   xReturned = xTaskCreate(vTurnRight,"TurnRight On/off",64, this,2,&vTurnRightHandle);
   if (xReturned != pdPASS){
-    Error_Handler();
+    Error_Handler(__FILE__,__LINE__);
   }
 
   xReturned = xTaskCreate(vBrake,"Brake On/off",64,this,2,&vBrakeHandle);
   if (xReturned != pdPASS){
-    Error_Handler();
+    Error_Handler(__FILE__,__LINE__);
   }
 }
 

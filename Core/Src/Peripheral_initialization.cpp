@@ -100,8 +100,11 @@ void assert_failed(uint8_t *file, uint32_t line)
 }
 #endif /* USE_FULL_ASSERT */
 
-
-void Error_Handler(void)
+void Error_Handler(void){
+  __disable_irq();
+  while(1){};
+}
+void Error_Handler(char* file, int line)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
@@ -111,7 +114,7 @@ void Error_Handler(void)
     int line; 
   } errorinfo;
 
-  errorinfo errors = { __FILE__,__LINE__};
+  errorinfo errors = {file,line};
   LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, (uint32_t) &errors, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
 
   while (1)
@@ -125,7 +128,7 @@ void Error_Handler(void)
 }
 
 void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName ){
-  Error_Handler();
+  Error_Handler(__FILE__,__LINE__);
 }
 /**
   * @brief  Period elapsed callback in non blocking mode

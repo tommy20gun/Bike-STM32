@@ -41,7 +41,7 @@ void Lock::initTask(){
     BaseType_t xReturned;
     xReturned = xTaskCreate(vLockFunction,"Lock Function",64, this,2,&vLockFunctionHandle);
     if (xReturned != pdPASS){
-    Error_Handler();
+    Error_Handler(__FILE__,__LINE__);
     }
     bsem = xSemaphoreCreateBinary();
 }
