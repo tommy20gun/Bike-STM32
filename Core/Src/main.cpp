@@ -18,7 +18,7 @@
 #include "Horn.h"
 #include "Bluetooth.h"
 #include "MemoryMap.h"
-#include "Odometer.h"
+#include "Speedometer.h"
 #include "Motion_Detector.h"
 #include "LED.h"
 #include "Lock.h"
@@ -39,6 +39,9 @@ static state_t state;
 
 /* create tasks, create object instances. object constructors set up hardware and own the semaphore*/
 void GlobalSetup(void){
+    //create global queue, assign to all obj
+  messenger = xQueueCreate(13,sizeof(struct uint32_t_Buffer));
+  
   bluetooth.initPeripherials();
   bluetooth.initTasks();
   bluetooth.initBTMemoryMap();
@@ -50,8 +53,7 @@ void GlobalSetup(void){
   taillight.initTasks();
   adc.init();
 
-  //create global queue, assign to all obj
-  messenger = xQueueCreate(13,sizeof(struct uint32_t_Buffer));
+
   bluetooth.messenger = messenger;
   headlight.messenger = messenger;
   horn.messenger = messenger;

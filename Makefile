@@ -87,11 +87,13 @@ CXX_SOURCES = \
 Core/Src/main.cpp \
 CustomDrivers/Bicycle_Hardware/Horn.cpp \
 CustomDrivers/Bicycle_Hardware/Headlight.cpp \
-CustomDrivers/Bicycle_Hardware/Taillight.cpp \
+CustomDrivers/Bicycle_Hardware/TailLight.cpp \
 CustomDrivers/Bicycle_Hardware/ADC.cpp \
 CustomDrivers/Bicycle_Hardware/Lock.cpp \
+CustomDrivers/Bicycle_Hardware/SwitchActivatedDevice.cpp \
 CustomDrivers/Communication/Bluetooth.cpp \
 CustomDrivers/Communication/MemoryMap.cpp\
+
 # ASM sources
 ASM_SOURCES = 
 
