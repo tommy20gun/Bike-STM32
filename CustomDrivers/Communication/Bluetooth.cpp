@@ -39,6 +39,7 @@ void Bluetooth::initPeripherials(){
   GPIO_InitStruct.Pull = LL_GPIO_PULL_UP; 
   GPIO_InitStruct.Alternate = LL_GPIO_AF_7;
   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+//todo make sure there is a pullup on RX for BLE module. Does this work?
 
   //init PA0
   GPIO_InitStruct.Pin = LL_GPIO_PIN_0;
@@ -103,7 +104,7 @@ void Bluetooth::initPeripherials(){
 
 void Bluetooth::initTasks(){
   BaseType_t xReturned;
-  xReturned = xTaskCreate(send,"send",64, this, 1, &sendHandle);
+  xReturned = xTaskCreate(send,"send",512, this, 1, &sendHandle);
   if(xReturned != pdPASS){
     Error_Handler();
   }
@@ -253,24 +254,14 @@ refer to the file Readme.txt in the CRC_usage folder*/
   return LL_CRC_ReadData32(CRC);
 }
 
-/*
-void Bluetooth::sendFast(void* pvParameters){
-  Bluetooth* tooth = (Bluetooth*)pvParameters;
-  MemoryMap* map = &(tooth->map);
-  while(1){
-    xSemaphoreTake(tooth->sendSemaphore,portMAX_DELAY);
-    uartTransmitDMA((uint32_t)&(map->speed),24);//size is 24, addr is +48 after start of struct
-    xSemaphoreGive(tooth->sendSemaphore);
-    vTaskDelay(200); //sending at 5hz
+//IT function
+void DMA1_Stream6_IRQHandler(void)
+{
+  //you cannot breakpoint this lol
+  if(LL_DMA_IsActiveFlag_TC6(DMA1) == 1){
+    LL_DMA_ClearFlag_TC6(DMA1);
   }
 }
-void Bluetooth::sendSpecialCommand(void* pvParameters){
-  //MemoryMap* map = &((Bluetooth*)pvParameters)->map;
-  while(1){
-    vTaskDelay(200);
-  }
-}*/
-
 
 //private functions
 /**
