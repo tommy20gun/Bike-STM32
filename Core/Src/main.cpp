@@ -57,6 +57,7 @@ void GlobalSetup(void){
   horn.messenger = messenger;
   taillight.messenger = messenger;
   adc.messenger = messenger;
+  
 
   
 
@@ -67,6 +68,7 @@ void GlobalSetup(void){
   SPILock = new Lock(stateMachineHandle);
   SPILock->initPeripheral();
   SPILock->initTask();
+  SPILock->messenger = messenger;
 }
 
 //TODO there is a possiblity to implement lock level 2 for motion detection
@@ -79,7 +81,7 @@ void state_machine(void* pvParameters){
   state_Transition transitiontable[2] = {lock,unlock};
   uint32_t notifiedValue;
   while(1){
-    xTaskNotifyWait(pdFALSE, 0xFFFFFFFF, &notifiedValue, portMAX_DELAY);
+    xTaskNotifyWait(0, 0, &notifiedValue, portMAX_DELAY);
     //notified value is the same enumeration where 1 calls unlock 0 calls locked
     //STATE_UNLOCKED = 1
     //STATE_LOCKED = 0
