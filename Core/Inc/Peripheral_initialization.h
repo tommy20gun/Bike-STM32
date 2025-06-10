@@ -11,6 +11,8 @@
 #ifndef __PERIPHERAL_INITIALIZATION
 #define __PERIPHERAL_INITIALIZATION
 
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -28,7 +30,7 @@ extern "C" {
 #include "stm32f4xx_ll_dma.h"
 #include "stm32f4xx_ll_gpio.h"
 #include "task.h"
-#include <cstring>
+
 
 void SystemClock_Config(void);
 void GPIO_GlobalSetup(void); //enable GPIO

@@ -86,11 +86,11 @@ CXX_SOURCES = \
 Core/Src/main.cpp \
 CustomDrivers/Bicycle_Hardware/Horn.cpp \
 CustomDrivers/Bicycle_Hardware/Headlight.cpp \
-CustomDrivers/Bicycle_Hardware/Taillight.cpp \
+CustomDrivers/Bicycle_Hardware/TailLight.cpp \
 CustomDrivers/Bicycle_Hardware/ADC.cpp \
 CustomDrivers/Bicycle_Hardware/Lock.cpp \
 CustomDrivers/Communication/Bluetooth.cpp \
-CustomDrivers/Communication/MemoryMap.cpp\
+CustomDrivers/Communication/MemoryMap.cpp \
 Core/Src/Peripheral_initialization.cpp \
 # ASM sources
 ASM_SOURCES = 
@@ -198,8 +198,7 @@ endif
 CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 
 
-CXXFLAGS = $(MCU) $(C_DEFS) $(CXX_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
-
+CXXFLAGS = $(MCU) $(C_DEFS) $(CXX_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections 
 ifeq ($(DEBUG), 1)
 CXXFLAGS += -g -gdwarf-2
 endif

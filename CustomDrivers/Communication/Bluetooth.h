@@ -19,7 +19,6 @@ extern "C" {
 #include "stm32f4xx_ll_usart.h"
 #include "main.h"
 #include "MemoryMap.h"
-#include <string.h>
 //#include "MemoryMap.h"
 
 #define DATA_MODE 0

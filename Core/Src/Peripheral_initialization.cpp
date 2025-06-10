@@ -9,6 +9,7 @@
   */
 
 #include <Peripheral_initialization.h>
+#include <string>
 
 void SystemClock_Config(void)
 {
@@ -100,29 +101,25 @@ void assert_failed(uint8_t *file, uint32_t line)
 }
 #endif /* USE_FULL_ASSERT */
 
-/*void Error_Handler(void){
+void Error_Handler(void){
   __disable_irq();
   while(1){};
-}*/
+}
 void Error_Handler(const char* file, int line)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
-  typedef struct errorinfo{
-    char file[strlen(file)];
-    int line; 
-  } errorinfo;
-  
-  errorinfo errors = {file,line};
-  LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, (uint32_t) &errors, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
 
+  std::string message = "ErrorHandler called by line: " + std::to_string(line) + " @ " + file;
   while (1)
   {
+    LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, (uint32_t) message.c_str(), LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
     LL_DMA_DisableStream(DMA1,LL_DMA_STREAM_6);
-    LL_DMA_SetDataLength(DMA1,LL_DMA_STREAM_6, sizeof(errors));
+    LL_DMA_SetDataLength(DMA1,LL_DMA_STREAM_6, message.size());
     LL_DMA_EnableStream(DMA1,LL_DMA_STREAM_6);
     LL_USART_EnableDMAReq_TX(USART2);
+
   }
   /* USER CODE END Error_Handler_Debug */
 }
