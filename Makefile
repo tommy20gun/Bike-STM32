@@ -91,7 +91,7 @@ CustomDrivers/Bicycle_Hardware/ADC.cpp \
 CustomDrivers/Bicycle_Hardware/Lock.cpp \
 CustomDrivers/Communication/Bluetooth.cpp \
 CustomDrivers/Communication/MemoryMap.cpp\
-Core/Src/Peripheral_initialization.c \
+Core/Src/Peripheral_initialization.cpp \
 # ASM sources
 ASM_SOURCES = 
 

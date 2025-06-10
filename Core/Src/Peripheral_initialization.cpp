@@ -104,16 +104,16 @@ void Error_Handler(void){
   __disable_irq();
   while(1){};
 }
-void Error_Handler(char* file, int line)
+void Error_Handler(const char* file, int line)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
   typedef struct errorinfo{
-    char* file;
+    const char* file;
     int line; 
   } errorinfo;
-
+  
   errorinfo errors = {file,line};
   LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, (uint32_t) &errors, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
 

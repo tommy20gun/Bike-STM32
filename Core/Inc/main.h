@@ -99,7 +99,7 @@ extern "C" {
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
-void Error_Handler(void);
+//void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 typedef enum{STATE_LOCKED, STATE_UNLOCKED} state_t;
