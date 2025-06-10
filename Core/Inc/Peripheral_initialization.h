@@ -28,10 +28,12 @@ extern "C" {
 #include "stm32f4xx_ll_dma.h"
 #include "stm32f4xx_ll_gpio.h"
 #include "task.h"
+#include <cstring>
 
 void SystemClock_Config(void);
 void GPIO_GlobalSetup(void); //enable GPIO
-
+//void Error_Handler(void);
+void Error_Handler(const char* file, int line);
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
 void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName );
 
@@ -39,8 +41,6 @@ void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName );
 }
 #endif //__cplusplus
 
-//cpp functions
-void Error_Handler(void);
-void Error_Handler(const char* file, int line);
+
 
 #endif //__Peripheral_initialization

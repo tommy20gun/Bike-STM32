@@ -57,7 +57,7 @@ void SystemClock_Config(void)
   // the time base source in CubeMX
   if (HAL_InitTick (TICK_INT_PRIORITY) != HAL_OK)
   {
-    Error_Handler();
+    Error_Handler(__FILE__,__LINE__);
   }
   LL_RCC_SetTIMPrescaler(LL_RCC_TIM_PRESCALER_TWICE);
 }
@@ -100,17 +100,17 @@ void assert_failed(uint8_t *file, uint32_t line)
 }
 #endif /* USE_FULL_ASSERT */
 
-void Error_Handler(void){
+/*void Error_Handler(void){
   __disable_irq();
   while(1){};
-}
+}*/
 void Error_Handler(const char* file, int line)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
   typedef struct errorinfo{
-    const char* file;
+    char file[strlen(file)];
     int line; 
   } errorinfo;
   

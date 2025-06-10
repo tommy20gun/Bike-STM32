@@ -104,7 +104,7 @@ void Bluetooth::initPeripherials(){
 
 void Bluetooth::initTasks(){
   BaseType_t xReturned;
-  xReturned = xTaskCreate(send,"send",512, this, 1, &sendHandle);
+  xReturned = xTaskCreate(send,"send",128, this, 1, &sendHandle);
   if(xReturned != pdPASS){
     Error_Handler(__FILE__,__LINE__);
   }
@@ -163,7 +163,6 @@ void Bluetooth::send(void* pvParameters){
     }
   #else //code for testing is below
     std::string TestingString;
-
     while (1){
       queueReceive(map,tooth);
       map->CRC32 = CRC32MemoryMap(map);
