@@ -18,10 +18,10 @@ class Device{
     } GPIOPin_Struct;
     TaskHandle_t TaskHandle;
 
-    virtual void initPeripherals();
-    virtual void initTasks();
-    virtual void RTOSImplementation();
-    virtual void Queuesend();
+    virtual void initPeripherals() = 0;
+    virtual void initTasks() = 0;
+    virtual void RTOSImplementation() = 0;
+    virtual void QueueSend() = 0;
 
 };
 

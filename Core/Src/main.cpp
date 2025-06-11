@@ -24,6 +24,7 @@
 #include "Lock.h"
 #include "Taillight.h"
 #include "ADC.h"
+#include "SwitchActivatedDevice.h"
 
 
 static Horn horn;
@@ -32,16 +33,19 @@ static Taillight taillight;
 static Bluetooth bluetooth;
 static ADCDriver adc;
 static Lock* SPILock;
-QueueHandle_t messenger;
 TaskHandle_t stateMachineHandle;
 static state_t state;
 
+//new
+static TestA* testAobj;
+QueueHandle_t messenger;
 
 /* create tasks, create object instances. object constructors set up hardware and own the semaphore*/
 void GlobalSetup(void){
     //create global queue, assign to all obj
   messenger = xQueueCreate(13,sizeof(struct uint32_t_Buffer));
-  
+  testAobj = new TestA(GPIOA,GPIO_PIN_10, GPIOB,GPIO_PIN_0, messenger, headlightON);
+
   bluetooth.initPeripherials();
   bluetooth.initTasks();
   bluetooth.initBTMemoryMap();

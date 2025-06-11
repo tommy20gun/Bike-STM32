@@ -36,9 +36,12 @@ class TestA : public SwitchActivatedDevice{
                                                             PinMaskOut,
                                                             messenger,
                                                             queueTag)
-    {};
+    {
+        initPeripherals();
+        initTasks();
+    };
     protected:
-    virtual void initTasks();
+    void initTasks();
     static void vTaskFunction(void* pvParameters);//this is just 1 line FreeRTOSImplementation()
 };
 
