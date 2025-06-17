@@ -1,5 +1,5 @@
 #ifndef __DEVICE
-#define ____DEVICE
+#define __DEVICE
 
 #ifdef __cplusplus
 extern "C" {

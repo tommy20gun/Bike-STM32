@@ -41,7 +41,6 @@ void SwitchActivatedDevice::initPeripherals(){
 }
 void SwitchActivatedDevice::QueueSend(){
   struct uint32_t_Buffer buff;
-  buff.data = 0;
   buff.tag = queueTag;
   buff.data = LL_GPIO_IsOutputPinSet(outputPin.GPIOx,outputPin.PinMask);
   xQueueSendToBack(messenger, &buff , 0);
