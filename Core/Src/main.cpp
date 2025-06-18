@@ -27,54 +27,40 @@
 #include "SwitchActivatedDevice.h"
 
 
-static Horn horn;
-static Headlight headlight;
-static Taillight taillight;
-static Bluetooth bluetooth;
-static ADCDriver adc;
-static Lock* SPILock;
+static Horn* horn;
+static Headlight* headlight;
+static TailLight_Turn* left;
+static TailLight_Turn* right;
+static TailLight_Brake* brake;
+//static Bluetooth* bluetooth;
+//static ADCDriver* adc;
+static Lock* bikelock;
+//static Motion_Detector* detector1;
+//static Motion_Detector* detector2;
+//static Motion_Detector* detector3;
+
 TaskHandle_t stateMachineHandle;
 static state_t state;
-
-//new
-static TestA* testAobj;
 QueueHandle_t messenger;
 
 /* create tasks, create object instances. object constructors set up hardware and own the semaphore*/
 void GlobalSetup(void){
     //create global queue, assign to all obj
   messenger = xQueueCreate(13,sizeof(struct uint32_t_Buffer));
-  testAobj = new TestA(GPIOA,GPIO_PIN_10, GPIOB,GPIO_PIN_0, messenger, headlightON);
-
-  bluetooth.initPeripherials();
-  bluetooth.initTasks();
-  bluetooth.initBTMemoryMap();
-  horn.initPeripherals();
-  horn.initTasks();
-  headlight.initPeripherals();
-  headlight.initTasks();
-  taillight.initPeripherals();
-  taillight.initTasks();
-  adc.init();
-
-
-  bluetooth.messenger = messenger;
-  headlight.messenger = messenger;
-  horn.messenger = messenger;
-  taillight.messenger = messenger;
-  adc.messenger = messenger;
-  
-
-  
-
   BaseType_t xReturned = xTaskCreate(state_machine, "state_machine", 64, NULL, 2, &stateMachineHandle);
   if (xReturned != pdPASS){
     Error_Handler();
   }
-  SPILock = new Lock(stateMachineHandle);
-  SPILock->initPeripheral();
-  SPILock->initTask();
-  SPILock->messenger = messenger;
+
+  horn = new Horn(GPIOA,GPIO_PIN_8,GPIOB,GPIO_PIN_1,messenger,hornON);
+  headlight = new Headlight(GPIOA,GPIO_PIN_10,GPIOB,GPIO_PIN_0,messenger,headlightON);
+  left = new TailLight_Turn(GPIOB,GPIO_PIN_6,GPIOB,GPIO_PIN_8,messenger,turningLeft);
+  right = new TailLight_Turn(GPIOB,GPIO_PIN_7,GPIOB,GPIO_PIN_9,messenger,turningRight);
+  brake = new TailLight_Brake(GPIOA,GPIO_PIN_9,GPIOB,GPIO_PIN_2,messenger,brakeON);
+  //bluetooth
+  //adc
+  bikelock = new Lock(GPIOA,GPIO_PIN_7,GPIOB,GPIO_PIN_6,messenger,StateMachineStatus,stateMachineHandle);
+  //detectors
 }
 
 //TODO there is a possiblity to implement lock level 2 for motion detection
@@ -100,10 +86,10 @@ FardriverEN_72V - PA6
 */
 state_t unlock(state_t state){
   if (state == STATE_LOCKED){
-    vTaskResume(headlight.vTurnOnHeadlightHandle);
-    vTaskResume(taillight.vTurnLeftHandle);
-    vTaskResume(taillight.vTurnRightHandle);
-    vTaskResume(taillight.vBrakeHandle);
+    vTaskResume(headlight->getTaskHandle());
+    vTaskResume(left->getTaskHandle());
+    vTaskResume(right->getTaskHandle());
+    vTaskResume(brake->getTaskHandle());
     LL_GPIO_ResetOutputPin(GPIOA,GPIO_PIN_6); //fardriver Pin
     //vTaskResume(LED);
     //vTaskSuspend(motionsensor);
@@ -118,10 +104,10 @@ FardriverEN_72V - PA6
 */
 state_t lock(state_t state){
   if (state == STATE_UNLOCKED){
-    vTaskSuspend(headlight.vTurnOnHeadlightHandle);
-    vTaskSuspend(taillight.vTurnLeftHandle);
-    vTaskSuspend(taillight.vTurnRightHandle);
-    vTaskSuspend(taillight.vBrakeHandle);
+    vTaskSuspend(headlight->getTaskHandle());
+    vTaskSuspend(left->getTaskHandle());
+    vTaskSuspend(right->getTaskHandle());
+    vTaskSuspend(brake->getTaskHandle());
     LL_GPIO_SetOutputPin(GPIOA,GPIO_PIN_6); //fardriver Pin
     //vTaskSuspend(LED);
     //vTaskResume(motiondetection)

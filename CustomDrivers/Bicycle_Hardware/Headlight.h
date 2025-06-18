@@ -17,23 +17,30 @@ extern "C" {
 #include "FreeRTOS.h"  
 #include "main.h"
 #include "MemoryMap.h"
+#include "SwitchActivatedDevice.h"
 
 
-class Headlight{
-  public:
-    SemaphoreHandle_t bsem;
-    QueueHandle_t messenger;
-    //tagged buffer: HeadlightON
-
-    static TaskHandle_t vTurnOnHeadlightHandle;
-    Headlight();
-    static void vTurnonHeadlight(void* pvParameters);
+class Headlight : public SwitchActivatedDevice{
+    public:
+    Headlight(GPIO_TypeDef* GPIOxIn, 
+            uint32_t PinMaskIn, 
+            GPIO_TypeDef* GPIOxOut, 
+            uint32_t PinMaskOut, 
+            QueueHandle_t messenger,
+            DataTable queueTag):SwitchActivatedDevice(GPIOxIn,
+                                                            PinMaskIn,
+                                                            GPIOxOut,
+                                                            PinMaskOut,
+                                                            messenger,
+                                                            queueTag)
+    {
+        initPeripherals();
+        initTasks();
+    };
+    protected:
     void initTasks();
-    void initPeripherals();
-    private:
-
+    static void vTaskFunction(void* pvParameters);//this is just 1 line FreeRTOSImplementation()
 };
-
 
 #ifdef __cplusplus
 }

@@ -15,21 +15,35 @@ extern "C" {
 
 #include "FreeRTOS.h" 
 #include "main.h"
-#include "MemoryMap.h"
+#include "SwitchActivatedDevice.h"
 
-class Lock{
+class Lock: public SwitchActivatedDevice{
   public:
-    TaskHandle_t vLockFunctionHandle;
+  Lock(GPIO_TypeDef* GPIOxIn, 
+      uint32_t PinMaskIn, 
+      GPIO_TypeDef* GPIOxOut, 
+      uint32_t PinMaskOut, 
+      QueueHandle_t messenger,
+      DataTable queueTag,
+      TaskHandle_t statetask):SwitchActivatedDevice(GPIOxIn,
+                                                      PinMaskIn,
+                                                      GPIOxOut,
+                                                      PinMaskOut,
+                                                      messenger,
+                                                      queueTag)
+    {
+        this->stateMachineHandle = statetask;
+        initPeripherals();
+        initTasks();
+    };
+    
     TaskHandle_t stateMachineHandle;
-    SemaphoreHandle_t bsem;
-    QueueHandle_t messenger;
+    void initPeripherals();
+    void initTasks();
 
+    static void vTaskFunction(void* pvParameters);
+    void RTOSImplementation();
 
-    Lock(TaskHandle_t statetask);
-    void initPeripheral();
-    void initTask();
-
-    static void vLockFunction(void* pvParameters);
 };
 
 #ifdef __cplusplus

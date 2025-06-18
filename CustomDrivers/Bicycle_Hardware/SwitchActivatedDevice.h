@@ -17,32 +17,9 @@ class SwitchActivatedDevice: public Device{
 
     void initInputPin(GPIOPin_Struct pin, bool PullDown);
     void initOutputPin(GPIOPin_Struct pin, bool OpenDrain);
-    void initPeripherals();
-    void RTOSImplementation();
+    virtual void initPeripherals();
+    virtual void RTOSImplementation();
     void QueueSend();
-};
-
-
-class TestA : public SwitchActivatedDevice{
-    public:
-    TestA(GPIO_TypeDef* GPIOxIn, 
-            uint32_t PinMaskIn, 
-            GPIO_TypeDef* GPIOxOut, 
-            uint32_t PinMaskOut, 
-            QueueHandle_t messenger,
-            DataTable queueTag):SwitchActivatedDevice(GPIOxIn,
-                                                            PinMaskIn,
-                                                            GPIOxOut,
-                                                            PinMaskOut,
-                                                            messenger,
-                                                            queueTag)
-    {
-        initPeripherals();
-        initTasks();
-    };
-    protected:
-    void initTasks();
-    static void vTaskFunction(void* pvParameters);//this is just 1 line FreeRTOSImplementation()
 };
 
 #ifdef __cplusplus

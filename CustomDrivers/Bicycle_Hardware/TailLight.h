@@ -15,28 +15,53 @@ extern "C" {
 
 #include "FreeRTOS.h" 
 #include "main.h"
-#include "MemoryMap.h"
+#include "SwitchActivatedDevice.h"
 
-class Taillight{
-  public:
-  SemaphoreHandle_t bsemleft;
-  SemaphoreHandle_t bsemright;
-  SemaphoreHandle_t bsembrake;
-  static TaskHandle_t vTurnLeftHandle;
-  static TaskHandle_t vTurnRightHandle;
-  static TaskHandle_t vBrakeHandle;
-  QueueHandle_t messenger;
-
-  Taillight();
-  static void vTurnLeft(void* pvParameters);
-  static void vTurnRight(void* pvParameters);
-  static void vBrake(void* pvParameters);
-  void initTasks();
-  void initPeripherals();
-  private:
-
+class TailLight_Turn : public SwitchActivatedDevice{
+    public:
+    TailLight_Turn(GPIO_TypeDef* GPIOxIn, 
+            uint32_t PinMaskIn, 
+            GPIO_TypeDef* GPIOxOut, 
+            uint32_t PinMaskOut, 
+            QueueHandle_t messenger,
+            DataTable queueTag):SwitchActivatedDevice(GPIOxIn,
+                                                            PinMaskIn,
+                                                            GPIOxOut,
+                                                            PinMaskOut,
+                                                            messenger,
+                                                            queueTag)
+    {
+        initPeripherals();
+        initTasks();
+    };
+    protected:
+    void initTasks();
+    static void vTaskFunction(void* pvParameters);//this is just 1 line FreeRTOSImplementation()
+    void RTOSImplementation();
 };
 
+
+class TailLight_Brake : public SwitchActivatedDevice{
+    public:
+    TailLight_Brake(GPIO_TypeDef* GPIOxIn, 
+            uint32_t PinMaskIn, 
+            GPIO_TypeDef* GPIOxOut, 
+            uint32_t PinMaskOut, 
+            QueueHandle_t messenger,
+            DataTable queueTag):SwitchActivatedDevice(GPIOxIn,
+                                                            PinMaskIn,
+                                                            GPIOxOut,
+                                                            PinMaskOut,
+                                                            messenger,
+                                                            queueTag)
+    {
+        initPeripherals();
+        initTasks();
+    };
+    protected:
+    void initTasks();
+    static void vTaskFunction(void* pvParameters);//this is just 1 line FreeRTOSImplementation()
+};
 
 
 #ifdef __cplusplus

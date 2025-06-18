@@ -16,21 +16,29 @@ extern "C" {
 
 #include "FreeRTOS.h"  
 #include "main.h"
-#include "MemoryMap.h"
+#include "SwitchActivatedDevice.h"
 
-class Horn{
-  public:
-  SemaphoreHandle_t bsem;
-  static TaskHandle_t vTurnOnHornHandle;
-  QueueHandle_t messenger;
-  Horn();
-  static void vTurnOnHorn(void* pvParameters);
-  void initTasks();
-  void initPeripherals();
-  private:
-
+class Horn : public SwitchActivatedDevice{
+    public:
+    Horn(GPIO_TypeDef* GPIOxIn, 
+            uint32_t PinMaskIn, 
+            GPIO_TypeDef* GPIOxOut, 
+            uint32_t PinMaskOut, 
+            QueueHandle_t messenger,
+            DataTable queueTag):SwitchActivatedDevice(GPIOxIn,
+                                                            PinMaskIn,
+                                                            GPIOxOut,
+                                                            PinMaskOut,
+                                                            messenger,
+                                                            queueTag)
+    {
+        initPeripherals();
+        initTasks();
+    };
+    protected:
+    void initTasks();
+    static void vTaskFunction(void* pvParameters);//this is just 1 line FreeRTOSImplementation()
 };
-
 
 #ifdef __cplusplus
 }

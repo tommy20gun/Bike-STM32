@@ -9,6 +9,8 @@ extern "C" {
 #include "MemoryMap.h"
 
 class Device{
+    public:
+    TaskHandle_t getTaskHandle();
     protected:
     QueueHandle_t messenger;
     DataTable queueTag;
@@ -22,7 +24,6 @@ class Device{
     virtual void initTasks() = 0;
     virtual void RTOSImplementation() = 0;
     virtual void QueueSend() = 0;
-
 };
 
 

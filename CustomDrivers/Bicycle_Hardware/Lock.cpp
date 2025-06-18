@@ -13,39 +13,23 @@
 
 #include "Lock.h"
 
-Lock::Lock(TaskHandle_t statetask){
-    this->stateMachineHandle = statetask;
+void Lock::initPeripherals(){
+    initInputPin(inputPin, true);
+    initOutputPin(outputPin, true);
 }
 
-void Lock::initPeripheral(){
-    LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
-
-    LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
-
-    GPIO_InitStruct.Pin = LL_GPIO_PIN_6;
-    GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
-    GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
-    GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_OPENDRAIN;
-    GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
-    LL_GPIO_Init(GPIOA,&GPIO_InitStruct);
-
-    GPIO_InitStruct.Pin = LL_GPIO_PIN_7;
-    GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
-    GPIO_InitStruct.Pull = LL_GPIO_PULL_DOWN;
-    LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-    LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_7, LL_GPIO_PULL_DOWN);
-    LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_7, LL_GPIO_MODE_INPUT);
-}
-
-void Lock::initTask(){
+void Lock::initTasks(){
     BaseType_t xReturned;
-    xReturned = xTaskCreate(vLockFunction,"Lock Function",64, this,2,&vLockFunctionHandle);
+    xReturned = xTaskCreate(vTaskFunction,"Lock Function",64, this,2,&TaskHandle);
     if (xReturned != pdPASS){
     Error_Handler();
     }
-    bsem = xSemaphoreCreateBinary();
 }
 
+void Lock::vTaskFunction(void* pvParameters){
+    Lock* lock = (Lock*) pvParameters;
+    lock->RTOSImplementation();
+}
 /*
 pin high external interrupt
 check pin status with debounce
@@ -57,20 +41,19 @@ result:
 - pressing pin for longer than debounce timer (+poll timer) will trigger state change
 - pressing not long enough does nothing
 */
-void Lock::vLockFunction(void* PvParameters){
-    Lock* SPILock = (Lock*) PvParameters;
+void Lock::RTOSImplementation(){
     bool inPinState;
     struct uint32_t_Buffer buff;
     buff.data = 0;
     buff.tag = StateMachineStatus;
     while(1){
         //every loop toggles the state
-        inPinState = LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_7);
+        inPinState = LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask);
         vTaskDelay(100); //debounce and poll rate
-        if (inPinState == true && inPinState == LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_7)){
-            xTaskNotifyGive(SPILock->stateMachineHandle); //increments notif value by 1.
+        if (inPinState == true && inPinState == LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask)){
+            xTaskNotifyGive(stateMachineHandle); //increments notif value by 1.
             buff.data = buff.data ^ 1U; //toggles the first bit
-            xQueueSendToBack(SPILock->messenger, &buff , 0);
+            xQueueSendToBack(messenger, &buff , 0);
             vTaskDelay(10000); //cannot change state again for more than seconds
         }
     }

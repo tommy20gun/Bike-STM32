@@ -9,6 +9,11 @@ SwitchActivatedDevice::SwitchActivatedDevice(GPIO_TypeDef* GPIOxIn, uint32_t Pin
     this->queueTag = queueTag;
 }
 
+void SwitchActivatedDevice::initPeripherals(){
+    initInputPin(inputPin, true);
+    initOutputPin(outputPin, false);
+}
+
 void SwitchActivatedDevice::initInputPin(GPIOPin_Struct pin, bool PullDown){
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
   GPIO_InitStruct.Pin =  pin.PinMask;
@@ -35,10 +40,7 @@ void SwitchActivatedDevice::initOutputPin(GPIOPin_Struct pin, bool openDrain){
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(pin.GPIOx, &GPIO_InitStruct);
 }
-void SwitchActivatedDevice::initPeripherals(){
-    initInputPin(inputPin, true);
-    initOutputPin(outputPin, false);
-}
+
 void SwitchActivatedDevice::QueueSend(){
   struct uint32_t_Buffer buff;
   buff.tag = queueTag;
@@ -68,17 +70,4 @@ void SwitchActivatedDevice::RTOSImplementation(){
       }
     }
   }
-}
-
-void TestA::initTasks(){
-    BaseType_t xReturned;
-    xReturned = xTaskCreate(vTaskFunction,"TestA On/Off",64, this,2,&TaskHandle);
-    if(xReturned != pdPASS){
-        Error_Handler();
-    }
-}
-
-void TestA::vTaskFunction(void* pvParameters){
-  TestA* testAobj = (TestA*) pvParameters;
-  testAobj->RTOSImplementation();
 }
