@@ -8,13 +8,15 @@
   */
 #include "ADC.h"
 
-ADCDriver::ADCDriver(){
-    //channel4 (12V), channel5 (72V)
-    pin4V = 12;
-    pin5V = 5;
+void ADCDriver::initTasks(){
+    BaseType_t xReturned;
+    xReturned = xTaskCreate(vTaskFunction,"ADCPoll",64, this,1,&TaskHandle);
+    if (xReturned != pdPASS){
+        Error_Handler();
+    }
 }
 
-void ADCDriver::init(){
+void ADCDriver::initPeripherals(){
     LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_ADC1);
     LL_ADC_InitTypeDef ADC_InitStruct = {0};
     LL_ADC_REG_InitTypeDef ADC_REG_InitStruct = {0};
@@ -48,13 +50,6 @@ void ADCDriver::init(){
     LL_ADC_REG_SetSequencerRanks(ADC1,LL_ADC_REG_RANK_2,LL_ADC_CHANNEL_5);
     LL_ADC_SetChannelSamplingTime(ADC1,LL_ADC_CHANNEL_4,LL_ADC_SAMPLINGTIME_15CYCLES);
     
-    BaseType_t xReturned;
-    xReturned = xTaskCreate(vADCPoll,"ADCPoll",64, this,1,&vADCPollHandle);
-    if (xReturned != pdPASS){
-    Error_Handler();
-    }
-
-
 }
 /*
 Single Conversion Group
@@ -93,8 +88,12 @@ The data converted from an injected channel are always stored into the ADC_JDRx
 registers.
 
 */
-void ADCDriver::vADCPoll(void* pvParameters){
+void ADCDriver::vTaskFunction(void* pvParameters){
     ADCDriver* adc = (ADCDriver*) pvParameters;
+    adc ->RTOSImplementation();
+}
+
+void ADCDriver::RTOSImplementation(){
     LL_ADC_Enable(ADC1);
     //just in case clear the flag even
     if (LL_ADC_IsActiveFlag_EOCS(ADC1)){
@@ -105,22 +104,21 @@ void ADCDriver::vADCPoll(void* pvParameters){
     if (!LL_ADC_IsEnabled(ADC1)){
         Error_Handler();
     }
-    //infiniteLoop
     while(1){
         for (int channel = 4; channel <= 5; channel++){
             LL_ADC_REG_StartConversionSWStart(ADC1);
             //wait for complete
             while(!LL_ADC_IsActiveFlag_EOCS(ADC1));
             //TODO ADC pin needs to not float
-            adc-> pinreading[channel-4] = LL_ADC_REG_ReadConversionData12(ADC1);
+            pinreading[channel-4] = LL_ADC_REG_ReadConversionData12(ADC1);
             LL_ADC_ClearFlag_EOCS(ADC1);
         }
-        adc->sendDataThroughQueue();
+        QueueSend();
         vTaskDelay(1000); //polling rate 1hz
     }
 }
 
-void ADCDriver::sendDataThroughQueue(){
+void ADCDriver::QueueSend(){
     struct floatBuffer buffer;
     buffer.tag = ADCreading12V;
     buffer.data = ADCToBatteryPercent(pinreading[0],4);

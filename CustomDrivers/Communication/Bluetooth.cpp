@@ -16,14 +16,7 @@
 #include "Bluetooth.h"
 #include <string>
 
- 
-
-Bluetooth::Bluetooth(){
-
-}
-
-
-void Bluetooth::initPeripherials(){
+void Bluetooth::initPeripherals(){
 
   LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART2);
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1);
@@ -104,18 +97,11 @@ void Bluetooth::initPeripherials(){
 
 void Bluetooth::initTasks(){
   BaseType_t xReturned;
-  xReturned = xTaskCreate(send,"send",512, this, 1, &sendHandle);
+  xReturned = xTaskCreate(vTaskFunction,"Bluetooth Send UART",512, this, 1, &TaskHandle);
   if(xReturned != pdPASS){
     Error_Handler();
   }
-  /*xReturned = xTaskCreate(sendFast,"sendFast",64, this,1,&sendFastHandle);
-  if(xReturned != pdPASS){
-    Error_Handler();
-  }
-  xReturned = xTaskCreate(sendSpecialCommand,"sendSpecialCommand",64, this,1,&sendSpecialCommandHandle);
-  if(xReturned != pdPASS){
-    Error_Handler();
-  }
+  /*
   sendSemaphore = xSemaphoreCreateMutex();
   if (sendSemaphore == NULL){
     Error_Handler();
@@ -142,12 +128,16 @@ void Bluetooth::initBTMemoryMap(){
   map = {69420,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //set the magic number
 }
 
-//this is static
-#define TESTING
+void Bluetooth::QueueSend(){};
 
-void Bluetooth::send(void* pvParameters){
+void Bluetooth::vTaskFunction(void* pvParameters){
   Bluetooth* tooth = (Bluetooth*)pvParameters;
-  MemoryMap* map = &(tooth->map);
+  tooth->RTOSImplementation();
+}
+
+#define TESTING //Testing code prints readable text to serial terminal
+void Bluetooth::RTOSImplementation(){
+  MemoryMap* map = &(this->map);
   #ifndef TESTING
     struct uint32_t_Buffer buff;
     LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, (uint32_t) map, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
@@ -155,13 +145,13 @@ void Bluetooth::send(void* pvParameters){
       //xSemaphoreTake(tooth->sendSemaphore,portMAX_DELAY);
       //empty queue
       //TODO maybe do a mutex and separate these tasks
-      while (uxQueueMessagesWaiting(tooth->messenger) > 0){
-        xQueueReceive(tooth->messenger, (void*) &buff, 0);
+      while (uxQueueMessagesWaiting(this->messenger) > 0){
+        xQueueReceive(this->messenger, (void*) &buff, 0);
         map = receiveTaggedData(&buff,map);
       }
       map->CRC32 = CRC32MemoryMap(map);
       uartTransmitDMA(sizeof(*map)); //size is 80 I think, addr: start of struct
-      //xSemaphoreGive(tooth->sendSemaphore);
+      //xSemaphoreGive(this->sendSemaphore);
       vTaskDelay(100);
     }
   #else //code for testing is below
@@ -208,35 +198,20 @@ void Bluetooth::send(void* pvParameters){
     }
   #endif
 }
-uint32_t Bluetooth::CRC32MemoryMap(MemoryMap* map){
-  /*To compute a CRC of the supported data, go through the following steps:
- 1. Enable the CRC peripheral clock via the RCC peripheral.
- 2. Set the CRC data register to the initial CRC value by configuring the initial CRC value 
-register (CRC_INIT). In the more recent STM32 Series, it is possible to chain a CRC 
-calculation based on the previous CRC calculation as initial value. In this case, the 
-CRC_IDR register (not affected by the reset bit in CRC_CR) can be used. In HAL, this 
-is implemented by HAL_CRC_Calculate.
-3. Set the I/O reverse bit order through the REV_IN[1:0] and REV_OUT bits, respectively, 
-in the CRC control register (CRC_CR).
-4. Set the polynomial size and coefficients through the POLYSIZE[1:0] bits in CRC control 
-register (CRC_CR) and CRC polynomial register (CRC_POL), respectively.
-5. Reset the CRC peripheral through the Reset bit in the CRC control register (CRC_CR).
-6. Set the data to the CRC data register.
-7. Read the content of the CRC data register.
-8. Disable the CRC peripheral clock.
 
- In the firmware package, the CRC_usage example runs the CRC checksum code 
+/*In the firmware package, the CRC_usage example runs the CRC checksum code 
 computing an array data (DataBuffer) of 256 supported data type. For a full description, 
-refer to the file Readme.txt in the CRC_usage folder*/
+refer to the file Readme.txt in the CRC_usage folder
 
 //calculates a checksum based on 12V ADC, 72V ADC, Odometer.
 //this is because i can iterate through the struct and it is a waste of time.
-//Uses CRC-32 polynomial: 0x4C11DB7
-  
+//Uses CRC-32 polynomial: 0x4C11DB7*/
+uint32_t Bluetooth::CRC32MemoryMap(MemoryMap* map){
+
   LL_CRC_ResetCRCCalculationUnit(CRC);
 
   //doing it in this order triggers the hardware properly
-  //headlightON is a bool
+ 
   LL_CRC_FeedData32(CRC, map->motorTemp);
   LL_CRC_FeedData32(CRC, map->headlightON);
   LL_CRC_FeedData32(CRC, map->ADCreading72V);
@@ -278,8 +253,8 @@ void Bluetooth::uartTransmitDMA(uint32_t size){
   * @brief This function handles DMA1 stream6 global interrupt.
   */
 
-
-/*void Bluetooth::ATModeTesting(){
+#ifdef ATTesting
+void Bluetooth::ATModeTesting(){
   // should slow blink when in AT mode, fast blink in connection mode
   
   //enter Command mode
@@ -333,4 +308,6 @@ void Bluetooth::uartTransmitDMA(uint32_t size){
   while(1){
     HAL_UART_Receive(&huart2,txbuffer, 1, HAL_MAX_DELAY);
   }
-};*/
+};
+
+#endif

@@ -16,23 +16,27 @@ extern "C" {
 
 #include "FreeRTOS.h"  
 #include "main.h"
-#include "MemoryMap.h"
+#include "Device.h"
 
-class ADCDriver{
+class ADCDriver: public Device{
     public:
-    TaskHandle_t vADCPollHandle;
-    QueueHandle_t messenger;
-    int pin4V;
-    int pin5V;
-
-    int pinreading[2];
-    ADCDriver();
-    void init();
-    static void vADCPoll(void* pvParameters);
+    ADCDriver(QueueHandle_t messenger, int pin4voltage, int pin5voltage){
+      this->messenger = messenger;
+      this->pin4voltage = pin4voltage;
+      this->pin5voltage = pin5voltage; 
+    };
 
     private:
+    int pin4voltage;
+    int pin5voltage;
+    int pinreading[2];
+
+    void initTasks();
+    void initPeripherals();
+    static void vTaskFunction(void* pvParameters);
+    void RTOSImplementation();
     static float ADCToBatteryPercent(float ADCReading,float scale);
-    void sendDataThroughQueue();
+    void QueueSend();
 };
 
 #ifdef __cplusplus

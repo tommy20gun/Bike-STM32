@@ -18,7 +18,7 @@ extern "C" {
 #include "FreeRTOS.h"  
 #include "stm32f4xx_ll_usart.h"
 #include "main.h"
-#include "MemoryMap.h"
+#include "Device.h"
 #include <string.h>
 //#include "MemoryMap.h"
 
@@ -32,37 +32,31 @@ extern "C" {
 typedef bool BTState; 
 typedef bool BTMode; 
 
-class Bluetooth{
+class Bluetooth : public Device{
   public:
-    TaskHandle_t sendHandle;
-    TaskHandle_t sendSlowHandle;
-    TaskHandle_t sendFastHandle;
-    TaskHandle_t sendSpecialCommandHandle;
-    QueueHandle_t messenger;
-    //SemaphoreHandle_t sendSemaphore;
+    Bluetooth(QueueHandle_t messenger){
+      this->messenger = messenger;
+      initPeripherals();
+      initTasks();
+    };
 
+  protected:
     MemoryMap map;
     BTMode mode;
     BTState state;
-    Bluetooth();
-    
-    void initPeripherials();
+
+    //device.h
+    void initPeripherals();
     void initTasks();
+    static void vTaskFunction(void* pvParameters);
+    void RTOSImplementation();
+    void QueueSend();//no implementation, not used
+ 
+    //helpers
     BTState getConnectionState();
     void initBTMemoryMap();
-    
-
-    //FreeRTOS tasks
-    static void send(void* pvParameters);
-    /*
-    static void sendFast(void* pvParameters);
-    static void sendSpecialCommand(void* pvParameters);*/
-    
-    
-
-    private:
     void setmode(int mode);
-    void ATModeTesting();
+    void ATModeTesting(); //used for setup only
     static void uartTransmitDMA(uint32_t size);
     static uint32_t CRC32MemoryMap(MemoryMap* map);
 };

@@ -32,8 +32,8 @@ static Headlight* headlight;
 static TailLight_Turn* left;
 static TailLight_Turn* right;
 static TailLight_Brake* brake;
-//static Bluetooth* bluetooth;
-//static ADCDriver* adc;
+static Bluetooth* bluetooth;
+static ADCDriver* adc;
 static Lock* bikelock;
 //static Motion_Detector* detector1;
 //static Motion_Detector* detector2;
@@ -57,8 +57,10 @@ void GlobalSetup(void){
   left = new TailLight_Turn(GPIOB,GPIO_PIN_6,GPIOB,GPIO_PIN_8,messenger,turningLeft);
   right = new TailLight_Turn(GPIOB,GPIO_PIN_7,GPIOB,GPIO_PIN_9,messenger,turningRight);
   brake = new TailLight_Brake(GPIOA,GPIO_PIN_9,GPIOB,GPIO_PIN_2,messenger,brakeON);
-  //bluetooth
+  bluetooth = new Bluetooth(messenger); //bluetooth hard coded to PA0,PA1,PA2,PA3
   //adc
+  //channel4 (12V), channel5 (72V) PA4 and PA5 is hardcoded. So is Queuetag
+  adc = new ADCDriver(messenger, 12, 5);      
   bikelock = new Lock(GPIOA,GPIO_PIN_7,GPIOB,GPIO_PIN_6,messenger,StateMachineStatus,stateMachineHandle);
   //detectors
 }
