@@ -120,7 +120,7 @@ state_t lock(state_t state){
 }
 
 int main(){
-  HAL_Init(); //TODO Try to run code without this
+  //HAL_Init(); //TODO Try to run code without this
   SystemClock_Config();
   GPIO_GlobalSetup();
   GlobalSetup();

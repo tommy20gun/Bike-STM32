@@ -36,7 +36,8 @@ void SystemClock_Config(void)
   {
 
   }
-  while (LL_PWR_IsActiveFlag_VOS() == 0) //if HAL_Init is not used, must be "!= 0"
+  while (LL_PWR_IsActiveFlag_VOS() != 0) //if HAL_Init is not used, must be "!= 0"
+  //if HALInit is used must be == 0
   {
   }
   LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
@@ -55,10 +56,10 @@ void SystemClock_Config(void)
    /* Update the time base */
    //TODO Timer is used for HAL to work. it is not an option to get rid of this as 
   // the time base source in CubeMX
-  if (HAL_InitTick (TICK_INT_PRIORITY) != HAL_OK)
+  /*if (HAL_InitTick (TICK_INT_PRIORITY) != HAL_OK)
   {
     Error_Handler();
-  }
+  }*/
   LL_RCC_SetTIMPrescaler(LL_RCC_TIM_PRESCALER_TWICE);
 }
 
