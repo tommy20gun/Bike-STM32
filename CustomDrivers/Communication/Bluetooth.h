@@ -38,6 +38,7 @@ class Bluetooth : public Device{
       this->messenger = messenger;
       initPeripherals();
       initTasks();
+      initBTMemoryMap();
     };
 
   protected:
@@ -56,6 +57,7 @@ class Bluetooth : public Device{
     BTState getConnectionState();
     void initBTMemoryMap();
     void setmode(int mode);
+    void emptyQueue();
     void ATModeTesting(); //used for setup only
     static void uartTransmitDMA(uint32_t size);
     static uint32_t CRC32MemoryMap(MemoryMap* map);

@@ -1,6 +1,7 @@
 #include "MemoryMap.h"
 
-MemoryMap* receiveTaggedData(uint32_t_Buffer* buff, MemoryMap* map){
+void receiveTaggedData(uint32_t_Buffer* buff, MemoryMap* map){
+  //TODO this float needs to be translated
   switch (buff->tag)
   {
   case 0:
@@ -45,6 +46,5 @@ MemoryMap* receiveTaggedData(uint32_t_Buffer* buff, MemoryMap* map){
   case 13:
     map->StateMachineStatus = buff->data;
   }
-  return map;
 }
 

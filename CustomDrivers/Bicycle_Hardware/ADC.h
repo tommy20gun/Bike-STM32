@@ -24,6 +24,8 @@ class ADCDriver: public Device{
       this->messenger = messenger;
       this->pin4voltage = pin4voltage;
       this->pin5voltage = pin5voltage; 
+      initTasks();
+      initPeripherals();
     };
 
     private:

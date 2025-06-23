@@ -58,7 +58,6 @@ void GlobalSetup(void){
   right = new TailLight_Turn(GPIOB,GPIO_PIN_7,GPIOB,GPIO_PIN_9,messenger,turningRight);
   brake = new TailLight_Brake(GPIOA,GPIO_PIN_9,GPIOB,GPIO_PIN_2,messenger,brakeON);
   bluetooth = new Bluetooth(messenger); //bluetooth hard coded to PA0,PA1,PA2,PA3
-  //adc
   //channel4 (12V), channel5 (72V) PA4 and PA5 is hardcoded. So is Queuetag
   adc = new ADCDriver(messenger, 12, 5);      
   bikelock = new Lock(GPIOA,GPIO_PIN_7,GPIOB,GPIO_PIN_6,messenger,StateMachineStatus,stateMachineHandle);

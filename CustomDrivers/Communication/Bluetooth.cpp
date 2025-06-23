@@ -130,67 +130,71 @@ void Bluetooth::initBTMemoryMap(){
 
 void Bluetooth::QueueSend(){};
 
+void Bluetooth::emptyQueue(){
+  struct uint32_t_Buffer buff;
+  while (uxQueueMessagesWaiting(this->messenger) > 0){
+    xQueueReceive(this->messenger, (void*) &buff, 0);
+    receiveTaggedData(&buff,&map);
+  }
+}
+
 void Bluetooth::vTaskFunction(void* pvParameters){
   Bluetooth* tooth = (Bluetooth*)pvParameters;
   tooth->RTOSImplementation();
 }
 
-#define TESTING //Testing code prints readable text to serial terminal
+  //Testing code prints readable text to serial terminal
+#define TESTING
 void Bluetooth::RTOSImplementation(){
-  MemoryMap* map = &(this->map);
   #ifndef TESTING
-    struct uint32_t_Buffer buff;
-    LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, (uint32_t) map, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+    LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, (uint32_t) &map, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
     while(1){
       //xSemaphoreTake(tooth->sendSemaphore,portMAX_DELAY);
       //empty queue
       //TODO maybe do a mutex and separate these tasks
-      while (uxQueueMessagesWaiting(this->messenger) > 0){
-        xQueueReceive(this->messenger, (void*) &buff, 0);
-        map = receiveTaggedData(&buff,map);
-      }
-      map->CRC32 = CRC32MemoryMap(map);
-      uartTransmitDMA(sizeof(*map)); //size is 80 I think, addr: start of struct
+      emptyQueue();
+      map.CRC32 = CRC32MemoryMap(&map);
+      uartTransmitDMA(sizeof(map)); //size is 80 I think, addr: start of struct
       //xSemaphoreGive(this->sendSemaphore);
       vTaskDelay(100);
     }
   #else //code for testing is below
     std::string TestingString;
-
     while (1){
-      map->CRC32 = CRC32MemoryMap(map);
+      emptyQueue();
+      map.CRC32 = CRC32MemoryMap(&map);
       TestingString = "Magic Number: ";
-      TestingString.append(std::to_string(map->magicNumber));
+      TestingString.append(std::to_string(map.magicNumber));
       TestingString.append("\nHeadlight ON: ");
-      TestingString.append(std::to_string(map->headlightON));
+      TestingString.append(std::to_string(map.headlightON));
       TestingString.append("\nMotor Temp: ");
-      TestingString.append(std::to_string(map->motorTemp));
+      TestingString.append(std::to_string(map.motorTemp));
       TestingString.append("\nADC Reading 72V: ");
-      TestingString.append(std::to_string(map->ADCreading72V));
+      TestingString.append(std::to_string(map.ADCreading72V));
       TestingString.append("\nADC Reading 12V: ");
-      TestingString.append(std::to_string(map->ADCreading12V));
+      TestingString.append(std::to_string(map.ADCreading12V));
       TestingString.append("\nBattery Temp: ");
-      TestingString.append(std::to_string(map->battTemp));
+      TestingString.append(std::to_string(map.battTemp));
       TestingString.append("\nOdometer: ");
-      TestingString.append(std::to_string(map->Odometer));
+      TestingString.append(std::to_string(map.Odometer));
       TestingString.append("\nSpeed: ");
-      TestingString.append(std::to_string(map->speed));
+      TestingString.append(std::to_string(map.speed));
       TestingString.append("\nHorn ON: ");
-      TestingString.append(std::to_string(map->hornON));
+      TestingString.append(std::to_string(map.hornON));
       TestingString.append("\nBrake ON: ");
-      TestingString.append(std::to_string(map->brakeON));
+      TestingString.append(std::to_string(map.brakeON));
       TestingString.append("\nTurning Left: ");
-      TestingString.append(std::to_string(map->turningLeft));
+      TestingString.append(std::to_string(map.turningLeft));
       TestingString.append("\nTurning Right: ");
-      TestingString.append(std::to_string(map->turningRight));
+      TestingString.append(std::to_string(map.turningRight));
       TestingString.append("\nRPM: ");
-      TestingString.append(std::to_string(map->RPM));
+      TestingString.append(std::to_string(map.RPM));
       TestingString.append("\nThrottle Voltage: ");
-      TestingString.append(std::to_string(map->throttleV));
+      TestingString.append(std::to_string(map.throttleV));
       TestingString.append("\nState Machine Status: ");
-      TestingString.append(std::to_string(map->StateMachineStatus));
+      TestingString.append(std::to_string(map.StateMachineStatus));
       TestingString.append("\nCRC32: ");
-      TestingString.append(std::to_string(map->CRC32));
+      TestingString.append(std::to_string(map.CRC32));
       TestingString.append("\n\n");
       LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6,(uint32_t) TestingString.c_str(), LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
       uartTransmitDMA(TestingString.size());

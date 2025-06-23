@@ -61,7 +61,7 @@ struct floatBuffer{
   float data;
 };
 
-MemoryMap* receiveTaggedData(uint32_t_Buffer* buff, MemoryMap* map);
+void receiveTaggedData(uint32_t_Buffer* buff, MemoryMap* map);
 #ifdef __cplusplus
 }
 #endif //__cplusplus
