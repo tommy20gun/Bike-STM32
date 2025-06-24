@@ -35,7 +35,7 @@ static TailLight_Brake* brake;
 static Bluetooth* bluetooth;
 static ADCDriver* adc;
 static Lock* bikelock;
-//static Motion_Detector* detector1;
+static Motion_Detector* detector1;
 //static Motion_Detector* detector2;
 //static Motion_Detector* detector3;
 
@@ -61,7 +61,8 @@ void GlobalSetup(void){
   //channel4 (12V), channel5 (72V) PA4 and PA5 is hardcoded. So is Queuetag
   adc = new ADCDriver(messenger, 12, 5);      
   bikelock = new Lock(GPIOA,GPIO_PIN_7,GPIOB,GPIO_PIN_6,messenger,StateMachineStatus,stateMachineHandle);
-  //detectors
+  detector1 = new Motion_Detector(messenger,headlightON, GPIOB, GPIO_PIN_13);
+  
 }
 
 //TODO there is a possiblity to implement lock level 2 for motion detection

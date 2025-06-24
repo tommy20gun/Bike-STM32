@@ -39,6 +39,7 @@ void Motion_Detector::initPeripherals(){
   LL_GPIO_Init(readingPin.GPIOx, &GPIO_InitStruct);
 
 }
+void Motion_Detector::QueueSend(){};//TODO I will impelemnt this later, it depends on how i want to send data
 
 void Motion_Detector::vTaskFunction(void* pvParameters){
     Motion_Detector* detector = (Motion_Detector*) pvParameters;
@@ -46,5 +47,39 @@ void Motion_Detector::vTaskFunction(void* pvParameters){
 }
 
 void Motion_Detector::RTOSImplementation(){
-    
+    /*
+    account for standby phase of 1 minute on startup
+  * Pin going low is "detected motion"
+  * there is a delay of 3 seconds (blocked after the pin going back HIGH)
+  * THere is an adjustable time delay during the last time motion is detected BEFORE pin going high again. 
+  * 
+  * interrupt on falling edge, input pin polling until back to high, 
+  * */
+  vTaskDelay(63000); // wait 1 minute for startup
+  struct uint32_t_Buffer buff;
+  buff.tag = headlightON;
+  bool previouspin = true;
+  while (1){
+    //executes when motion is detected
+    if (LL_GPIO_IsInputPinSet(readingPin.GPIOx,readingPin.PinMask) == false){
+      LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_0);
+      buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
+      xQueueSendToBack(messenger, &buff , 0);
+      previouspin = false;
+      vTaskDelay(30);
+    }
+    //executes on rising edge only
+    else if (LL_GPIO_IsInputPinSet(readingPin.GPIOx,readingPin.PinMask) == true && previouspin == false){
+      LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_0);
+      buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
+      xQueueSendToBack(messenger, &buff , 0);
+      previouspin = true;
+      //pin goes back high
+      vTaskDelay(3000);
+    }
+    //normally go here
+    else{
+      vTaskDelay(100);
+    }
+  }
 }

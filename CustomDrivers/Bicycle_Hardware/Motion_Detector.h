@@ -14,7 +14,7 @@ extern "C" {
 
 #include "FreeRTOS.h" 
 #include "Device.h"
-class Motion_Detector : public Device{
+class Motion_Detector : public Device{ //does not inherit SwitchActivateDevice because output pin should be initialized
   public:
   Motion_Detector(
         QueueHandle_t messenger,
@@ -35,7 +35,7 @@ class Motion_Detector : public Device{
   void initPeripherals();
   static void vTaskFunction(void* pvParameters);//this is just 1 line FreeRTOSImplementation()
   void RTOSImplementation();
-  
+  void QueueSend();
 };
 
 #ifdef __cplusplus

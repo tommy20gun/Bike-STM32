@@ -77,6 +77,7 @@ CustomDrivers/Bicycle_Hardware/ADC.cpp \
 CustomDrivers/Bicycle_Hardware/Lock.cpp \
 CustomDrivers/Bicycle_Hardware/SwitchActivatedDevice.cpp \
 CustomDrivers/Bicycle_Hardware/Device.cpp \
+CustomDrivers/Bicycle_Hardware/Motion_Detector.cpp \
 CustomDrivers/Communication/Bluetooth.cpp \
 CustomDrivers/Communication/MemoryMap.cpp\
 
