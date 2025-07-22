@@ -107,21 +107,7 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
-  typedef struct errorinfo{
-    char* file;
-    int line; 
-  } errorinfo;
 
-  errorinfo errors = { __FILE__,__LINE__};
-  LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, (uint32_t) &errors, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
-
-  while (1)
-  {
-    LL_DMA_DisableStream(DMA1,LL_DMA_STREAM_6);
-    LL_DMA_SetDataLength(DMA1,LL_DMA_STREAM_6, sizeof(errors));
-    LL_DMA_EnableStream(DMA1,LL_DMA_STREAM_6);
-    LL_USART_EnableDMAReq_TX(USART2);
-  }
   /* USER CODE END Error_Handler_Debug */
 }
 
