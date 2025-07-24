@@ -54,30 +54,45 @@ void Motion_Detector::RTOSImplementation(){
   * THere is an adjustable time delay during the last time motion is detected BEFORE pin going high again. 
   * 
   * interrupt on falling edge, input pin polling until back to high, 
+  * 
+  * logic:
+  * light is off
+motion detector triggers
+light turns on
+
+There is motion
+if light is off, then motion occurs, turn light on
+if light is on from the switch, then motion occurs, nothing happens
+
+There is no more motion
+no more motion, headlight is on due to motion detector = turn off headlight
+no more motion, headlight is on from light switch = turn off headlight
+no more motion, headlight is off due to light switch = nothing
   * */
-  vTaskDelay(63000); // wait 1 minute for startup
+  vTaskDelay(63000); // wait 1 minute for startup. The sensor should calibrate during this time so everytime
+  // it becomes active (unlock->lock) state, it should do this calibration.
   struct uint32_t_Buffer buff;
   buff.tag = headlightON;
   bool previouspin = true;
   while (1){
     //executes when motion is detected
-    if (LL_GPIO_IsInputPinSet(readingPin.GPIOx,readingPin.PinMask) == false){
+    if (LL_GPIO_IsInputPinSet(readingPin.GPIOx,readingPin.PinMask) == true){
+      //todo add threshold for 1 minute continuous motion or some algo
       LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_0);
       buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
       xQueueSendToBack(messenger, &buff , 0);
-      previouspin = false;
+      previouspin = true;
       vTaskDelay(30);
     }
-    //executes on rising edge only
-    else if (LL_GPIO_IsInputPinSet(readingPin.GPIOx,readingPin.PinMask) == true && previouspin == false){
+    //executes on falling edge only
+    else if (LL_GPIO_IsInputPinSet(readingPin.GPIOx,readingPin.PinMask) == false && previouspin == true){
       LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_0);
       buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
       xQueueSendToBack(messenger, &buff , 0);
-      previouspin = true;
-      //pin goes back high
-      vTaskDelay(3000);
+      previouspin = false;
+      vTaskDelay(3000); //lockout is 3sec
     }
-    //normally go here
+    //Go here when no motion is detected
     else{
       vTaskDelay(100);
     }
