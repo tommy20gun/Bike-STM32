@@ -14,12 +14,18 @@
   * there is a delay of 3 seconds (blocked after the pin going back HIGH)
   * THere is an adjustable time delay during the last time motion is detected BEFORE pin going high again. 
   * 
-  * interrupt on falling edge, input pin polling until back to high, 
   * Settings on breakoutboard:
   * Repeat Trigger
   * 3 second delay
   * 3 meters
   * 
+  * Logic:
+  * motion is detected for 5 seconds continuously: turn on all lights
+  * motion is continually detected ~30 seconds honk the horn for 2 clicks every5 seconds
+  * until motion is gone
+  * 
+  * on the activation or resume of a task, wait 60 seconds to initialize.
+  * make sure the detector is able to signal when initialization is complete
   *
   */
 #include "Motion_Detector.h"
@@ -74,28 +80,34 @@ no more motion, headlight is off due to light switch = nothing
   // it becomes active (unlock->lock) state, it should do this calibration.
   struct uint32_t_Buffer buff;
   buff.tag = headlightON;
-  bool previouspin = true;
-  while (1){
+  //bool previouspin = true;
+  uint64_t timeON = 0;
+  while(1){
     //executes when motion is detected
-    if (LL_GPIO_IsInputPinSet(readingPin.GPIOx,readingPin.PinMask) == true){
-      //todo add threshold for 1 minute continuous motion or some algo
-      LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_0);
-      buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
-      xQueueSendToBack(messenger, &buff , 0);
-      previouspin = true;
-      vTaskDelay(30);
-    }
-    //executes on falling edge only
-    else if (LL_GPIO_IsInputPinSet(readingPin.GPIOx,readingPin.PinMask) == false && previouspin == true){
-      LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_0);
-      buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
-      xQueueSendToBack(messenger, &buff , 0);
-      previouspin = false;
-      vTaskDelay(3000); //lockout is 3sec
-    }
-    //Go here when no motion is detected
-    else{
+    while (LL_GPIO_IsInputPinSet(readingPin.GPIOx,readingPin.PinMask) == true){
+      timeON +=30;
+      if (timeON >= 5000 && LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0)){
+        LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_0);
+        buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
+        xQueueSendToBack(messenger, &buff , 0);
+        //previouspin = true;
+      }
+      //executes on falling edge only
+      else if(LL_GPIO_IsInputPinSet(readingPin.GPIOx,readingPin.PinMask) == false /*&& previouspin == true*/){
+        LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_0);
+        buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
+        xQueueSendToBack(messenger, &buff , 0);
+        //previouspin = false;
+        timeON = 0;
+        vTaskDelay(3000); //lockout is 3sec
+        break;
+      }
+      else{
+        vTaskDelay(30);
+      }
       vTaskDelay(100);
     }
   }
 }
+
+
