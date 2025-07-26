@@ -76,7 +76,7 @@ no more motion, headlight is on due to motion detector = turn off headlight
 no more motion, headlight is on from light switch = turn off headlight
 no more motion, headlight is off due to light switch = nothing
   * */
-  vTaskDelay(63000); // wait 1 minute for startup. The sensor should calibrate during this time so everytime
+  //vTaskDelay(63000); // wait 1 minute for startup. The sensor should calibrate during this time so everytime
   // it becomes active (unlock->lock) state, it should do this calibration.
   struct uint32_t_Buffer buff;
   buff.tag = headlightON;
@@ -84,30 +84,32 @@ no more motion, headlight is off due to light switch = nothing
   uint64_t timeON = 0;
   while(1){
     //executes when motion is detected
-    while (LL_GPIO_IsInputPinSet(readingPin.GPIOx,readingPin.PinMask) == true){
-      timeON +=30;
-      if (timeON >= 5000 && LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0)){
-        LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_0);
-        buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
-        xQueueSendToBack(messenger, &buff , 0);
-        //previouspin = true;
+    if (LL_GPIO_IsInputPinSet(readingPin.GPIOx,readingPin.PinMask) == true){
+      while (1){
+        timeON +=30;
+        if (timeON >= 5000 && !LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0)){
+          LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_0);
+          buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
+          xQueueSendToBack(messenger, &buff , 0);
+          //previouspin = true;
+        }
+        //executes on falling edge only
+        else if(LL_GPIO_IsInputPinSet(readingPin.GPIOx,readingPin.PinMask) == false /*&& previouspin == true*/){
+          LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_0);
+          buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
+          xQueueSendToBack(messenger, &buff , 0);
+          //previouspin = false;
+          timeON = 0;
+          vTaskDelay(3000); //lockout is 3sec
+          break;
+        }
+        else{
+          vTaskDelay(30);
+        }
       }
-      //executes on falling edge only
-      else if(LL_GPIO_IsInputPinSet(readingPin.GPIOx,readingPin.PinMask) == false /*&& previouspin == true*/){
-        LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_0);
-        buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
-        xQueueSendToBack(messenger, &buff , 0);
-        //previouspin = false;
-        timeON = 0;
-        vTaskDelay(3000); //lockout is 3sec
-        break;
-      }
-      else{
-        vTaskDelay(30);
-      }
-      vTaskDelay(100);
     }
-  }
+    vTaskDelay(100);
+  } 
 }
 
 
