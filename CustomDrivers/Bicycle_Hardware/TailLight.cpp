@@ -7,7 +7,7 @@
   * Turn signal will blink the specfied light at full brightness. Timed GPIO Output will implement the blinking of TailLights. Trigger will be implemented by Rising edge GPIO EXTI
   * 
   * Input Pin PB6(left), PB7(right), PA9 (brake). TODO these need to be 12V with transistor
-  * Output Pin for turn signal transistor PB8 (left), PB9 (right), PB2 (brake)
+  * Output Pin for turn signal transistor PB8 (left), PB9 (right), PB2 (brake), PB10 (Turnleft bright), PB12 (turnright bright)
   * 
   */
 #include <Taillight.h>
