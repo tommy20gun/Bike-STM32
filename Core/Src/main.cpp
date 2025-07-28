@@ -54,8 +54,8 @@ void GlobalSetup(void){
 
   horn = new Horn(GPIOA,GPIO_PIN_8,GPIOB,GPIO_PIN_1,messenger,hornON);
   headlight = new Headlight(GPIOA,GPIO_PIN_10,GPIOB,GPIO_PIN_0,messenger,headlightON);
-  left = new TailLight_Turn(GPIOB,GPIO_PIN_6,GPIOB,GPIO_PIN_8,messenger,turningLeft);
-  right = new TailLight_Turn(GPIOB,GPIO_PIN_7,GPIOB,GPIO_PIN_9,messenger,turningRight);
+  left = new TailLight_Turn(GPIOB,GPIO_PIN_6,GPIOB,GPIO_PIN_8,GPIOB,GPIO_PIN_10,messenger,turningLeft);
+  right = new TailLight_Turn(GPIOB,GPIO_PIN_7,GPIOB,GPIO_PIN_9,GPIOB, GPIO_PIN_12,messenger,turningRight);
   brake = new TailLight_Brake(GPIOA,GPIO_PIN_9,GPIOB,GPIO_PIN_2,messenger,brakeON);
   bluetooth = new Bluetooth(messenger); //bluetooth hard coded to PA0,PA1,PA2,PA3
   //channel4 (12V), channel5 (72V) PA4 and PA5 is hardcoded. So is Queuetag
