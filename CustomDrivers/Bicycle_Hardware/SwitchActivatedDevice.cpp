@@ -11,7 +11,7 @@ SwitchActivatedDevice::SwitchActivatedDevice(GPIO_TypeDef* GPIOxIn, uint32_t Pin
 
 void SwitchActivatedDevice::initPeripherals(){
     initInputPin(inputPin, true);
-    initOutputPin(outputPin, false);
+    initOutputPin(outputPin, true);
 }
 
 void SwitchActivatedDevice::initInputPin(GPIOPin_Struct pin, bool PullDown){
