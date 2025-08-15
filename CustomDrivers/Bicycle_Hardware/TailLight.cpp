@@ -20,6 +20,12 @@ void TailLight_Turn::initTasks(){
     }
 }
 
+void TailLight_Turn::initPeripherals(){
+    initInputPin(inputPin, true);
+    initOutputPin(outputPin, false);
+    initOutputPin(brightnessPin,true);
+}
+
 void TailLight_Turn::vTaskFunction(void* pvParameters){
   TailLight_Turn* taillightturn = (TailLight_Turn*) pvParameters;
   taillightturn->RTOSImplementation();
@@ -32,9 +38,11 @@ void TailLight_Turn::RTOSImplementation(){
     vTaskDelay(50);
     while(inPinState == true && LL_GPIO_IsInputPinSet(inputPin.GPIOx, inputPin.PinMask) == inPinState){
       LL_GPIO_TogglePin(outputPin.GPIOx, outputPin.PinMask);
+      LL_GPIO_SetOutputPin(brightnessPin.GPIOx, brightnessPin.PinMask);
       QueueSend();
       vTaskDelay(500);
     }
+    LL_GPIO_ResetOutputPin(brightnessPin.GPIOx, brightnessPin.PinMask);
   }
 }
 

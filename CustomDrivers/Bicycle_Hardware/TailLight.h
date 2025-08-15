@@ -23,6 +23,8 @@ class TailLight_Turn : public SwitchActivatedDevice{
             uint32_t PinMaskIn, 
             GPIO_TypeDef* GPIOxOut, 
             uint32_t PinMaskOut, 
+            GPIO_TypeDef* GPIOxOut_2, 
+            uint32_t PinMaskOut_2,
             QueueHandle_t messenger,
             DataTable queueTag):SwitchActivatedDevice(GPIOxIn,
                                                             PinMaskIn,
@@ -31,11 +33,15 @@ class TailLight_Turn : public SwitchActivatedDevice{
                                                             messenger,
                                                             queueTag)
     {
+        brightnessPin.GPIOx = GPIOxOut_2;
+        brightnessPin.PinMask = PinMaskOut_2;
         initPeripherals();
         initTasks();
     };
     protected:
+    GPIOPin_Struct brightnessPin;
     void initTasks();
+    void initPeripherals();
     static void vTaskFunction(void* pvParameters);//this is just 1 line FreeRTOSImplementation()
     void RTOSImplementation();
 };
