@@ -22,7 +22,7 @@ void TailLight_Turn::initTasks(){
 
 void TailLight_Turn::initPeripherals(){
     initInputPin(inputPin, true);
-    initOutputPin(outputPin, false);
+    initOutputPin(outputPin, true);
     initOutputPin(brightnessPin,true);
 }
 
