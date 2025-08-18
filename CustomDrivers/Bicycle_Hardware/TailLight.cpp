@@ -42,6 +42,7 @@ void TailLight_Turn::RTOSImplementation(){
       QueueSend();
       vTaskDelay(500);
     }
+    LL_GPIO_ResetOutputPin(outputPin.GPIOx, outputPin.PinMask);
     LL_GPIO_ResetOutputPin(brightnessPin.GPIOx, brightnessPin.PinMask);
   }
 }
