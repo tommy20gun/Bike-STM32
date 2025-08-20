@@ -62,7 +62,7 @@ void GlobalSetup(void){
   adc = new ADCDriver(messenger, 12, 5);      
   bikelock = new Lock(GPIOA,GPIO_PIN_7,GPIOB,GPIO_PIN_6,messenger,StateMachineStatus,stateMachineHandle);
   detector1 = new Motion_Detector(messenger,headlightON, GPIOB, GPIO_PIN_13);
-  
+  //lock(state); This should initialize the state machine as locked after 
 }
 
 //TODO there is a possiblity to implement lock level 2 for motion detection
