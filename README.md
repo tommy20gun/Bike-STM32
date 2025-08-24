@@ -22,19 +22,29 @@ The three modules are comprised of **Hardware, Embedded Software, and Android Ap
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Demo
-![image](Docs/Diagrams/demogif.gif)
-## State Machine Implementation of Lock
 
-![image](Docs/Diagrams/statemachine.png)
+### TailLights
+![image](Docs/Diagrams/demogif.gif)
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Microcontroller Pinout -  KiCAD EDA:
+### Microcontroller Pinout -  KiCAD EDA:
 
 ![image](Docs/Diagrams/MCUPinout.png)
 <a href="https://github.com/tommy20gun/Bike-STM32/tree/master/Docs/Diagrams/Bike_PCB.pdf"><strong>Explore the eCAD » </strong> </a>
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Bike
+### Battery Curve
+![image](Docs/Diagrams/batteryCurve.jpg)
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### State Machine Implementation of Lock
+
+![image](Docs/Diagrams/statemachine.png)
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+### Bike
 ![image](Docs/Diagrams/bike.jpg)
 <!-- LICENSE -->
 ## License
