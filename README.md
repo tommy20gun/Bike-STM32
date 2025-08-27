@@ -23,7 +23,7 @@ The three modules are comprised of **Hardware, Embedded Software, and Android Ap
 
 ## Demo
 
-### TailLights
+### Turn Signals
 ![image](Docs/Diagrams/demogif.gif)
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

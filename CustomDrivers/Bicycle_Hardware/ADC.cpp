@@ -3,7 +3,7 @@
   * @brief          : Implementation of driver for ADC
   * Functionality:
   * PA4 will read the voltage of the battery
-  * PA5 will read the throttle's voltage
+  * 
   * 
   */
 #include "ADC.h"
