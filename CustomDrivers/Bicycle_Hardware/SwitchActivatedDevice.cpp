@@ -55,7 +55,7 @@ void SwitchActivatedDevice::RTOSImplementation(){
   while(1){
     inPinState = LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask);
     //debounce
-    vTaskDelay(100);
+    vTaskDelay(50);
     //read again to confirm the signal, if not, ignore it
     if (inPinState == LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask) && inPinState != prevPinState){
       if (inPinState){
