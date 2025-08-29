@@ -38,12 +38,12 @@ void TailLight_Turn::RTOSImplementation(){
     vTaskDelay(50);
     while(inPinState == true && LL_GPIO_IsInputPinSet(inputPin.GPIOx, inputPin.PinMask) == inPinState){
       LL_GPIO_TogglePin(outputPin.GPIOx, outputPin.PinMask);
-      LL_GPIO_SetOutputPin(brightnessPin.GPIOx, brightnessPin.PinMask);
+      LL_GPIO_ResetOutputPin(brightnessPin.GPIOx, brightnessPin.PinMask); //pull to ground, opens
       QueueSend();
       vTaskDelay(500);
     }
-    LL_GPIO_ResetOutputPin(outputPin.GPIOx, outputPin.PinMask);
-    LL_GPIO_ResetOutputPin(brightnessPin.GPIOx, brightnessPin.PinMask);
+    LL_GPIO_SetOutputPin(outputPin.GPIOx, outputPin.PinMask);
+    LL_GPIO_SetOutputPin(brightnessPin.GPIOx, brightnessPin.PinMask);
   }
 }
 
