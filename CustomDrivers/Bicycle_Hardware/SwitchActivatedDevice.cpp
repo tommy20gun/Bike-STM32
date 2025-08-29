@@ -59,7 +59,7 @@ void SwitchActivatedDevice::RTOSImplementation(){
     //read again to confirm the signal, if not, ignore it
     if (inPinState == LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask) && inPinState != prevPinState){
       if (inPinState){
-        LL_GPIO_SetOutputPin(outputPin.GPIOx,outputPin.PinMask);
+        LL_GPIO_SetOutputPin(outputPin.GPIOx,outputPin.PinMask); //TODO make this a mutex for motion detect
         QueueSend();
         prevPinState = inPinState;
       }

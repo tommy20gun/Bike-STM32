@@ -61,7 +61,7 @@ void GlobalSetup(void){
   //channel4 (12V), channel6 (72V) PA4 and PA6 is hardcoded. So is Queuetag
   adc = new ADCDriver(messenger, 12, 5);      
   bikelock = new Lock(GPIOA,GPIO_PIN_7,GPIOB,GPIO_PIN_6,messenger,StateMachineStatus,stateMachineHandle);
-  detector1 = new Motion_Detector(messenger,headlightON, GPIOB, GPIO_PIN_13);
+  //detector1 = new Motion_Detector(messenger,headlightON, GPIOB, GPIO_PIN_13);
   //lock(state); This should initialize the state machine as locked after 
 }
 
