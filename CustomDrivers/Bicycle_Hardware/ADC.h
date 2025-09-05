@@ -20,21 +20,15 @@ extern "C" {
 
 class ADCDriver: public Device{
     public:
-    ADCDriver(QueueHandle_t messenger, int pin4voltage, int pin5voltage){
-      this->messenger = messenger;
-      this->pin4voltage = pin4voltage;
-      this->pin5voltage = pin5voltage; 
-      initTasks();
-      initPeripherals();
-    };
+    ADCDriver(QueueHandle_t messenger, GPIO_TypeDef* GPIOxADC, uint32_t PinMaskIn);
 
-    private:
-    int pin4voltage;
-    int pin5voltage;
-    int pinreading[2];
+    protected:
+    GPIOPin_Struct ADCPin;
+    //int pin4voltage;
+    float pinreading;
 
     void initTasks();
-    void initPeripherals();
+    virtual void initPeripherals();
     static void vTaskFunction(void* pvParameters);
     void RTOSImplementation();
     static float ADCToBatteryPercent(float ADCReading,float scale);

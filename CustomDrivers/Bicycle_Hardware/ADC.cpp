@@ -24,10 +24,10 @@ void ADCDriver::initPeripherals(){
 
     LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
 
-    GPIO_InitStruct.Pin = LL_GPIO_PIN_4|LL_GPIO_PIN_5;
+    GPIO_InitStruct.Pin = ADCPin.PinMask;
     GPIO_InitStruct.Mode = LL_GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = LL_GPIO_PULL_NO; //TODO I need my own Pullup resistor in fritzing
-    LL_GPIO_Init(GPIOA,&GPIO_InitStruct);
+    LL_GPIO_Init(ADCPin.GPIOx,&GPIO_InitStruct);
 
     ADC_InitStruct.Resolution = LL_ADC_RESOLUTION_12B;
     ADC_InitStruct.DataAlignment = LL_ADC_DATA_ALIGN_RIGHT;
@@ -88,6 +88,14 @@ The data converted from an injected channel are always stored into the ADC_JDRx
 registers.
 
 */
+ADCDriver::ADCDriver(QueueHandle_t messenger, GPIO_TypeDef* GPIOxADC, uint32_t PinMaskIn){
+    this->messenger = messenger;
+    //this->pin4voltage = pin4voltage;
+    this->ADCPin.GPIOx = GPIOxADC;
+    this->ADCPin.PinMask = PinMaskIn;  
+    initTasks();
+    initPeripherals();
+}
 void ADCDriver::vTaskFunction(void* pvParameters){
     ADCDriver* adc = (ADCDriver*) pvParameters;
     adc ->RTOSImplementation();
@@ -105,14 +113,13 @@ void ADCDriver::RTOSImplementation(){
         Error_Handler();
     }
     while(1){
-        for (int channel = 4; channel <= 5; channel++){
-            LL_ADC_REG_StartConversionSWStart(ADC1);
-            //wait for complete
-            while(!LL_ADC_IsActiveFlag_EOCS(ADC1));
-            //TODO ADC pin needs to not float
-            pinreading[channel-4] = LL_ADC_REG_ReadConversionData12(ADC1);
-            LL_ADC_ClearFlag_EOCS(ADC1);
-        }
+
+        LL_ADC_REG_StartConversionSWStart(ADC1);
+        //wait for complete
+        while(!LL_ADC_IsActiveFlag_EOCS(ADC1));
+        //TODO ADC pin needs to not float
+        pinreading = LL_ADC_REG_ReadConversionData12(ADC1);
+        LL_ADC_ClearFlag_EOCS(ADC1);
         QueueSend();
         vTaskDelay(1000); //polling rate 1hz
     }
@@ -121,10 +128,7 @@ void ADCDriver::RTOSImplementation(){
 void ADCDriver::QueueSend(){
     struct floatBuffer buffer;
     buffer.tag = ADCreading12V;
-    buffer.data = ADCToBatteryPercent(pinreading[0],4);
-    xQueueSendToBack(messenger,&buffer,0);
-    buffer.tag = throttleV;
-    buffer.data = ADCToBatteryPercent(pinreading[1],2.5);
+    buffer.data = ADCToBatteryPercent(pinreading,4);
     xQueueSendToBack(messenger,&buffer,0);
 }
 

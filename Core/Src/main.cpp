@@ -58,9 +58,9 @@ void GlobalSetup(void){
   right = new TailLight_Turn(GPIOB,GPIO_PIN_7,GPIOB,GPIO_PIN_9,GPIOB, GPIO_PIN_12,messenger,turningRight);
   brake = new TailLight_Brake(GPIOA,GPIO_PIN_9,GPIOA,GPIO_PIN_5,messenger,brakeON);
   bluetooth = new Bluetooth(messenger); //bluetooth hard coded to PA0,PA1,PA2,PA3
-  //channel4 (12V), channel6 (72V) PA4 and PA6 is hardcoded. So is Queuetag
-  adc = new ADCDriver(messenger, 12, 5);      
-  bikelock = new Lock(GPIOA,GPIO_PIN_7,GPIOB,GPIO_PIN_6,messenger,StateMachineStatus,stateMachineHandle);
+  //channel4 (12V) PA4 is hardcoded. So is Queuetag
+  adc = new ADCDriver(messenger, GPIOA, GPIO_PIN_4);      
+  bikelock = new Lock(GPIOA,GPIO_PIN_7,GPIOA,GPIO_PIN_6,messenger,StateMachineStatus,stateMachineHandle);
   //detector1 = new Motion_Detector(messenger,headlightON, GPIOB, GPIO_PIN_13);
   //lock(state); This should initialize the state machine as locked after 
 }
