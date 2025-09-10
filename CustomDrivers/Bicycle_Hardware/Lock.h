@@ -43,6 +43,7 @@ class Lock: public SwitchActivatedDevice{
 
     static void vTaskFunction(void* pvParameters);
     void RTOSImplementation();
+    void ToggleLock();
 
 };
 
