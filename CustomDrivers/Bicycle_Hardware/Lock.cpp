@@ -54,7 +54,7 @@ void Lock::RTOSImplementation(){
             ToggleLock();
             buff.data = buff.data ^ 1U; //toggles the first bit
             xQueueSendToBack(messenger, &buff , 0);
-            vTaskDelay(10000); //cannot change state again for more than seconds
+            vTaskDelay(1000); //cannot change state again for more than seconds
         }
     }
 }

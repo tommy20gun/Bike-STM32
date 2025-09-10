@@ -62,7 +62,7 @@ void GlobalSetup(void){
   adc = new ADCDriver(messenger, GPIOA, GPIO_PIN_4);      
   bikelock = new Lock(GPIOA,GPIO_PIN_7,GPIOA,GPIO_PIN_6,messenger,StateMachineStatus,stateMachineHandle);
   detector1 = new Motion_Detector(messenger,headlightON, GPIOB, GPIO_PIN_13);
-  xTaskNotifyGive(stateMachineHandle); //increments notif value by 1. TODO this is wrong bc then state 1 is unlock but I should check notified value to confirm.
+  xTaskNotify(stateMachineHandle, 2, eSetValueWithOverwrite); //increments notif value by 1. TODO this is wrong bc then state 1 is unlock but I should check notified value to confirm.
 }
 
 //TODO there is a possiblity to implement lock level 2 for motion detection
@@ -79,7 +79,12 @@ void state_machine(void* pvParameters){
     //notified value is the same enumeration where 1 calls unlock 0 calls locked
     //STATE_UNLOCKED = 1
     //STATE_LOCKED = 0
-    state = transitiontable[notifiedValue & 3U](state); //reads the last bit to determine 0 or 1
+    if (state == STATE_START){
+      state = transitiontable[notifiedValue & 3U](state); //reads the last bit to determine 0 or 1
+    }
+    else {
+      state = transitiontable[notifiedValue & 1U](state); //reads the last bit to determine 0 or 1
+    }
   }
 }
 //TODO future make this an event group where the notification uint32 has mapping of each task handle
