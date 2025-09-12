@@ -102,13 +102,14 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-typedef enum{STATE_LOCKED, STATE_UNLOCKED} state_t;
+typedef enum{STATE_LOCKED, STATE_UNLOCKED, STATE_START} state_t;
 
 
 
 void state_machine(void* pvParameters);
 state_t unlock(state_t state);
 state_t lock(state_t state);
+state_t start(state_t state);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

@@ -61,8 +61,8 @@ void GlobalSetup(void){
   //channel4 (12V) PA4 is hardcoded. So is Queuetag
   adc = new ADCDriver(messenger, GPIOA, GPIO_PIN_4);      
   bikelock = new Lock(GPIOA,GPIO_PIN_7,GPIOA,GPIO_PIN_6,messenger,StateMachineStatus,stateMachineHandle);
-  //detector1 = new Motion_Detector(messenger,headlightON, GPIOB, GPIO_PIN_13);
-  //lock(state); This should initialize the state machine as locked after 
+  detector1 = new Motion_Detector(messenger,headlightON, GPIOB, GPIO_PIN_13);
+  xTaskNotify(stateMachineHandle, 2, eSetValueWithOverwrite); //increments notif value by 1. TODO this is wrong bc then state 1 is unlock but I should check notified value to confirm.
 }
 
 //TODO there is a possiblity to implement lock level 2 for motion detection
@@ -70,16 +70,21 @@ void GlobalSetup(void){
 State machine should stay in main
 */
 void state_machine(void* pvParameters){
-  state = STATE_LOCKED;
+  state = STATE_START;
   typedef state_t (*state_Transition)(state_t);
-  state_Transition transitiontable[2] = {lock,unlock};
-  uint32_t notifiedValue;
+  state_Transition transitiontable[3] = {lock,unlock, start};
+  uint32_t notifiedValue = 0;
   while(1){
-    xTaskNotifyWait(0, 0, &notifiedValue, portMAX_DELAY);
+    xTaskNotifyWait(0, 2U, &notifiedValue, portMAX_DELAY); // first call and subsequent calls will clear bit 1, meaning the task will toggle between lock and unlock
     //notified value is the same enumeration where 1 calls unlock 0 calls locked
     //STATE_UNLOCKED = 1
     //STATE_LOCKED = 0
-    state = transitiontable[notifiedValue & 1U](state); //reads the last bit to determine 0 or 1
+    if (state == STATE_START){
+      state = transitiontable[notifiedValue & 3U](state); //reads the last bit to determine 0 or 1
+    }
+    else {
+      state = transitiontable[notifiedValue & 1U](state); //reads the last bit to determine 0 or 1
+    }
   }
 }
 //TODO future make this an event group where the notification uint32 has mapping of each task handle
@@ -88,13 +93,12 @@ FardriverEN_72V - PA6
 */
 state_t unlock(state_t state){
   if (state == STATE_LOCKED){
-    vTaskResume(headlight->getTaskHandle());
     vTaskResume(left->getTaskHandle());
     vTaskResume(right->getTaskHandle());
     vTaskResume(brake->getTaskHandle());
     LL_GPIO_ResetOutputPin(GPIOA,GPIO_PIN_6); //fardriver Pin
     //vTaskResume(LED);
-    //vTaskSuspend(motionsensor);
+    vTaskSuspend(detector1->getTaskHandle());
     //log stateUnlocked suscessful
     return STATE_UNLOCKED;
   }
@@ -106,18 +110,32 @@ FardriverEN_72V - PA6
 */
 state_t lock(state_t state){
   if (state == STATE_UNLOCKED){
-    vTaskSuspend(headlight->getTaskHandle());
     vTaskSuspend(left->getTaskHandle());
     vTaskSuspend(right->getTaskHandle());
     vTaskSuspend(brake->getTaskHandle());
-    LL_GPIO_SetOutputPin(GPIOA,GPIO_PIN_6); //fardriver Pin
+    LL_GPIO_SetOutputPin(GPIOA,GPIO_PIN_6); //fardriver Pin will close OD, close relay, locking the bike 
     //vTaskSuspend(LED);
-    //vTaskResume(motiondetection)
+    vTaskResume(detector1->getTaskHandle());
     //log stateUnlocked suscessful
     return STATE_LOCKED;
   }
   //log stateunlocked failed
   return STATE_UNLOCKED;
+}
+
+state_t start(state_t state){
+  if (state == STATE_START){
+    LL_GPIO_SetOutputPin(GPIOA,GPIO_PIN_6); //fardriver Pin will close OD, close relay, locking the bike 
+    vTaskSuspend(left->getTaskHandle());
+    vTaskSuspend(right->getTaskHandle());
+    vTaskSuspend(brake->getTaskHandle());
+    //vTaskSuspend(LED);
+    vTaskResume(detector1->getTaskHandle());
+    //log stateUnlocked suscessful
+    return STATE_LOCKED;
+  }
+  //log stateunlocked failed
+  return state;
 }
 
 int main(){
