@@ -59,3 +59,29 @@ void TailLight_Brake::vTaskFunction(void* pvParameters){
   TailLight_Brake* taillightbrake = (TailLight_Brake*) pvParameters;
   taillightbrake->RTOSImplementation();
 } 
+
+void TailLight_Brake::RTOSImplementation(){
+  bool inPinState;
+  bool prevPinState = LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask);
+
+  while(1){
+    inPinState = LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask);
+    //debounce
+    vTaskDelay(50);
+    //read again to confirm the signal, if not, ignore it
+    if (inPinState == LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask) && inPinState != prevPinState){
+      if (inPinState){
+        LL_GPIO_SetOutputPin(outputPin.GPIOx,outputPin.PinMask); 
+        LL_GPIO_SetOutputPin(GPIOA,GPIO_PIN_6); // Brake activated throttle
+        QueueSend();
+        prevPinState = inPinState;
+      }
+      else if (!inPinState){
+        LL_GPIO_ResetOutputPin(outputPin.GPIOx,outputPin.PinMask);
+        LL_GPIO_ResetOutputPin(GPIOA,GPIO_PIN_6); // Brake activated throttle
+        QueueSend();
+        prevPinState = inPinState;
+      }
+    }
+  }
+}

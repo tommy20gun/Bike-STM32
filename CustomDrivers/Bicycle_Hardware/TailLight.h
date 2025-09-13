@@ -67,6 +67,7 @@ class TailLight_Brake : public SwitchActivatedDevice{
     protected:
     void initTasks();
     static void vTaskFunction(void* pvParameters);//this is just 1 line FreeRTOSImplementation()
+    void RTOSImplementation();
 };
 
 
