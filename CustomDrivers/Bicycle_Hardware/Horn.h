@@ -37,6 +37,7 @@ class Horn : public SwitchActivatedDevice{
     };
     protected:
     void initTasks();
+    void RTOSImplementation();
     static void vTaskFunction(void* pvParameters);//this is just 1 line FreeRTOSImplementation()
 };
 

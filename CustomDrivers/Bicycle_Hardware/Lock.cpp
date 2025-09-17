@@ -50,11 +50,14 @@ void Lock::RTOSImplementation(){
         //every loop toggles the state
         inPinState = LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask);
         vTaskDelay(100); //debounce and poll rate
-        if (inPinState == true && inPinState == LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask)){
-            ToggleLock();
-            buff.data = buff.data ^ 1U; //toggles the first bit
-            xQueueSendToBack(messenger, &buff , 0);
-            vTaskDelay(1000); //cannot change state again for more than seconds
+        if (LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask) == true && inPinState == LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask)){
+            vTaskDelay(100);
+            if (LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask) == true && inPinState == LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask)){
+                ToggleLock();
+                buff.data = buff.data ^ 1U; //toggles the first bit
+                xQueueSendToBack(messenger, &buff , 0);
+                vTaskDelay(1000); //cannot change state again for more than seconds
+            }
         }
     }
 }

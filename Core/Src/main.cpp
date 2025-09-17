@@ -99,6 +99,7 @@ state_t unlock(state_t state){
     LL_GPIO_ResetOutputPin(GPIOA,GPIO_PIN_6); //fardriver Pin
     //vTaskResume(LED);
     vTaskSuspend(detector1->getTaskHandle());
+    honkHorn(state);
     //log stateUnlocked suscessful
     return STATE_UNLOCKED;
   }
@@ -116,6 +117,7 @@ state_t lock(state_t state){
     LL_GPIO_SetOutputPin(GPIOA,GPIO_PIN_6); //fardriver Pin will close OD, close relay, locking the bike 
     //vTaskSuspend(LED);
     vTaskResume(detector1->getTaskHandle());
+    honkHorn(state);
     //log stateUnlocked suscessful
     return STATE_LOCKED;
   }
@@ -136,6 +138,23 @@ state_t start(state_t state){
   }
   //log stateunlocked failed
   return state;
+}
+
+void honkHorn(state_t func_call_state){
+  if (func_call_state == STATE_UNLOCKED || func_call_state == STATE_START){ //lock is 1 beep
+    LL_GPIO_SetOutputPin(GPIOB, LL_GPIO_PIN_1);
+    vTaskDelay(50);
+    LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_1);
+  }
+  else {//unlock is 2 beep
+    LL_GPIO_SetOutputPin(GPIOB, LL_GPIO_PIN_1);
+    vTaskDelay(20);
+    LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_1);
+    vTaskDelay(10);
+    LL_GPIO_SetOutputPin(GPIOB, LL_GPIO_PIN_1);
+    vTaskDelay(10);
+    LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_1);
+  }
 }
 
 int main(){

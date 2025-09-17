@@ -110,6 +110,7 @@ void state_machine(void* pvParameters);
 state_t unlock(state_t state);
 state_t lock(state_t state);
 state_t start(state_t state);
+void honkHorn(state_t func_call_state);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

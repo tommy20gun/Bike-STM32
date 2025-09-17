@@ -21,3 +21,27 @@ void Horn::vTaskFunction(void* pvParameters){
   Horn* horn = (Horn*) pvParameters;
   horn->RTOSImplementation();
 }
+
+void Horn::RTOSImplementation(){
+  bool inPinState;
+  bool prevPinState = LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask);
+
+  while(1){
+    inPinState = LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask);
+    //debounce
+    vTaskDelay(15);
+    //read again to confirm the signal, if not, ignore it
+    if (inPinState == LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask) && inPinState != prevPinState){
+      if (inPinState){
+        LL_GPIO_SetOutputPin(outputPin.GPIOx,outputPin.PinMask); //TODO make this a mutex for motion detect
+        QueueSend();
+        prevPinState = inPinState;
+      }
+      else if (!inPinState){
+        LL_GPIO_ResetOutputPin(outputPin.GPIOx,outputPin.PinMask);
+        QueueSend();
+        prevPinState = inPinState;
+      }
+    }
+  }
+}
