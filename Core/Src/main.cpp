@@ -61,7 +61,7 @@ void GlobalSetup(void){
   //channel4 (12V) PA4 is hardcoded. So is Queuetag
   adc = new ADCDriver(messenger, GPIOA, GPIO_PIN_4);      
   bikelock = new Lock(GPIOA,GPIO_PIN_7,GPIOA,GPIO_PIN_6,messenger,StateMachineStatus,stateMachineHandle);
-  detector1 = new Motion_Detector(messenger,headlightON, GPIOB, GPIO_PIN_13);
+  //detector1 = new Motion_Detector(messenger,headlightON, GPIOB, GPIO_PIN_14);
   xTaskNotify(stateMachineHandle, 2, eSetValueWithOverwrite); //increments notif value by 1. TODO this is wrong bc then state 1 is unlock but I should check notified value to confirm.
 }
 
@@ -143,14 +143,14 @@ state_t start(state_t state){
 void honkHorn(state_t func_call_state){
   if (func_call_state == STATE_UNLOCKED || func_call_state == STATE_START){ //lock is 1 beep
     LL_GPIO_SetOutputPin(GPIOB, LL_GPIO_PIN_1);
-    vTaskDelay(50);
+    vTaskDelay(10);
     LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_1);
   }
   else {//unlock is 2 beep
     LL_GPIO_SetOutputPin(GPIOB, LL_GPIO_PIN_1);
-    vTaskDelay(20);
-    LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_1);
     vTaskDelay(10);
+    LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_1);
+    vTaskDelay(100);
     LL_GPIO_SetOutputPin(GPIOB, LL_GPIO_PIN_1);
     vTaskDelay(10);
     LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_1);

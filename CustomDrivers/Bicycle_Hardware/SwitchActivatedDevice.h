@@ -20,6 +20,7 @@ class SwitchActivatedDevice: public Device{
     virtual void initPeripherals();
     virtual void RTOSImplementation();
     void QueueSend();
+    void initializeHWPinState();
 };
 
 #ifdef __cplusplus

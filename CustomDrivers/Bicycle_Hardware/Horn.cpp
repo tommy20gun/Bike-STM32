@@ -23,6 +23,7 @@ void Horn::vTaskFunction(void* pvParameters){
 }
 
 void Horn::RTOSImplementation(){
+  initializeHWPinState();
   bool inPinState;
   bool prevPinState = LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask);
 

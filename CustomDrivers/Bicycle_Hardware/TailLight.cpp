@@ -32,6 +32,8 @@ void TailLight_Turn::vTaskFunction(void* pvParameters){
 }
 
 void TailLight_Turn::RTOSImplementation(){
+  //manually turn on taillight at startup
+  LL_GPIO_ResetOutputPin(outputPin.GPIOx, outputPin.PinMask);
   bool inPinState;
   while(1){
     inPinState = LL_GPIO_IsInputPinSet(inputPin.GPIOx, inputPin.PinMask);
@@ -61,6 +63,7 @@ void TailLight_Brake::vTaskFunction(void* pvParameters){
 } 
 
 void TailLight_Brake::RTOSImplementation(){
+  initializeHWPinState();
   bool inPinState;
   bool prevPinState = LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask);
 

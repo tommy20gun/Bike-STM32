@@ -49,6 +49,7 @@ void SwitchActivatedDevice::QueueSend(){
 }
 
 void SwitchActivatedDevice::RTOSImplementation(){
+  initializeHWPinState();
   bool inPinState;
   bool prevPinState = LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask);
 
@@ -71,3 +72,15 @@ void SwitchActivatedDevice::RTOSImplementation(){
     }
   }
 }
+
+void SwitchActivatedDevice::initializeHWPinState(){
+  //initialize to previous hardware setting. I.e. if the light switch is on,
+  //then the light should be on at reset
+  if (LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask)){
+    LL_GPIO_SetOutputPin(outputPin.GPIOx,outputPin.PinMask); //closes the circuit, ground the output
+  }
+  else{
+    LL_GPIO_ResetOutputPin(outputPin.GPIOx,outputPin.PinMask); //open the circuit, open drain
+  }
+}
+

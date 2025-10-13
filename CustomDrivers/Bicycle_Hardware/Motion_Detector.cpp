@@ -87,16 +87,16 @@ no more motion, headlight is off due to light switch = nothing
     if (LL_GPIO_IsInputPinSet(readingPin.GPIOx,readingPin.PinMask) == true){
       while (1){
         timeON +=30;
-        if (timeON >= 5000 && !LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0)){
-          LL_GPIO_SetOutputPin(GPIOB,GPIO_PIN_0);
-          buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
+        if (timeON >= 500 && !LL_GPIO_IsOutputPinSet(GPIOA,GPIO_PIN_5)){
+          LL_GPIO_ResetOutputPin(GPIOA,GPIO_PIN_5);
+          buff.data = LL_GPIO_IsOutputPinSet(GPIOA,GPIO_PIN_5);
           xQueueSendToBack(messenger, &buff , 0);
           //previouspin = true;
         }
         //executes on falling edge only
         else if(LL_GPIO_IsInputPinSet(readingPin.GPIOx,readingPin.PinMask) == false /*&& previouspin == true*/){
-          LL_GPIO_ResetOutputPin(GPIOB,GPIO_PIN_0);
-          buff.data = LL_GPIO_IsOutputPinSet(GPIOB,GPIO_PIN_0);
+          LL_GPIO_SetOutputPin(GPIOA,GPIO_PIN_5);
+          buff.data = LL_GPIO_IsOutputPinSet(GPIOA,GPIO_PIN_5);
           xQueueSendToBack(messenger, &buff , 0);
           //previouspin = false;
           timeON = 0;
