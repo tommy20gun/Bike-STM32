@@ -54,7 +54,8 @@ void SwitchActivatedDevice::RTOSImplementation(){
   bool prevPinState = LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask);
 
   while(1){
-    inPinState = LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask);
+    inPinState = LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask); //TODO make this an interrupt signal, 
+    //where the task runs one time to check for debounce
     //debounce
     vTaskDelay(50);
     //read again to confirm the signal, if not, ignore it
