@@ -46,3 +46,40 @@ void Horn::RTOSImplementation(){
     }
   }
 }
+
+void ShortHorn::RTOSImplementation(){
+  initializeHWPinState();
+  bool inPinState;
+  bool prevPinState = LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask);
+
+  while(1){
+    inPinState = LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask);
+    //debounce
+    vTaskDelay(15);
+    //read again to confirm the signal, if not, ignore it
+    if (inPinState == LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask) && inPinState != prevPinState){
+      if (inPinState){
+        shortHonk();          
+        QueueSend();
+        prevPinState = inPinState;
+      }
+      else if (!inPinState){
+        shortHonk();        
+        QueueSend();
+        prevPinState = inPinState;
+      }
+    }
+  }
+}
+
+void ShortHorn::shortHonk(){
+  LL_GPIO_SetOutputPin(outputPin.GPIOx,outputPin.PinMask);
+  vTaskDelay(20);
+  LL_GPIO_ResetOutputPin(outputPin.GPIOx,outputPin.PinMask);
+  vTaskDelay(80);
+  LL_GPIO_SetOutputPin(outputPin.GPIOx,outputPin.PinMask);
+  vTaskDelay(20);
+  LL_GPIO_ResetOutputPin(outputPin.GPIOx,outputPin.PinMask);
+  vTaskDelay(80);
+}
+

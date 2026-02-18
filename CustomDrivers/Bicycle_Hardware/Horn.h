@@ -38,6 +38,30 @@ class Horn : public SwitchActivatedDevice{
     protected:
     void initTasks();
     void RTOSImplementation();
+    void shortHonk();
+    static void vTaskFunction(void* pvParameters);//this is just 1 line FreeRTOSImplementation()
+};
+
+class ShortHorn : public Horn{
+    public:
+    ShortHorn(GPIO_TypeDef* GPIOxIn, 
+            uint32_t PinMaskIn, 
+            GPIO_TypeDef* GPIOxOut, 
+            uint32_t PinMaskOut, 
+            QueueHandle_t messenger,
+            DataTable queueTag):Horn(GPIOxIn,
+                                                            PinMaskIn,
+                                                            GPIOxOut,
+                                                            PinMaskOut,
+                                                            messenger,
+                                                            queueTag)
+    {
+
+    };
+    protected:
+
+    void RTOSImplementation();
+    void shortHonk();
     static void vTaskFunction(void* pvParameters);//this is just 1 line FreeRTOSImplementation()
 };
 

@@ -28,6 +28,7 @@
 
 
 static Horn* horn;
+static ShortHorn* shorthorn;
 static Headlight* headlight;
 static TailLight_Turn* left;
 static TailLight_Turn* right;
@@ -53,6 +54,7 @@ void GlobalSetup(void){
   }
 
   horn = new Horn(GPIOA,GPIO_PIN_8,GPIOB,GPIO_PIN_1,messenger,hornON);
+  shorthorn = new ShortHorn(GPIOB,GPIO_PIN_14, GPIOB,GPIO_PIN_1,messenger,hornON);
   headlight = new Headlight(GPIOA,GPIO_PIN_10,GPIOB,GPIO_PIN_0,messenger,headlightON);
   left = new TailLight_Turn(GPIOB,GPIO_PIN_6,GPIOB,GPIO_PIN_8,GPIOB,GPIO_PIN_10,messenger,turningLeft);
   right = new TailLight_Turn(GPIOB,GPIO_PIN_7,GPIOB,GPIO_PIN_9,GPIOB, GPIO_PIN_12,messenger,turningRight);
