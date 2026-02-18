@@ -74,13 +74,13 @@ void TailLight_Brake::RTOSImplementation(){
     //read again to confirm the signal, if not, ignore it
     if (inPinState == LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask) && inPinState != prevPinState){
       if (inPinState){
-        LL_GPIO_SetOutputPin(outputPin.GPIOx,outputPin.PinMask); 
+        LL_GPIO_ResetOutputPin(outputPin.GPIOx,outputPin.PinMask); 
         LL_GPIO_SetOutputPin(GPIOA,GPIO_PIN_6); // Brake activated throttle
         QueueSend();
         prevPinState = inPinState;
       }
       else if (!inPinState){
-        LL_GPIO_ResetOutputPin(outputPin.GPIOx,outputPin.PinMask);
+        LL_GPIO_SetOutputPin(outputPin.GPIOx,outputPin.PinMask);
         LL_GPIO_ResetOutputPin(GPIOA,GPIO_PIN_6); // Brake activated throttle
         QueueSend();
         prevPinState = inPinState;
