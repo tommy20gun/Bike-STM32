@@ -27,21 +27,22 @@
 #include "SwitchActivatedDevice.h"
 
 
-static Horn* horn;
-static Headlight* headlight;
-static TailLight_Turn* left;
-static TailLight_Turn* right;
-static TailLight_Brake* brake;
-static Bluetooth* bluetooth;
-static ADCDriver* adc;
-static Lock* bikelock;
-static Motion_Detector* detector1;
-//static Motion_Detector* detector2;
-//static Motion_Detector* detector3;
+static const Horn* horn;
+static const Headlight* headlight;
+static const TailLight_Turn* left;
+static const TailLight_Turn* right;
+static const TailLight_Brake* brake;
+static const Bluetooth* bluetooth;
+static const ADCDriver* adc;
+static const Lock* bikelock;
+static const Motion_Detector* detector1;
+//static const Motion_Detector* detector2;
+//static const Motion_Detector* detector3;
 
-TaskHandle_t stateMachineHandle;
+// these should be externs
+static TaskHandle_t stateMachineHandle;
 static state_t state;
-QueueHandle_t messenger;
+static QueueHandle_t messenger;
 
 /* create tasks, create object instances. object constructors set up hardware and own the semaphore*/
 void GlobalSetup(void){
