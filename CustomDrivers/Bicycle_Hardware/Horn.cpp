@@ -55,7 +55,7 @@ void ShortHorn::RTOSImplementation(){
   while(1){
     inPinState = LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask);
     //debounce
-    vTaskDelay(15);
+    vTaskDelay(30);
     //read again to confirm the signal, if not, ignore it
     if (inPinState == LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask) && inPinState != prevPinState){
       if (inPinState){
@@ -64,8 +64,6 @@ void ShortHorn::RTOSImplementation(){
         prevPinState = inPinState;
       }
       else if (!inPinState){
-        shortHonk();        
-        QueueSend();
         prevPinState = inPinState;
       }
     }
