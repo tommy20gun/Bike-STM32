@@ -45,7 +45,6 @@ typedef enum DataTable{
   brakeON,
   turningLeft,
   turningRight,
-  RPM_data,
   throttleV,
   StateMachineStatus
 }DataTable;
