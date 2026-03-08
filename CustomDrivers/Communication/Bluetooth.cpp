@@ -187,8 +187,6 @@ void Bluetooth::RTOSImplementation(){
       TestingString.append(std::to_string(map.turningLeft));
       TestingString.append("\nTurning Right: ");
       TestingString.append(std::to_string(map.turningRight));
-      TestingString.append("\nRPM: ");
-      TestingString.append(std::to_string(map.RPM));
       TestingString.append("\nThrottle Voltage: ");
       TestingString.append(std::to_string(map.throttleV));
       TestingString.append("\nState Machine Status: ");
@@ -227,7 +225,6 @@ uint32_t Bluetooth::CRC32MemoryMap(MemoryMap* map){
   LL_CRC_FeedData32(CRC, map->brakeON);
   LL_CRC_FeedData32(CRC, map->turningLeft);
   LL_CRC_FeedData32(CRC, map->turningRight);
-  LL_CRC_FeedData32(CRC, map->RPM);
   LL_CRC_FeedData32(CRC, map->throttleV);
   LL_CRC_FeedData32(CRC, map->StateMachineStatus);
   return LL_CRC_ReadData32(CRC);

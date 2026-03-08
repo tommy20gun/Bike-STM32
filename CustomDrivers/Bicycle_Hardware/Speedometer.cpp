@@ -29,7 +29,7 @@ Speedometer::Speedometer(QueueHandle_t messenger, GPIO_TypeDef* GPIOx, uint32_t 
     s_speedometer_IRQ_sema = xSemaphoreCreateBinary();
     initPeripherals();
     initTasks();
-    queueTag = RPM_data;
+    queueTag = speed;
 }
 
 void Speedometer::initTasks()

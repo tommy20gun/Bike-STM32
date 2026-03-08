@@ -21,7 +21,6 @@ typedef struct MemoryMap{
   uint32_t brakeON;
   uint32_t turningLeft;
   uint32_t turningRight;
-  uint32_t RPM;
   float throttleV;
   uint32_t StateMachineStatus;
   uint32_t CRC32;
@@ -46,7 +45,7 @@ typedef enum DataTable{
   brakeON,
   turningLeft,
   turningRight,
-  RPM,
+  RPM_data,
   throttleV,
   StateMachineStatus
 }DataTable;
@@ -59,6 +58,11 @@ struct uint32_t_Buffer{
 struct floatBuffer{
   DataTable tag;
   float data;
+};
+
+struct int32_t_Buffer{ 
+  DataTable tag;
+  int32_t data;
 };
 
 void receiveTaggedData(uint32_t_Buffer* buff, MemoryMap* map);
