@@ -15,18 +15,17 @@ extern "C" {
 
 #include "FreeRTOS.h"  
 #include "Device.h"
-#define WHEEL_RADIUS (6u) //inches
+#include "main.h"
+
+
 
 class Speedometer: public Device{
   public:
-  Speedometer(QueueHandle_t messenger, GPIO_TypeDef* GPIOxADC, uint32_t PinMaskIn);
+  Speedometer(QueueHandle_t messenger, GPIO_TypeDef* GPIOx, uint32_t PinMaskIn);
   
   protected:
-  int32_t RPM; //signed int
+  GPIOPin_Struct inputPin;
   float mph;
-  uint32_t milis_elapsed;
-
-
 
   void initTasks();
   virtual void initPeripherals();
@@ -35,7 +34,9 @@ class Speedometer: public Device{
   void QueueSend();
 
   //helpers
-  static float RPM2mph();
+  static float RPM2mph(float smoothed_rpm);
+  static float calculateRPM(uint32_t milis_elapsed);
+  static float getAverage(float* buffer, uint8_t count);
 
   //isr checkout caabd33 and previous
   /* 
@@ -49,12 +50,14 @@ class Speedometer: public Device{
   6. once task finishes, rid semaphore
   */
 
-}
+};
+
+void EXTI15_10_IRQHandler(void);
+
+
 #ifdef __cplusplus
 }
 #endif //__cplusplus
-
-
 
 #endif //__Peripheral_initialization
 
