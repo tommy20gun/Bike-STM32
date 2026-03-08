@@ -38,12 +38,9 @@ void receiveTaggedData(uint32_t_Buffer* buff, MemoryMap* map){
     map->turningRight = buff->data;
     break;
   case 11:
-    map->RPM = buff->data;
-    break;
-  case 12:
     map->throttleV = buff->data;
     break;
-  case 13:
+  case 12:
     map->StateMachineStatus = buff->data;
   }
 }

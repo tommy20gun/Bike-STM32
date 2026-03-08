@@ -31,9 +31,12 @@ class ADCDriver: public Device{
     virtual void initPeripherals();
     static void vTaskFunction(void* pvParameters);
     void RTOSImplementation();
-    static float ADCToBatteryPercent(float ADCReading,float scale);
     void QueueSend();
-};
+
+    //helpers
+    static float ADCToBatteryPercent(float ADCReading,float scale);
+
+  };
 
 #ifdef __cplusplus
 }

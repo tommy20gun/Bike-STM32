@@ -72,6 +72,8 @@ void GPIO_GlobalSetup(void){
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
 
+  LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
+
   //enable EXTI
   /*
   int prio = NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 5, 0);

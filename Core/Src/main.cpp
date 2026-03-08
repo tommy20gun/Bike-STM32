@@ -37,12 +37,14 @@ static Bluetooth* bluetooth;
 static ADCDriver* adc;
 static Lock* bikelock;
 static Motion_Detector* detector1;
+static Speedometer* speedometer;
 //static Motion_Detector* detector2;
 //static Motion_Detector* detector3;
 
-TaskHandle_t stateMachineHandle;
+// these should be externs
+static TaskHandle_t stateMachineHandle;
 static state_t state;
-QueueHandle_t messenger;
+static QueueHandle_t messenger;
 
 /* create tasks, create object instances. object constructors set up hardware and own the semaphore*/
 void GlobalSetup(void){
@@ -63,6 +65,7 @@ void GlobalSetup(void){
   //channel4 (12V) PA4 is hardcoded. So is Queuetag
   adc = new ADCDriver(messenger, GPIOA, GPIO_PIN_4);      
   bikelock = new Lock(GPIOA,GPIO_PIN_7,GPIOA,GPIO_PIN_6,messenger,StateMachineStatus,stateMachineHandle);
+  speedometer = new Speedometer(messenger, GPIOC, GPIO_PIN_14);
   //detector1 = new Motion_Detector(messenger,headlightON, GPIOB, GPIO_PIN_14);
   xTaskNotify(stateMachineHandle, 2, eSetValueWithOverwrite); //increments notif value by 1. TODO this is wrong bc then state 1 is unlock but I should check notified value to confirm.
 }
