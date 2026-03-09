@@ -101,6 +101,7 @@ state_t unlock(state_t state){
     vTaskResume(horn->getTaskHandle());
     vTaskResume(left->getTaskHandle());
     vTaskResume(right->getTaskHandle());
+    vTaskResume(brake->getTaskHandle());
     LL_GPIO_ResetOutputPin(GPIOA,GPIO_PIN_6); //fardriver Pin
     //vTaskResume(LED);
     //vTaskSuspend(detector1->getTaskHandle());
@@ -119,6 +120,7 @@ state_t lock(state_t state){
     vTaskSuspend(horn->getTaskHandle());
     vTaskSuspend(left->getTaskHandle());
     vTaskSuspend(right->getTaskHandle());
+    vTaskSuspend(brake->getTaskHandle());
     LL_GPIO_SetOutputPin(GPIOA,GPIO_PIN_6); //fardriver Pin will close OD, close relay, locking the bike 
     //vTaskSuspend(LED);
     //vTaskResume(detector1->getTaskHandle());
@@ -136,6 +138,7 @@ state_t start(state_t state){
     vTaskSuspend(horn->getTaskHandle());
     vTaskSuspend(left->getTaskHandle());
     vTaskSuspend(right->getTaskHandle());
+    vTaskSuspend(brake->getTaskHandle());
     //vTaskSuspend(LED);
     vTaskResume(detector1->getTaskHandle());
     //log stateUnlocked suscessful
