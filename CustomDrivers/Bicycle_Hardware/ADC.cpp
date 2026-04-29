@@ -88,7 +88,7 @@ The data converted from an injected channel are always stored into the ADC_JDRx
 registers.
 
 */
-ADCDriver::ADCDriver(QueueHandle_t messenger, GPIO_TypeDef* GPIOxADC, uint32_t PinMaskIn){
+ADCDriver::ADCDriver(QueueHandle_t messenger, GPIO_TypeDef* GPIOxADC, uint32_t PinMaskIn, DataTable queueTag){
     this->messenger = messenger;
     //this->pin4voltage = pin4voltage;
     this->ADCPin.GPIOx = GPIOxADC;
@@ -118,7 +118,7 @@ void ADCDriver::RTOSImplementation(){
         //wait for complete
         while(!LL_ADC_IsActiveFlag_EOCS(ADC1));
         //TODO ADC pin needs to not float
-        pinreading = LL_ADC_REG_ReadConversionData12(ADC1);
+        raw_adc_read = LL_ADC_REG_ReadConversionData12(ADC1);
         LL_ADC_ClearFlag_EOCS(ADC1);
         QueueSend();
         vTaskDelay(1000); //polling rate 1hz
@@ -137,13 +137,18 @@ void ADCDriver::QueueSend(){
     xQueueSendToBack(messenger,&buffer,0);
 }
 
-float ADCDriver::ADCToBatteryPercent(float ADCReading,float scale){
+float ADCDriver::raw2Voltage(uint16_t raw, float scale)
+{
     float vdd = 3.33;
     float resolution = 4096;
     float cellsInSeries = 3;
-    float voltage = ADCReading/resolution*vdd*scale; //assume 12bit resolution, 0-3.3V ADC range, yields 0-4.2V range
+    float voltage = raw/resolution*vdd*scale; //assume 12bit resolution, 0-3.3V ADC range, yields 0-4.2V range
     float voltagePerCell = voltage/cellsInSeries;
 
+    return voltagePerCell;
+}
+
+float ADCDriver::ADCToBatteryPercent(float voltagePerCell){
     //coeff
     //voltage > 3.63
     float a = 1839.98366f;

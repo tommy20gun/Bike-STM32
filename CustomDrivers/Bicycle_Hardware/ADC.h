@@ -25,7 +25,7 @@ class ADCDriver: public Device{
     protected:
     GPIOPin_Struct ADCPin;
     //int pin4voltage;
-    float pinreading;
+    uint16_t raw_adc_read;
 
     void initTasks();
     virtual void initPeripherals();
@@ -34,7 +34,9 @@ class ADCDriver: public Device{
     void QueueSend();
 
     //helpers
-    static float ADCToBatteryPercent(float ADCReading,float scale);
+    static float ADCToBatteryPercent(float voltagePerCell);
+    static float raw2Voltage(uint16_t raw, float scale);
+
 
   };
 
