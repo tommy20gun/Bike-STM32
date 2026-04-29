@@ -28,7 +28,7 @@
 
 
 static Horn* horn;
-static ShortHorn* shorthorn;
+// static ShortHorn* shorthorn;
 static Headlight* headlight;
 static TailLight_Turn* left;
 static TailLight_Turn* right;

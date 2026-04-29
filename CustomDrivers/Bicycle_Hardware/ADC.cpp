@@ -88,7 +88,7 @@ The data converted from an injected channel are always stored into the ADC_JDRx
 registers.
 
 */
-ADCDriver::ADCDriver(QueueHandle_t messenger, GPIO_TypeDef* GPIOxADC, uint32_t PinMaskIn, DataTable queueTag){
+ADCDriver::ADCDriver(QueueHandle_t messenger, GPIO_TypeDef* GPIOxADC, uint32_t PinMaskIn){
     this->messenger = messenger;
     //this->pin4voltage = pin4voltage;
     this->ADCPin.GPIOx = GPIOxADC;
