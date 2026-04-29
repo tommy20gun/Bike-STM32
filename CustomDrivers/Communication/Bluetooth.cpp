@@ -144,7 +144,7 @@ void Bluetooth::vTaskFunction(void* pvParameters){
 }
 
   //Testing code prints readable text to serial terminal
-#define TESTING
+// #define TESTING
 void Bluetooth::RTOSImplementation(){
   #ifndef TESTING
     LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, (uint32_t) &map, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
@@ -154,9 +154,9 @@ void Bluetooth::RTOSImplementation(){
       //TODO maybe do a mutex and separate these tasks
       emptyQueue();
       map.CRC32 = CRC32MemoryMap(&map);
-      uartTransmitDMA(sizeof(map)); //size is 80 I think, addr: start of struct
+      uartTransmitDMA(sizeof(map)); //size is 52 bytes, each 32bit item is 4 bytes characters
       //xSemaphoreGive(this->sendSemaphore);
-      vTaskDelay(100);
+      vTaskDelay(333); //task rate is 3hz
     }
   #else //code for testing is below
     std::string TestingString;
@@ -167,18 +167,10 @@ void Bluetooth::RTOSImplementation(){
       TestingString.append(std::to_string(map.magicNumber));
       TestingString.append("\nHeadlight ON: ");
       TestingString.append(std::to_string(map.headlightON));
-      TestingString.append("\nMotor Temp: ");
-      TestingString.append(std::to_string(map.motorTemp));
-      TestingString.append("\nADC Reading 72V: ");
-      TestingString.append(std::to_string(map.ADCreading72V));
       TestingString.append("\nADC Reading 12V: ");
-      TestingString.append(std::to_string(map.ADCreading12V));
-      TestingString.append("\nBattery Temp: ");
-      TestingString.append(std::to_string(map.battTemp));
-      TestingString.append("\nOdometer: ");
-      TestingString.append(std::to_string(map.Odometer));
+      TestingString.append(std::to_string(map.percent12VBatt));
       TestingString.append("\nSpeed: ");
-      TestingString.append(std::to_string(map.speed));
+      TestingString.append(std::to_string(map.bike_speed));
       TestingString.append("\nHorn ON: ");
       TestingString.append(std::to_string(map.hornON));
       TestingString.append("\nBrake ON: ");
@@ -190,7 +182,7 @@ void Bluetooth::RTOSImplementation(){
       TestingString.append("\nThrottle Voltage: ");
       TestingString.append(std::to_string(map.throttleV));
       TestingString.append("\nState Machine Status: ");
-      TestingString.append(std::to_string(map.StateMachineStatus));
+      TestingString.append(std::to_string(map.state_machine_status));
       TestingString.append("\nCRC32: ");
       TestingString.append(std::to_string(map.CRC32));
       TestingString.append("\n\n");
@@ -214,19 +206,18 @@ uint32_t Bluetooth::CRC32MemoryMap(MemoryMap* map){
 
   //doing it in this order triggers the hardware properly
  
-  LL_CRC_FeedData32(CRC, map->motorTemp);
+
   LL_CRC_FeedData32(CRC, map->headlightON);
-  LL_CRC_FeedData32(CRC, map->ADCreading72V);
-  LL_CRC_FeedData32(CRC, map->ADCreading12V);
-  LL_CRC_FeedData32(CRC, map->battTemp);
-  LL_CRC_FeedData32(CRC, map->Odometer);
-  LL_CRC_FeedData32(CRC, map->speed);
+
+  LL_CRC_FeedData32(CRC, map->percent12VBatt);
+
+  LL_CRC_FeedData32(CRC, map->bike_speed);
   LL_CRC_FeedData32(CRC, map->hornON);
   LL_CRC_FeedData32(CRC, map->brakeON);
   LL_CRC_FeedData32(CRC, map->turningLeft);
   LL_CRC_FeedData32(CRC, map->turningRight);
   LL_CRC_FeedData32(CRC, map->throttleV);
-  LL_CRC_FeedData32(CRC, map->StateMachineStatus);
+  LL_CRC_FeedData32(CRC, map->state_machine_status);
   return LL_CRC_ReadData32(CRC);
 }
 

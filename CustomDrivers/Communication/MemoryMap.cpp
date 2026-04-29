@@ -4,44 +4,41 @@ void receiveTaggedData(uint32_t_Buffer* buff, MemoryMap* map){
   //TODO this float needs to be translated
   switch (buff->tag)
   {
-  case 0:
+  case HEADLIGHT_ON:
     map->headlightON = buff->data;
     break;
-  case 1:
-    map->motorTemp = buff->data;
-    break;
-  case 2:
-    map->ADCreading72V = buff->data;
-    break;
-  case 3:
-    map->ADCreading12V = buff->data;
-    break;
-  case 4:
-    map->battTemp = buff->data;
-    break;
-  case 5:
-    map->Odometer = buff->data;
-    break;
-  case 6:
-    map->speed = buff->data;
-    break;
-  case 7:
+  case HORN_ON:
     map->hornON = buff->data;
     break;
-  case 8:
+  case BRAKE_ON:
     map->brakeON = buff->data;
     break;
-  case 9:
+  case TURNING_LEFT:
     map->turningLeft = buff->data;
     break;
-  case 10:
+  case TURNING_RIGHT:
     map->turningRight = buff->data;
     break;
-  case 11:
+  case STATE_MACHINE_STATUS:
+    map->state_machine_status = buff->data;
+    break;
+  case LED_STATUS:
+    map->LED_status = buff->data;
+    break;
+  case THROTTLE_V:
     map->throttleV = buff->data;
     break;
-  case 12:
-    map->StateMachineStatus = buff->data;
+  case PERCENT_12V_BATT:
+    map->percent12VBatt = buff->data;
+    break;
+  case VOLTAGE_12V_BATT:
+    map->voltage12VBatt = buff->data;
+    break;
+  case BIKE_SPEED:
+    map->bike_speed = buff->data;
+    break;
+  default:
+    break;
   }
 }
 

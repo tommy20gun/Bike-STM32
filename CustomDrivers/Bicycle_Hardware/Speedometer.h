@@ -21,7 +21,7 @@ extern "C" {
 
 class Speedometer: public Device{
   public:
-  Speedometer(QueueHandle_t messenger, GPIO_TypeDef* GPIOx, uint32_t PinMaskIn);
+  Speedometer(QueueHandle_t messenger, GPIO_TypeDef* GPIOx, uint32_t PinMaskIn, DataTable queueTag);
   
   protected:
   GPIOPin_Struct inputPin;

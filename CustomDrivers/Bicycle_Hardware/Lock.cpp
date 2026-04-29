@@ -45,7 +45,7 @@ void Lock::RTOSImplementation(){
     bool inPinState;
     struct uint32_t_Buffer buff;
     buff.data = 0;//TODO this needs to be fixed to 2 when I do reporting on android device
-    buff.tag = StateMachineStatus;
+    buff.tag = STATE_MACHINE_STATUS;
     while(1){
         //every loop toggles the state
         inPinState = LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask);

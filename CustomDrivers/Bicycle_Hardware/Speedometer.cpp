@@ -21,7 +21,7 @@
 
 static SemaphoreHandle_t s_speedometer_IRQ_sema;
 
-Speedometer::Speedometer(QueueHandle_t messenger, GPIO_TypeDef* GPIOx, uint32_t PinMaskIn)
+Speedometer::Speedometer(QueueHandle_t messenger, GPIO_TypeDef* GPIOx, uint32_t PinMaskIn, DataTable queueTag)
 {
     this->messenger = messenger;
     inputPin.GPIOx = GPIOx;
@@ -29,7 +29,7 @@ Speedometer::Speedometer(QueueHandle_t messenger, GPIO_TypeDef* GPIOx, uint32_t 
     s_speedometer_IRQ_sema = xSemaphoreCreateBinary();
     initPeripherals();
     initTasks();
-    queueTag = speed;
+    queueTag = queueTag;
 }
 
 void Speedometer::initTasks()

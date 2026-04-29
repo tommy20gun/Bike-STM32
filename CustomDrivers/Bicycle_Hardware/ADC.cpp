@@ -92,7 +92,7 @@ ADCDriver::ADCDriver(QueueHandle_t messenger, GPIO_TypeDef* GPIOxADC, uint32_t P
     this->messenger = messenger;
     //this->pin4voltage = pin4voltage;
     this->ADCPin.GPIOx = GPIOxADC;
-    this->ADCPin.PinMask = PinMaskIn;  
+    this->ADCPin.PinMask = PinMaskIn;
     initTasks();
     initPeripherals();
 }
@@ -127,8 +127,13 @@ void ADCDriver::RTOSImplementation(){
 
 void ADCDriver::QueueSend(){
     struct floatBuffer buffer;
-    buffer.tag = ADCreading12V;
-    buffer.data = ADCToBatteryPercent(pinreading,4);
+
+    buffer.tag = VOLTAGE_12V_BATT;
+    buffer.data = raw2Voltage(raw_adc_read, 4.0f);
+    xQueueSendToBack(messenger,&buffer,0);
+
+    buffer.tag = PERCENT_12V_BATT;
+    buffer.data = ADCToBatteryPercent(buffer.data);
     xQueueSendToBack(messenger,&buffer,0);
 }
 

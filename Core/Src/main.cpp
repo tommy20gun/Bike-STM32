@@ -55,18 +55,17 @@ void GlobalSetup(void){
     Error_Handler();
   }
 
-  horn = new Horn(GPIOA,GPIO_PIN_8,GPIOB,GPIO_PIN_1,messenger,hornON);
-  // shorthorn = new ShortHorn(GPIOB,GPIO_PIN_14, GPIOB,GPIO_PIN_1,messenger,hornON);
-  headlight = new Headlight(GPIOA,GPIO_PIN_10,GPIOB,GPIO_PIN_0,messenger,headlightON);
-  left = new TailLight_Turn(GPIOB,GPIO_PIN_6,GPIOB,GPIO_PIN_8,GPIOB,GPIO_PIN_10,messenger,turningLeft);
-  right = new TailLight_Turn(GPIOB,GPIO_PIN_7,GPIOB,GPIO_PIN_9,GPIOB, GPIO_PIN_12,messenger,turningRight);
-  brake = new TailLight_Brake(GPIOA,GPIO_PIN_9,GPIOA,GPIO_PIN_5,messenger,brakeON);
+  horn = new Horn(GPIOA,GPIO_PIN_8,GPIOB,GPIO_PIN_1,messenger,HORN_ON);
+  // shorthorn = new ShortHorn(GPIOB,GPIO_PIN_14, GPIOB,GPIO_PIN_1,messenger,HORN_ON);
+  headlight = new Headlight(GPIOA,GPIO_PIN_10,GPIOB,GPIO_PIN_0,messenger,HEADLIGHT_ON);
+  left = new TailLight_Turn(GPIOB,GPIO_PIN_6,GPIOB,GPIO_PIN_8,GPIOB,GPIO_PIN_10,messenger,TURNING_LEFT);
+  right = new TailLight_Turn(GPIOB,GPIO_PIN_7,GPIOB,GPIO_PIN_9,GPIOB, GPIO_PIN_12,messenger,TURNING_RIGHT);
+  brake = new TailLight_Brake(GPIOA,GPIO_PIN_9,GPIOA,GPIO_PIN_5,messenger,BRAKE_ON);
   bluetooth = new Bluetooth(messenger); //bluetooth hard coded to PA0,PA1,PA2,PA3
-  //channel4 (12V) PA4 is hardcoded. So is Queuetag
-  adc = new ADCDriver(messenger, GPIOA, GPIO_PIN_4);      
-  bikelock = new Lock(GPIOA,GPIO_PIN_7,GPIOA,GPIO_PIN_6,messenger,StateMachineStatus,stateMachineHandle);
-  speedometer = new Speedometer(messenger, GPIOC, GPIO_PIN_14);
-  //detector1 = new Motion_Detector(messenger,headlightON, GPIOB, GPIO_PIN_13);
+  adc = new ADCDriver(messenger, GPIOA, GPIO_PIN_4); //VOLTAGE_12V_BATT and PERCENT_12V_BATT are hardcoded. channel4 (12V) PA4 is hardcoded. So is Queuetag
+  bikelock = new Lock(GPIOA,GPIO_PIN_7,GPIOA,GPIO_PIN_6,messenger,STATE_MACHINE_STATUS,stateMachineHandle);
+  speedometer = new Speedometer(messenger, GPIOC, GPIO_PIN_14, BIKE_SPEED);
+  //detector1 = new Motion_Detector(messenger,HEADLIGHT_ON, GPIOB, GPIO_PIN_13);
   xTaskNotify(stateMachineHandle, 2, eSetValueWithOverwrite); //increments notif value by 1. TODO this is wrong bc then state 1 is unlock but I should check notified value to confirm.
 }
 

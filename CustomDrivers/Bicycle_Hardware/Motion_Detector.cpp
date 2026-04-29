@@ -79,7 +79,7 @@ no more motion, headlight is off due to light switch = nothing
   //vTaskDelay(63000); // wait 1 minute for startup. The sensor should calibrate during this time so everytime
   // it becomes active (unlock->lock) state, it should do this calibration.
   struct uint32_t_Buffer buff;
-  buff.tag = headlightON;
+  buff.tag = HEADLIGHT_ON;
   //bool previouspin = true;
   uint64_t timeON = 0;
   while(1){

@@ -7,46 +7,36 @@ extern "C" {
 #include "FreeRTOS.h"
 #include "main.h"
 typedef struct MemoryMap{
-  //slow data
   uint32_t magicNumber;
   uint32_t headlightON;
-  float motorTemp;
-  float ADCreading72V;
-  float ADCreading12V;
-  float battTemp;
-  float Odometer;
-  //fast data
-  float speed;
   uint32_t hornON;
   uint32_t brakeON;
   uint32_t turningLeft;
   uint32_t turningRight;
-  float throttleV;
-  uint32_t StateMachineStatus;
-  uint32_t CRC32;
+  uint32_t state_machine_status;
+  uint32_t LED_status;
 
-  //special command
-  /*
-  state_t* locked;
-  state_t* unlocked;
-  bool* BMSMOS_On;
-  */
+  float throttleV; //V
+  float percent12VBatt; //percent
+  float voltage12VBatt; //V
+  float bike_speed; //mph
+
+  uint32_t CRC32;
 }MemoryMap;
 
 typedef enum DataTable{
-  headlightON,
-  motorTemp,
-  ADCreading72V,
-  ADCreading12V,
-  battTemp,
-  Odometer,
-  speed,
-  hornON,
-  brakeON,
-  turningLeft,
-  turningRight,
-  throttleV,
-  StateMachineStatus
+  HEADLIGHT_ON = 0u,
+  HORN_ON, 
+  BRAKE_ON,
+  TURNING_LEFT,
+  TURNING_RIGHT,
+  STATE_MACHINE_STATUS,
+  LED_STATUS,
+  THROTTLE_V,
+  PERCENT_12V_BATT,
+  VOLTAGE_12V_BATT,
+  BIKE_SPEED,
+  DATATABLE_MAX
 }DataTable;
 
 struct uint32_t_Buffer{ 
@@ -59,10 +49,10 @@ struct floatBuffer{
   float data;
 };
 
-struct int32_t_Buffer{ 
-  DataTable tag;
-  int32_t data;
-};
+// struct int32_t_Buffer{ 
+//   DataTable tag;
+//   int32_t data;
+// };
 
 void receiveTaggedData(uint32_t_Buffer* buff, MemoryMap* map);
 #ifdef __cplusplus
