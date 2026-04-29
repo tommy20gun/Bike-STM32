@@ -110,19 +110,19 @@ void Bluetooth::initTasks(){
   xSemaphoreGive(sendSemaphore);*/
 }
 
-void Bluetooth::setmode(int mode){
-  // only works on powerup for hc05
-  //wire in switch to work on perffboard
-  if (mode){
-    LL_GPIO_SetOutputPin(GPIOA, GPIO_PIN_0);
-  }
-  else{
-    LL_GPIO_ResetOutputPin(GPIOA, GPIO_PIN_0);
-  }
-}
-BTState Bluetooth::getConnectionState(){
-  return LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_1);
-}
+// void Bluetooth::setmode(int mode){
+//   // only works on powerup for hc05
+//   //wire in switch to work on perffboard
+//   if (mode){
+//     LL_GPIO_SetOutputPin(GPIOA, GPIO_PIN_0);
+//   }
+//   else{
+//     LL_GPIO_ResetOutputPin(GPIOA, GPIO_PIN_0);
+//   }
+// }
+// BTState Bluetooth::getConnectionState(){
+//   return LL_GPIO_IsInputPinSet(GPIOA,GPIO_PIN_1);
+// }
 
 void Bluetooth::initBTMemoryMap(){
   map = {69420,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //set the magic number
