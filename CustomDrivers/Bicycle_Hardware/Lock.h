@@ -33,6 +33,7 @@ class Lock: public SwitchActivatedDevice{
                                                       queueTag)
     {
         this->stateMachineHandle = statetask;
+        this->queueTag = queueTag;
         initPeripherals();
         initTasks();
     };
