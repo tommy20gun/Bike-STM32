@@ -205,18 +205,8 @@ uint32_t Bluetooth::CRC32MemoryMap(MemoryMap* map){
 
   //doing it in this order triggers the hardware properly
  
-
+  // LL_CRC_FeedData32(CRC, map->brakeON);
   LL_CRC_FeedData32(CRC, map->headlightON);
-
-  LL_CRC_FeedData32(CRC, map->percent12VBatt);
-
-  LL_CRC_FeedData32(CRC, map->bike_speed);
-  LL_CRC_FeedData32(CRC, map->hornON);
-  LL_CRC_FeedData32(CRC, map->brakeON);
-  LL_CRC_FeedData32(CRC, map->turningLeft);
-  LL_CRC_FeedData32(CRC, map->turningRight);
-  LL_CRC_FeedData32(CRC, map->throttleV);
-  LL_CRC_FeedData32(CRC, map->state_machine_status);
   return LL_CRC_ReadData32(CRC);
 }
 
