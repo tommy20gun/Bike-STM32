@@ -97,7 +97,7 @@ void Bluetooth::initPeripherals(){
 
 void Bluetooth::initTasks(){
   BaseType_t xReturned;
-  xReturned = xTaskCreate(vTaskFunction,"Bluetooth Send UART",512, this, 1, &TaskHandle);
+  xReturned = xTaskCreate(vTaskFunction,"Bluetooth Send UART",512, this, 3, &TaskHandle);
   if(xReturned != pdPASS){
     Error_Handler();
   }
@@ -125,7 +125,7 @@ void Bluetooth::initTasks(){
 // }
 
 void Bluetooth::initBTMemoryMap(){
-  map = {69420,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //set the magic number
+  map = {69420u,0u,0u,0u,0u,0u,0u,0u,0.0f,0.0f,0.0f,0.0f,0u}; //set the magic number
 }
 
 void Bluetooth::QueueSend(){};
@@ -150,7 +150,6 @@ void Bluetooth::RTOSImplementation(){
     LL_DMA_ConfigAddresses(DMA1,LL_DMA_STREAM_6, (uint32_t) &map, LL_USART_DMA_GetRegAddr(USART2),LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
     while(1){
       //xSemaphoreTake(tooth->sendSemaphore,portMAX_DELAY);
-      //empty queue
       //TODO maybe do a mutex and separate these tasks
       emptyQueue();
       map.CRC32 = CRC32MemoryMap(&map);
