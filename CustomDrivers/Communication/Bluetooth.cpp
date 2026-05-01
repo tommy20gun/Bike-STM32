@@ -125,7 +125,7 @@ void Bluetooth::initTasks(){
 // }
 
 void Bluetooth::initBTMemoryMap(){
-  map = {69420u,0u,0u,0u,0u,0u,0u,0u,0.0f,0.0f,0.0f,0.0f,0u}; //set the magic number
+  map = {69420u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u}; //set the magic number
 }
 
 void Bluetooth::QueueSend(){};

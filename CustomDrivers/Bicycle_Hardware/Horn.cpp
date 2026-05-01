@@ -60,7 +60,6 @@ void ShortHorn::RTOSImplementation(){
     if (inPinState == LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask) && inPinState != prevPinState){
       if (inPinState){
         shortHonk();          
-        QueueSend();
         prevPinState = inPinState;
       }
       else if (!inPinState){

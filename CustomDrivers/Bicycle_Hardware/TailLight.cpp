@@ -35,10 +35,12 @@ void TailLight_Turn::RTOSImplementation(){
   //manually turn on taillight at startup
   LL_GPIO_ResetOutputPin(outputPin.GPIOx, outputPin.PinMask);
   bool inPinState;
-  while(1){
+  while(1)
+  {
     inPinState = LL_GPIO_IsInputPinSet(inputPin.GPIOx, inputPin.PinMask);
     vTaskDelay(50);
-    while(inPinState == true && LL_GPIO_IsInputPinSet(inputPin.GPIOx, inputPin.PinMask) == inPinState){
+    while(inPinState == true && LL_GPIO_IsInputPinSet(inputPin.GPIOx, inputPin.PinMask) == inPinState)
+    {
       LL_GPIO_TogglePin(outputPin.GPIOx, outputPin.PinMask);
       LL_GPIO_ResetOutputPin(brightnessPin.GPIOx, brightnessPin.PinMask); //pull to ground, opens
       QueueSend();
@@ -46,6 +48,7 @@ void TailLight_Turn::RTOSImplementation(){
     }
     LL_GPIO_SetOutputPin(outputPin.GPIOx, outputPin.PinMask);
     LL_GPIO_SetOutputPin(brightnessPin.GPIOx, brightnessPin.PinMask);
+    QueueSend();
   }
 }
 

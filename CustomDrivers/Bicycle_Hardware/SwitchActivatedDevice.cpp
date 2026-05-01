@@ -79,9 +79,11 @@ void SwitchActivatedDevice::initializeHWPinState(){
   //then the light should be on at reset
   if (LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask)){
     LL_GPIO_SetOutputPin(outputPin.GPIOx,outputPin.PinMask); //closes the circuit, ground the output
+    QueueSend();
   }
   else{
     LL_GPIO_ResetOutputPin(outputPin.GPIOx,outputPin.PinMask); //open the circuit, open drain
+    QueueSend();
   }
 }
 

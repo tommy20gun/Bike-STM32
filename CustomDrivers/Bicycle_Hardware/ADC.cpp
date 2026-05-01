@@ -126,14 +126,15 @@ void ADCDriver::RTOSImplementation(){
 }
 
 void ADCDriver::QueueSend(){
-    struct floatBuffer buffer;
+    struct uint32_t_Buffer buffer;
 
     buffer.tag = VOLTAGE_12V_BATT;
-    buffer.data = raw2Voltage(raw_adc_read, 4.0f);
+    float volt_temp = raw2Voltage(raw_adc_read, 4.0f);
+    buffer.data = (uint32_t)(volt_temp * 100.0f + 0.5f); // move decimal right 2 and round
     xQueueSendToBack(messenger,&buffer,0);
 
     buffer.tag = PERCENT_12V_BATT;
-    buffer.data = ADCToBatteryPercent(buffer.data);
+    buffer.data = (uint32_t)(ADCToBatteryPercent(volt_temp)* 100.0f + 0.5f); // move decimal right 2 and round
     xQueueSendToBack(messenger,&buffer,0);
 }
 

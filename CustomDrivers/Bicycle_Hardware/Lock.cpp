@@ -44,7 +44,7 @@ result:
 void Lock::RTOSImplementation(){
     bool inPinState;
     struct uint32_t_Buffer buff;
-    buff.data = 0;//TODO this needs to be fixed to 2 when I do reporting on android device
+    buff.data = 2U;
     buff.tag = queueTag;
     while(1){
         //every loop toggles the state
@@ -54,6 +54,10 @@ void Lock::RTOSImplementation(){
             vTaskDelay(100);
             if (LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask) == true && inPinState == LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask)){
                 ToggleLock();
+                if (buff.data == 2U)
+                {
+                    buff.data = 1U; //only runs at start-> unlock
+                }
                 buff.data = buff.data ^ 1U; //toggles the first bit
                 xQueueSendToBack(messenger, &buff , 0);
                 vTaskDelay(1000); //cannot change state again for more than seconds

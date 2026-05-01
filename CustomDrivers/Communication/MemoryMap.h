@@ -16,10 +16,10 @@ typedef struct MemoryMap{
   uint32_t state_machine_status;
   uint32_t LED_status;
 
-  float throttleV; //V
-  float percent12VBatt; //percent
-  float voltage12VBatt; //V
-  float bike_speed; //mph
+  uint32_t throttleV; //V
+  uint32_t percent12VBatt; //percent
+  uint32_t voltage12VBatt; //V
+  uint32_t bike_speed; //mph
 
   uint32_t CRC32;
 }MemoryMap;
@@ -42,11 +42,6 @@ typedef enum DataTable{
 struct uint32_t_Buffer{ 
   DataTable tag;
   uint32_t data;
-};
-
-struct floatBuffer{
-  DataTable tag;
-  float data;
 };
 
 // struct int32_t_Buffer{ 

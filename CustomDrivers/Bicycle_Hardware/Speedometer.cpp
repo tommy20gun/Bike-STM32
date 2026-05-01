@@ -41,9 +41,9 @@ void Speedometer::initTasks()
 }
 
 void Speedometer::QueueSend(){
-  struct floatBuffer buff;
+  struct uint32_t_Buffer buff;
   buff.tag = BIKE_SPEED;
-  buff.data = mph;
+  buff.data = (uint32_t) (mph* 100.0f + 0.5f); //2 decimal float conversion
   xQueueSendToBack(messenger, &buff , 0);
 }
 

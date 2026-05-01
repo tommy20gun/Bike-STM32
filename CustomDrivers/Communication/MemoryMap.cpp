@@ -26,16 +26,16 @@ void receiveTaggedData(uint32_t_Buffer* buff, MemoryMap* map){
     map->LED_status = buff->data;
     break;
   case THROTTLE_V:
-    map->throttleV = (float) buff->data;
+    map->throttleV = buff->data;
     break;
   case PERCENT_12V_BATT:
-    map->percent12VBatt = (float) buff->data;
+    map->percent12VBatt = buff->data;
     break;
   case VOLTAGE_12V_BATT:
-    map->voltage12VBatt = (float) buff->data;
+    map->voltage12VBatt = buff->data;
     break;
   case BIKE_SPEED:
-    map->bike_speed = (float) buff->data;
+    map->bike_speed = buff->data;
     break;
   default:
     break;
