@@ -44,7 +44,7 @@ void SwitchActivatedDevice::initOutputPin(GPIOPin_Struct pin, bool openDrain){
 void SwitchActivatedDevice::QueueSend(){
   struct uint32_t_Buffer buff;
   buff.tag = queueTag;
-  buff.data = LL_GPIO_IsOutputPinSet(outputPin.GPIOx,outputPin.PinMask);
+  buff.data = LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask);
   xQueueSendToBack(messenger, &buff , 0);
 }
 

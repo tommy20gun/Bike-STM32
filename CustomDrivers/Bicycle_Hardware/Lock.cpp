@@ -46,6 +46,7 @@ void Lock::RTOSImplementation(){
     struct uint32_t_Buffer buff;
     buff.data = 2U;
     buff.tag = queueTag;
+    xQueueSendToBack(messenger, &buff , 0);
     while(1){
         //every loop toggles the state
         inPinState = LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask);
@@ -58,7 +59,10 @@ void Lock::RTOSImplementation(){
                 {
                     buff.data = 1U; //only runs at start-> unlock
                 }
-                buff.data = buff.data ^ 1U; //toggles the first bit
+                else
+                {
+                    buff.data = buff.data ^ 1U; //toggles the first bit
+                }
                 xQueueSendToBack(messenger, &buff , 0);
                 vTaskDelay(1000); //cannot change state again for more than seconds
             }

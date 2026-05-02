@@ -25,7 +25,8 @@ class ADCDriver: public Device{
     protected:
     GPIOPin_Struct ADCPin;
     //int pin4voltage;
-    uint16_t raw_adc_read;
+    volatile uint16_t raw_adc_read_batt;
+    volatile uint16_t raw_adc_read_throttle_V;
 
     void initTasks();
     virtual void initPeripherals();

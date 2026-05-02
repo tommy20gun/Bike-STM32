@@ -26,7 +26,7 @@ void ADCDriver::initPeripherals(){
 
     GPIO_InitStruct.Pin = ADCPin.PinMask;
     GPIO_InitStruct.Mode = LL_GPIO_MODE_ANALOG;
-    GPIO_InitStruct.Pull = LL_GPIO_PULL_NO; //TODO I need my own Pullup resistor in fritzing
+    GPIO_InitStruct.Pull = LL_GPIO_PULL_DOWN; //TODO I need my own Pullup resistor in fritzing
     LL_GPIO_Init(ADCPin.GPIOx,&GPIO_InitStruct);
 
     ADC_InitStruct.Resolution = LL_ADC_RESOLUTION_12B;
@@ -45,10 +45,10 @@ void ADCDriver::initPeripherals(){
     LL_ADC_CommonInit(__LL_ADC_COMMON_INSTANCE(ADC1),&ADC_CommonInitStruct);
 
     LL_ADC_REG_SetSequencerRanks(ADC1,LL_ADC_REG_RANK_1,LL_ADC_CHANNEL_4);
-    LL_ADC_SetChannelSamplingTime(ADC1,LL_ADC_CHANNEL_4,LL_ADC_SAMPLINGTIME_15CYCLES);
+    LL_ADC_SetChannelSamplingTime(ADC1,LL_ADC_CHANNEL_4,LL_ADC_SAMPLINGTIME_112CYCLES);
 
     LL_ADC_REG_SetSequencerRanks(ADC1,LL_ADC_REG_RANK_2,LL_ADC_CHANNEL_5);
-    LL_ADC_SetChannelSamplingTime(ADC1,LL_ADC_CHANNEL_4,LL_ADC_SAMPLINGTIME_15CYCLES);
+    LL_ADC_SetChannelSamplingTime(ADC1,LL_ADC_CHANNEL_4,LL_ADC_SAMPLINGTIME_112CYCLES);
     
 }
 /*
@@ -100,7 +100,7 @@ void ADCDriver::vTaskFunction(void* pvParameters){
     ADCDriver* adc = (ADCDriver*) pvParameters;
     adc ->RTOSImplementation();
 }
-
+static bool pingpong = 0U; 
 void ADCDriver::RTOSImplementation(){
     LL_ADC_Enable(ADC1);
     //just in case clear the flag even
@@ -112,36 +112,55 @@ void ADCDriver::RTOSImplementation(){
     if (!LL_ADC_IsEnabled(ADC1)){
         Error_Handler();
     }
+    volatile bool eocflag = 0U;
     while(1){
-
         LL_ADC_REG_StartConversionSWStart(ADC1);
+        vTaskDelay(100); //polling rate 1hz
         //wait for complete
-        while(!LL_ADC_IsActiveFlag_EOCS(ADC1));
-        //TODO ADC pin needs to not float
-        raw_adc_read = LL_ADC_REG_ReadConversionData12(ADC1);
-        LL_ADC_ClearFlag_EOCS(ADC1);
+        eocflag = LL_ADC_IsActiveFlag_EOCS(ADC1);
+        if (eocflag)
+        {
+            if (pingpong == 0U)
+            {
+                raw_adc_read_batt = LL_ADC_REG_ReadConversionData12(ADC1); //rank 1
+                pingpong ^= 1U;
+            }
+            else
+            {
+                raw_adc_read_throttle_V = LL_ADC_REG_ReadConversionData12(ADC1); //rank 2
+                pingpong ^= 1U;
+            }
+            LL_ADC_ClearFlag_EOCS(ADC1);
+        }
         QueueSend();
-        vTaskDelay(1000); //polling rate 1hz
     }
 }
 
 void ADCDriver::QueueSend(){
     struct uint32_t_Buffer buffer;
+    if (pingpong == 0U)
+    {
+        buffer.tag = VOLTAGE_12V_BATT;
+        float volt_temp = raw2Voltage(raw_adc_read_batt, 4.0f);
+        buffer.data = (uint32_t)(volt_temp * 100.0f + 0.5f); // move decimal right 2 and round
+        xQueueSendToBack(messenger,&buffer,0);
 
-    buffer.tag = VOLTAGE_12V_BATT;
-    float volt_temp = raw2Voltage(raw_adc_read, 4.0f);
-    buffer.data = (uint32_t)(volt_temp * 100.0f + 0.5f); // move decimal right 2 and round
-    xQueueSendToBack(messenger,&buffer,0);
-
-    buffer.tag = PERCENT_12V_BATT;
-    buffer.data = (uint32_t)(ADCToBatteryPercent(volt_temp)* 100.0f + 0.5f); // move decimal right 2 and round
-    xQueueSendToBack(messenger,&buffer,0);
+        buffer.tag = PERCENT_12V_BATT;
+        buffer.data = (uint32_t)(ADCToBatteryPercent(volt_temp)* 100.0f + 0.5f); // move decimal right 2 and round
+        xQueueSendToBack(messenger,&buffer,0);
+    }
+    else
+    {
+        buffer.tag = THROTTLE_V;
+        buffer.data =((float)raw_adc_read_throttle_V * 3.33f / 4095.0f * 100.0f + 0.5f);
+        xQueueSendToBack(messenger,&buffer,0);
+    }
 }
 
 float ADCDriver::raw2Voltage(uint16_t raw, float scale)
 {
-    float vdd = 3.33;
-    float resolution = 4096;
+    float vdd = 3.33; //you might have to calibrate this to the voltage of the MCU
+    float resolution = 4095;
     float cellsInSeries = 3;
     float voltage = raw/resolution*vdd*scale; //assume 12bit resolution, 0-3.3V ADC range, yields 0-4.2V range
     float voltagePerCell = voltage/cellsInSeries;
