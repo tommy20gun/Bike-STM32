@@ -2,8 +2,6 @@
   * @file           : BLESend.c
   * @brief          : Implementation of BLE polling of memory map, interface with HC05, many BLE send commands
   * 
-  * BLEKey/EN - PA0 output. This value must be set on startup to allow ATmode
-  * BLEState - PA1 input
   * USART2TX - PA2
   * USART2RX - PA3
   * 
@@ -35,22 +33,22 @@ void Bluetooth::initPeripherals(){
   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 //todo make sure there is a pullup on RX for BLE module. Does this work?
 
-  //init PA0
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_0;
-  GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
-  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
-  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
-  LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  // //init PA0
+  // GPIO_InitStruct.Pin = LL_GPIO_PIN_0;
+  // GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
+  // GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+  // GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+  // GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  // LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
   
-  //BLEState - PA1 input
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_1;
-  GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
-  LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  // //BLEState - PA1 input
+  // GPIO_InitStruct.Pin = LL_GPIO_PIN_1;
+  // GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
+  // GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  // LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  //Ensure pin is reset for data mode on default
-  LL_GPIO_ResetOutputPin(GPIOA, GPIO_PIN_0);
+  // //Ensure pin is reset for data mode on default
+  // LL_GPIO_ResetOutputPin(GPIOA, GPIO_PIN_0);
 
   //DMA init
 
