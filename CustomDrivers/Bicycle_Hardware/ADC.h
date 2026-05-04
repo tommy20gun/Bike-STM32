@@ -20,10 +20,11 @@ extern "C" {
 
 class ADCDriver: public Device{
     public:
-    ADCDriver(QueueHandle_t messenger, GPIO_TypeDef* GPIOxADC, uint32_t PinMaskIn);
+    ADCDriver(QueueHandle_t messenger, GPIO_TypeDef* GPIOxADC, uint32_t PinMaskInBatt, uint32_t PinMaskInThrottle);
 
     protected:
-    GPIOPin_Struct ADCPin;
+    GPIOPin_Struct ADCPinBatt;
+    GPIOPin_Struct ADCPinThrottle;
     //int pin4voltage;
     volatile uint16_t raw_adc_read_batt;
     volatile uint16_t raw_adc_read_throttle_V;

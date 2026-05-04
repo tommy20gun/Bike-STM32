@@ -24,10 +24,10 @@ void ADCDriver::initPeripherals(){
 
     LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
 
-    GPIO_InitStruct.Pin = ADCPin.PinMask;
+    GPIO_InitStruct.Pin = ADCPinBatt.PinMask | ADCPinThrottle.PinMask;
     GPIO_InitStruct.Mode = LL_GPIO_MODE_ANALOG;
-    GPIO_InitStruct.Pull = LL_GPIO_PULL_DOWN; //TODO I need my own Pullup resistor in fritzing
-    LL_GPIO_Init(ADCPin.GPIOx,&GPIO_InitStruct);
+    GPIO_InitStruct.Pull = LL_GPIO_PULL_DOWN;
+    LL_GPIO_Init(ADCPinBatt.GPIOx,&GPIO_InitStruct);
 
     ADC_InitStruct.Resolution = LL_ADC_RESOLUTION_12B;
     ADC_InitStruct.DataAlignment = LL_ADC_DATA_ALIGN_RIGHT;
@@ -47,7 +47,7 @@ void ADCDriver::initPeripherals(){
     LL_ADC_REG_SetSequencerRanks(ADC1,LL_ADC_REG_RANK_1,LL_ADC_CHANNEL_4);
     LL_ADC_SetChannelSamplingTime(ADC1,LL_ADC_CHANNEL_4,LL_ADC_SAMPLINGTIME_112CYCLES);
 
-    LL_ADC_REG_SetSequencerRanks(ADC1,LL_ADC_REG_RANK_2,LL_ADC_CHANNEL_5);
+    LL_ADC_REG_SetSequencerRanks(ADC1,LL_ADC_REG_RANK_2,LL_ADC_CHANNEL_1);
     LL_ADC_SetChannelSamplingTime(ADC1,LL_ADC_CHANNEL_4,LL_ADC_SAMPLINGTIME_112CYCLES);
     
 }
@@ -88,11 +88,13 @@ The data converted from an injected channel are always stored into the ADC_JDRx
 registers.
 
 */
-ADCDriver::ADCDriver(QueueHandle_t messenger, GPIO_TypeDef* GPIOxADC, uint32_t PinMaskIn){
+ADCDriver::ADCDriver(QueueHandle_t messenger, GPIO_TypeDef* GPIOxADC, uint32_t PinMaskInBatt, uint32_t PinMaskInThrottle){
     this->messenger = messenger;
     //this->pin4voltage = pin4voltage;
-    this->ADCPin.GPIOx = GPIOxADC;
-    this->ADCPin.PinMask = PinMaskIn;
+    this->ADCPinBatt.GPIOx = GPIOxADC;
+    this->ADCPinBatt.PinMask = PinMaskInBatt;
+    this->ADCPinThrottle.GPIOx = GPIOxADC;
+    this->ADCPinThrottle.PinMask = PinMaskInThrottle;
     initTasks();
     initPeripherals();
 }
