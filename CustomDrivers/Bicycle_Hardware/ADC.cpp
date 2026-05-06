@@ -144,7 +144,7 @@ void ADCDriver::QueueSend(){
     {
         buffer.tag = VOLTAGE_12V_BATT;
         float volt_temp = raw2Voltage(raw_adc_read_batt, 4.0f);
-        buffer.data = (uint32_t)(volt_temp * 100.0f + 0.5f); // move decimal right 2 and round
+        buffer.data = (uint32_t)(volt_temp * 3.0f * 100.0f + 0.5f); // add back cell in series, move decimal right 2 and round
         xQueueSendToBack(messenger,&buffer,0);
 
         buffer.tag = PERCENT_12V_BATT;
