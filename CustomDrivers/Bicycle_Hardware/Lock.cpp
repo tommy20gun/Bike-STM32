@@ -39,19 +39,25 @@ static volatile bool six_is_first_char_flag = 0;
 static volatile bool disable_uart_isr = 0;
 SemaphoreHandle_t UART_RX_sema = NULL;
 
+
 void USART2_IRQHandler(void)
 {
+    uint8_t data = 0;
+    if (LL_USART_IsActiveFlag_RXNE(USART2))
+    {
+        data = LL_USART_ReceiveData8(USART2);
+    }
     if (!disable_uart_isr)
     {
-        if (LL_USART_IsActiveFlag_RXNE(USART2))
+        if (six_is_first_char_flag || data == 6) //if data[0] is 6, set flag and start saving. Otherwise skip
         {
-            uint8_t data = LL_USART_ReceiveData8(USART2);
-            if (six_is_first_char_flag || data == 6) //if data[0] is 6, set flag and start saving. Otherwise skip
+            i++;
+            if (i > RXBUFF_SIZE)
             {
-                i++;
-                uart_buffer[i-1] = data;
-                six_is_first_char_flag = 1;
+                i = 1;
             }
+            uart_buffer[i-1] = data;
+            six_is_first_char_flag = 1;
         }
         //break from ISR
         if (i == 4)
@@ -62,7 +68,6 @@ void USART2_IRQHandler(void)
             portYIELD_FROM_ISR(xHigherPriorityTaskWoken)
         }
     }
-    LL_USART_ClearFlag_RXNE(USART2); //essentially disables ISR 
 }
 
 /*
@@ -89,6 +94,7 @@ void Lock::RTOSImplementation(){
         if (uart_buffer[0] == 6 && uart_buffer[1] == 7 && uart_buffer[2] == 6 && uart_buffer[3] == 7)
         {
             buff.data = 1U; //it will exit the loop
+            xQueueSendToBack(messenger, &buff , 0);
             /* Set PA3 to input isntead of AF so the interrupt never fires */
 
         }
