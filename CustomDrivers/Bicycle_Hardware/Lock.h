@@ -36,6 +36,7 @@ class Lock: public SwitchActivatedDevice{
         this->queueTag = queueTag;
         initPeripherals();
         initTasks();
+        
     };
     
     TaskHandle_t stateMachineHandle;
@@ -47,6 +48,8 @@ class Lock: public SwitchActivatedDevice{
     void ToggleLock();
 
 };
+
+void USART2_IRQHandler(void);
 
 #ifdef __cplusplus
 }

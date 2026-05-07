@@ -23,8 +23,8 @@ void Bluetooth::initPeripherals(){
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   //TXPA2 RXPA3 is automatic for AF7
-  // GPIO_InitStruct.Pin = LL_GPIO_PIN_2| LL_GPIO_PIN_3 ;   // Re-enable this to receive UART
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_2;
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_2| LL_GPIO_PIN_3 ;   // Re-enable this to receive UART
+  // GPIO_InitStruct.Pin = LL_GPIO_PIN_2;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_VERY_HIGH;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
