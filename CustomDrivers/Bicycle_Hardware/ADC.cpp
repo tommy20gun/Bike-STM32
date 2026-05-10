@@ -154,7 +154,7 @@ void ADCDriver::QueueSend(){
     else
     {
         buffer.tag = THROTTLE_V;
-        buffer.data =(uint32_t)((float)raw_adc_read_throttle_V * 3.33f / 4095.0f * 100.0f + 0.5f);
+        buffer.data =(uint32_t)((float)raw_adc_read_throttle_V * 1.49f / 4095.0f * 100.0f + 0.5f); //6.1V is the throttle VDD, then vdiv is 2.2k and 6.8k = 24.4%. 
         xQueueSendToBack(messenger,&buffer,0);
     }
 }
