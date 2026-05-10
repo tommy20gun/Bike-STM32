@@ -41,7 +41,6 @@ static Speedometer* speedometer;
 //static Motion_Detector* detector2;
 //static Motion_Detector* detector3;
 
-// these should be externs
 static TaskHandle_t stateMachineHandle;
 static state_t state;
 static QueueHandle_t messenger;
@@ -49,7 +48,7 @@ static QueueHandle_t messenger;
 /* create tasks, create object instances. object constructors set up hardware and own the semaphore*/
 void GlobalSetup(void){
     //create global queue, assign to all obj
-  messenger = xQueueCreate(13,sizeof(struct uint32_t_Buffer));
+  messenger = xQueueCreate(30,sizeof(struct uint32_t_Buffer));
   BaseType_t xReturned = xTaskCreate(state_machine, "state_machine", 64, NULL, 2, &stateMachineHandle);
   if (xReturned != pdPASS){
     Error_Handler();
@@ -61,10 +60,10 @@ void GlobalSetup(void){
   left = new TailLight_Turn(GPIOB,GPIO_PIN_6,GPIOB,GPIO_PIN_8,GPIOB,GPIO_PIN_10,messenger,TURNING_LEFT);
   right = new TailLight_Turn(GPIOB,GPIO_PIN_7,GPIOB,GPIO_PIN_9,GPIOB, GPIO_PIN_12,messenger,TURNING_RIGHT);
   brake = new TailLight_Brake(GPIOA,GPIO_PIN_9,GPIOA,GPIO_PIN_5,messenger,BRAKE_ON);
-  bluetooth = new Bluetooth(messenger); //bluetooth hard coded to PA0,PA1,PA2,PA3
-  adc = new ADCDriver(messenger, GPIOA, GPIO_PIN_4, GPIO_PIN_1); //VOLTAGE_12V_BATT and PERCENT_12V_BATT are hardcoded. channel4 (12V) PA4 is hardcoded. So is Queuetag
+  bluetooth = new Bluetooth(messenger); //bluetooth hard coded to PA2,PA3
+  adc = new ADCDriver(messenger, GPIOA, GPIO_PIN_4, GPIO_PIN_0); //VOLTAGE_12V_BATT and PERCENT_12V_BATT are hardcoded. channel4 (12V) PA4 is hardcoded. So is Queuetag
   bikelock = new Lock(GPIOA,GPIO_PIN_7,GPIOA,GPIO_PIN_6,messenger,STATE_MACHINE_STATUS,stateMachineHandle);
-  speedometer = new Speedometer(messenger, GPIOC, GPIO_PIN_14);
+  speedometer = new Speedometer(messenger, GPIOA, GPIO_PIN_1);
   //detector1 = new Motion_Detector(messenger,HEADLIGHT_ON, GPIOB, GPIO_PIN_13);
   xTaskNotify(stateMachineHandle, 2, eSetValueWithOverwrite); //increments notif value by 1. TODO this is wrong bc then state 1 is unlock but I should check notified value to confirm.
 }
@@ -79,7 +78,8 @@ void state_machine(void* pvParameters){
   state_Transition transitiontable[3] = {lock,unlock, start};
   uint32_t notifiedValue = 0;
   while(1){
-    xTaskNotifyWait(0, 2U, &notifiedValue, portMAX_DELAY); // first call and subsequent calls will clear bit 1, meaning the task will toggle between lock and unlock
+    xTaskNotifyWait(0, 2U, &notifiedValue, portMAX_DELAY); //Start is not block bc of this  xTaskNotify(stateMachineHandle, 2, eSetValueWithOverwrite); //increments notif value by 1. TODO this is wrong bc then state 1 is unlock but I should check notified value to confirm.
+
     //notified value is the same enumeration where 1 calls unlock 0 calls locked
     //STATE_UNLOCKED = 1
     //STATE_LOCKED = 0

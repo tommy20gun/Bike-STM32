@@ -84,17 +84,18 @@ result:
 void Lock::RTOSImplementation(){
     bool inPinState;
     struct uint32_t_Buffer buff;
-    buff.data = 2U;
+    buff.data = STATE_START;
     buff.tag = queueTag;
     xQueueSendToBack(messenger, &buff , 0);
     UART_RX_sema = xSemaphoreCreateBinary();
-    while (buff.data == 2U)
+    while (buff.data == STATE_START)
     {
         xSemaphoreTake(UART_RX_sema, portMAX_DELAY); //block the task
         if (uart_buffer[0] == 6 && uart_buffer[1] == 7 && uart_buffer[2] == 6 && uart_buffer[3] == 7)
         {
-            buff.data = 1U; //it will exit the loop
+            buff.data = STATE_UNLOCKED; //it will exit the loop
             xQueueSendToBack(messenger, &buff , 0);
+            ToggleLock();
             /* Set PA3 to input isntead of AF so the interrupt never fires */
 
         }

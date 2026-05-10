@@ -154,7 +154,7 @@ void Bluetooth::RTOSImplementation(){
       map.CRC32 = CRC32MemoryMap(&map);
       uartTransmitDMA(sizeof(map)); //size is 52 bytes, each 32bit item is 4 bytes characters
       //xSemaphoreGive(this->sendSemaphore);
-      vTaskDelay(333); //task rate is 3hz
+      vTaskDelay(125); //task rate is 8hz
     }
   #else //code for testing is below
     std::string TestingString;

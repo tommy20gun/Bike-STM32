@@ -10,7 +10,7 @@
 
 void ADCDriver::initTasks(){
     BaseType_t xReturned;
-    xReturned = xTaskCreate(vTaskFunction,"ADCPoll",64, this,1,&TaskHandle);
+    xReturned = xTaskCreate(vTaskFunction,"ADCPoll",256, this,1,&TaskHandle);
     if (xReturned != pdPASS){
         Error_Handler();
     }
@@ -47,7 +47,7 @@ void ADCDriver::initPeripherals(){
     LL_ADC_REG_SetSequencerRanks(ADC1,LL_ADC_REG_RANK_1,LL_ADC_CHANNEL_4);
     LL_ADC_SetChannelSamplingTime(ADC1,LL_ADC_CHANNEL_4,LL_ADC_SAMPLINGTIME_112CYCLES);
 
-    LL_ADC_REG_SetSequencerRanks(ADC1,LL_ADC_REG_RANK_2,LL_ADC_CHANNEL_1);
+    LL_ADC_REG_SetSequencerRanks(ADC1,LL_ADC_REG_RANK_2,LL_ADC_CHANNEL_0);
     LL_ADC_SetChannelSamplingTime(ADC1,LL_ADC_CHANNEL_4,LL_ADC_SAMPLINGTIME_112CYCLES);
     
 }
@@ -117,7 +117,7 @@ void ADCDriver::RTOSImplementation(){
     volatile bool eocflag = 0U;
     while(1){
         LL_ADC_REG_StartConversionSWStart(ADC1);
-        vTaskDelay(100); //polling rate 1hz
+        vTaskDelay(500); //polling rate 2hz
         //wait for complete
         eocflag = LL_ADC_IsActiveFlag_EOCS(ADC1);
         if (eocflag)
@@ -154,7 +154,7 @@ void ADCDriver::QueueSend(){
     else
     {
         buffer.tag = THROTTLE_V;
-        buffer.data =((float)raw_adc_read_throttle_V * 3.33f / 4095.0f * 100.0f + 0.5f);
+        buffer.data =(uint32_t)((float)raw_adc_read_throttle_V * 3.33f / 4095.0f * 100.0f + 0.5f);
         xQueueSendToBack(messenger,&buffer,0);
     }
 }
