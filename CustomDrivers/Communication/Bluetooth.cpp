@@ -201,6 +201,7 @@ refer to the file Readme.txt in the CRC_usage folder
 uint32_t Bluetooth::CRC32MemoryMap(MemoryMap* map){
 
   LL_CRC_ResetCRCCalculationUnit(CRC);
+  __DSB();
 
   //doing it in this order triggers the hardware properly
  

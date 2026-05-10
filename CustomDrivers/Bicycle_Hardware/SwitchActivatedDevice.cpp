@@ -62,13 +62,15 @@ void SwitchActivatedDevice::RTOSImplementation(){
     if (inPinState == LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask) && inPinState != prevPinState){
       if (inPinState){
         LL_GPIO_SetOutputPin(outputPin.GPIOx,outputPin.PinMask); //TODO make this a mutex for motion detect
-        QueueSend();
+        LL_GPIO_SetOutputPin(outputPin.GPIOx,outputPin.PinMask);  //Slight delay to allow the readpin to work
         prevPinState = inPinState;
+        QueueSend();
       }
       else if (!inPinState){
         LL_GPIO_ResetOutputPin(outputPin.GPIOx,outputPin.PinMask);
-        QueueSend();
+        LL_GPIO_ResetOutputPin(outputPin.GPIOx,outputPin.PinMask); //Slight delay to allow the readpin to work
         prevPinState = inPinState;
+        QueueSend();
       }
     }
   }
