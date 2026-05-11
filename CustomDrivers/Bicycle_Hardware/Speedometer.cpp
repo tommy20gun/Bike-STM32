@@ -11,13 +11,13 @@
 
 #include "Speedometer.h"
 
-#define WHEEL_DIAMETER (12.0f) //inches
+#define WHEEL_DIAMETER (15.0f) //inches
 #define PI (3.14159f)
 #define RPM_TO_MPH (60.0f / 63360.0f) // minutes / hour / (inch / mile)
 #define COUNTS_PER_REV (1u) // 1 magnet
 #define MOVING_AVG_SIZE (5u)
 #define MS_PER_MINUTE (60000u)
-#define MAX_PULSE_GAP_MS (1000u)
+#define MAX_PULSE_GAP_MS (4000u)
 
 static SemaphoreHandle_t s_speedometer_IRQ_sema;
 
@@ -43,7 +43,7 @@ void Speedometer::initTasks()
 void Speedometer::QueueSend(){
   struct uint32_t_Buffer buff;
   buff.tag = BIKE_SPEED;
-  buff.data = (uint32_t) (mph* 100.0f + 0.5f); //2 decimal float conversion
+  buff.data = (uint32_t) (mph* 10.0f + 0.5f); //1 decimal float conversion
   xQueueSendToBack(messenger, &buff , 0);
 }
 
@@ -61,8 +61,8 @@ void Speedometer::initPeripherals()
     LL_GPIO_SetPinPull(inputPin.GPIOx, inputPin.PinMask, LL_GPIO_PULL_DOWN);
     LL_GPIO_SetPinMode(inputPin.GPIOx, inputPin.PinMask, LL_GPIO_MODE_INPUT);
 
-    //hardcoded pin 14
-    LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTC, LL_SYSCFG_EXTI_LINE14);
+    //hardcoded pin 1
+    LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA, LL_SYSCFG_EXTI_LINE1);
 
     LL_EXTI_InitTypeDef EXTI_InitStruct = {0};
 
@@ -78,9 +78,9 @@ void Speedometer::initPeripherals()
 
     __disable_irq();
     uint32_t prio = NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 5, 0);
-    NVIC_ClearPendingIRQ(EXTI15_10_IRQn);
-    NVIC_SetPriority(EXTI15_10_IRQn, prio);
-    NVIC_EnableIRQ(EXTI15_10_IRQn);
+    NVIC_ClearPendingIRQ(EXTI1_IRQn);
+    NVIC_SetPriority(EXTI1_IRQn, prio);
+    NVIC_EnableIRQ(EXTI1_IRQn);
     __enable_irq();
 }
 
@@ -164,9 +164,9 @@ float Speedometer::getAverage(float* buffer, uint8_t count)
     return sum / count;
 }
 
-void EXTI15_10_IRQHandler(void)
+void EXTI1_IRQHandler(void)
 {
-    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_14);
+    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_1);
     //wakes up H
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
