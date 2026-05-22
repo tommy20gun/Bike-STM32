@@ -11,13 +11,13 @@
 
 #include "Speedometer.h"
 
-#define WHEEL_DIAMETER (15.0f) //inches
+#define WHEEL_DIAMETER (14.7f) //inches
 #define PI (3.14159f)
 #define RPM_TO_MPH (60.0f / 63360.0f) // minutes / hour / (inch / mile)
 #define COUNTS_PER_REV (1u) // 1 magnet
-#define MOVING_AVG_SIZE (5u)
+#define MOVING_AVG_SIZE (3u)
 #define MS_PER_MINUTE (60000u)
-#define MAX_PULSE_GAP_MS (4000u)
+#define MAX_PULSE_GAP_MS (2000u)
 
 static SemaphoreHandle_t s_speedometer_IRQ_sema;
 

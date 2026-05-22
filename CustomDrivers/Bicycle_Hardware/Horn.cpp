@@ -35,13 +35,13 @@ void Horn::RTOSImplementation(){
     if (inPinState == LL_GPIO_IsInputPinSet(inputPin.GPIOx,inputPin.PinMask) && inPinState != prevPinState){
       if (inPinState){
         LL_GPIO_SetOutputPin(outputPin.GPIOx,outputPin.PinMask); //TODO make this a mutex for motion detect
-        LL_GPIO_SetOutputPin(outputPin.GPIOx,outputPin.PinMask);  //Slight delay to allow the readpin to work
+        LL_GPIO_SetOutputPin(outputPin.GPIOx,outputPin.PinMask);  //Slight delay did not work for horn, permanent bug
         prevPinState = inPinState;
         QueueSend();
       }
       else if (!inPinState){
         LL_GPIO_ResetOutputPin(outputPin.GPIOx,outputPin.PinMask);
-        LL_GPIO_ResetOutputPin(outputPin.GPIOx,outputPin.PinMask); //Slight delay to allow the readpin to work
+        LL_GPIO_ResetOutputPin(outputPin.GPIOx,outputPin.PinMask); //Slight delay did not work for horn, permanent bugso i
         prevPinState = inPinState;
         QueueSend();
       }

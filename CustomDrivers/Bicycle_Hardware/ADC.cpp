@@ -26,7 +26,7 @@ void ADCDriver::initPeripherals(){
 
     GPIO_InitStruct.Pin = ADCPinBatt.PinMask | ADCPinThrottle.PinMask;
     GPIO_InitStruct.Mode = LL_GPIO_MODE_ANALOG;
-    GPIO_InitStruct.Pull = LL_GPIO_PULL_DOWN;
+    GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
     LL_GPIO_Init(ADCPinBatt.GPIOx,&GPIO_InitStruct);
 
     ADC_InitStruct.Resolution = LL_ADC_RESOLUTION_12B;
@@ -117,7 +117,7 @@ void ADCDriver::RTOSImplementation(){
     volatile bool eocflag = 0U;
     while(1){
         LL_ADC_REG_StartConversionSWStart(ADC1);
-        vTaskDelay(500); //polling rate 2hz
+        vTaskDelay(200); //polling rate 5hz
         //wait for complete
         eocflag = LL_ADC_IsActiveFlag_EOCS(ADC1);
         if (eocflag)
@@ -171,30 +171,32 @@ float ADCDriver::raw2Voltage(uint16_t raw, float scale)
 }
 
 float ADCDriver::ADCToBatteryPercent(float voltagePerCell){
-    //coeff
-    //voltage > 3.63
-    float a = 1839.98366f;
-    float b = -28678.5498f;
-    float c = 167243.8687f;
-    float d = -432295.73505f;
-    float e = 417750.60866f;
+    // //coeff
+    // //voltage > 3.63
+    // float a = 1839.98366f;
+    // float b = -28678.5498f;
+    // float c = 167243.8687f;
+    // float d = -432295.73505f;
+    // float e = 417750.60866f;
 
-    //voltage < 3.63
-    float a1 = 49.2366f;
-    float b1 = -3.5f;
+    // //voltage < 3.63
+    // float a1 = 49.2366f;
+    // float b1 = -3.5f;
 
-    //x = 1839.98366*y^4 - 28678.5498*y^3 + 167243.8687*y^2 - 432295.73505*y + 417750.60866 (y in range of 3.685-4.2V)
-    //x = 49.2366*(y-3.5) (y < 3.685)
-    float batteryPercentage;
-    if (voltagePerCell > 3.685f){
-        batteryPercentage = (((((a*voltagePerCell+b)*voltagePerCell) + c)*voltagePerCell + d) * voltagePerCell) + e;
-    }
-    else if (voltagePerCell <= 3.685f && voltagePerCell > 3.2f){
-        batteryPercentage = a1*(voltagePerCell+b1);
-    }
-    else {
-        batteryPercentage = -1.0f;//Error bc battery% cant be negative
-    }
-    return batteryPercentage;
+    // //x = 1839.98366*y^4 - 28678.5498*y^3 + 167243.8687*y^2 - 432295.73505*y + 417750.60866 (y in range of 3.685-4.2V)
+    // //x = 49.2366*(y-3.5) (y < 3.685)
+    // float batteryPercentage;
+    // if (voltagePerCell > 3.685f){
+    //     batteryPercentage = (((((a*voltagePerCell+b)*voltagePerCell) + c)*voltagePerCell + d) * voltagePerCell) + e;
+    // }
+    // else if (voltagePerCell <= 3.685f && voltagePerCell > 3.2f){
+    //     batteryPercentage = a1*(voltagePerCell+b1);
+    // }
+    // else {
+    //     batteryPercentage = -1.0f;//Error bc battery% cant be negative
+    // }
+    // return batteryPercentage;
+
+    return (voltagePerCell-3.5) / 0.7 * 100.0;
 }
 
